@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugar Cage Match</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
+        :root {
+            --font-title: 'DotGothic16', monospace, sans-serif;
+            --font-main: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            
+            --bg-color: #fce4ec;
+            --box-bg: rgba(255, 255, 255, 0.98);
+            --text-color: #2b1f24;
+            --accent-color: #e91e63;
+            --border-color: #f48fb1;
+            
+            --glitch-intensity: 0px;
+            --stat-bg: rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+            overflow: hidden;
+            transition: background-color 2s ease, color 2s ease;
+        }
+
+        #app-wrapper { width: 100%; max-width: 800px; z-index: 10; position: relative; }
+
+        .container-box {
+            background: var(--box-bg);
+            border-radius: 12px;
+            padding: 25px 30px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            border: 2px solid var(--border-color);
+            box-sizing: border-box;
+            transition: background 2s ease, border-color 2s ease, color 2s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .glitch-text {
+            font-family: var(--font-title);
+            text-shadow: 
+                calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5),
+                calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5);
+            transition: text-shadow 0.5s;
+        }
+
+        h1 { font-family: var(--font-title); font-size: 1.8rem; border-bottom: 2px dashed var(--accent-color); padding-bottom: 10px; margin-bottom: 20px; color: var(--accent-color); letter-spacing: 2px; transition: color 2s ease, border-color 2s ease; }
+        
+        .top-nav { position: absolute; top: -40px; right: 0; display: flex; gap: 10px; }
+        .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        .small-btn:hover { background: var(--accent-color); color: #fff; }
+
+        .status-container { background: rgba(128,128,128,0.1); padding: 12px; border-radius: 8px; margin-bottom: 25px; text-align: left; border: 1px solid var(--border-color); transition: border-color 2s ease; }
+        .status-title { font-family: var(--font-title); font-size: 0.85rem; color: var(--accent-color); margin-bottom: 8px; text-align: center; letter-spacing: 2px; transition: color 2s ease; }
+        .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.85rem; font-family: var(--font-title); }
+        .stat-label { width: 15px; font-weight: bold; text-align: center; }
+        .stat-bar-bg { flex: 1; height: 10px; background: var(--stat-bg); border-radius: 5px; overflow: hidden; margin: 0 10px; border: 1px solid var(--border-color); }
+        .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
+        .stat-val { width: 25px; text-align: right; font-weight: bold; }
+
+        .question-text { font-size: 1.05rem; margin-bottom: 30px; line-height: 1.7; min-height: 5em; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; }
+
+        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 8px; padding: 0 5px; opacity: 0.8; font-weight: bold; }
+        .scale-container { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; }
+        .scale-btn { flex: 1; height: 48px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; }
+        .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); }
+        .scale-btn::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); opacity: 0.3; transition: 0.2s; }
+        .scale-btn:hover::after { background: #fff; opacity: 1; }
+
+        .hidden { display: none !important; }
+        
+        .blind-cards-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .blind-card { background: var(--box-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; }
+        .blind-card:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .blind-card.glow { border: 2px solid #ff4081; box-shadow: 0 0 15px rgba(255, 64, 129, 0.5); animation: neonPulse 1.5s infinite alternate; }
+        @keyframes neonPulse { from { box-shadow: 0 0 5px #f06292; } to { box-shadow: 0 0 20px #e91e63; } }
+        
+        .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; }
+        .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
+
+        /* RESULT & ARCHIVE IMAGE DISPLAY */
+        .char-image-section { margin: 20px 0; text-align: center; }
+        .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
+        .image-label { font-size: 0.75rem; color: var(--muted, rgba(0,0,0,0.5)); margin-bottom: 8px; letter-spacing: 1px; }
+
+        #result-details, #archive-details { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: left; margin-bottom: 20px; }
+        .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 12px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; letter-spacing: 1px; }
+        .detail-desc { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; font-weight: 500; margin-bottom: 16px; }
+
+        .expand-sensitive { background: transparent; color: var(--accent-color); border: 2px solid var(--accent-color); padding: 10px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: bold; margin: 12px 0; transition: 0.3s; }
+        .expand-sensitive:hover { background: var(--accent-color); color: #fff; }
+        .expand-sensitive.expanded { background: var(--accent-color); color: #fff; }
+
+        .sensitive-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .sensitive-content.expanded { max-height: 2000px; }
+
+        .sensitive-text { font-size: 0.85rem; line-height: 1.8; white-space: pre-wrap; font-weight: 500; color: var(--text-color); margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); }
+
+        /* CORRELATIONS */
+        .correlations { background: rgba(128,128,128,0.05); padding: 12px; border-radius: 6px; margin-top: 16px; border: 1px solid var(--border-color); }
+        .corr-title { font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 8px; text-transform: uppercase; }
+        .corr-item { font-size: 0.85rem; margin: 6px 0; color: var(--text-color); }
+        .corr-label { font-weight: bold; color: var(--accent-color); }
+        .corr-name { cursor: pointer; text-decoration: underline; opacity: 0.7; }
+        .corr-name:hover { opacity: 1; }
+        .corr-name.locked { cursor: not-allowed; opacity: 0.4; }
+
+        .main-btn { font-family: var(--font-main); background: var(--accent-color); color: white; border: none; padding: 14px 20px; border-radius: 30px; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 1rem; transition: 0.2s; box-shadow: 0 4px 0 var(--border-color); font-weight: bold; letter-spacing: 2px; }
+        .main-btn:hover { filter: brightness(1.1); transform: translateY(2px); box-shadow: 0 2px 0 var(--border-color); }
+        .sub-btn { background: transparent; color: var(--accent-color); border: 2px solid var(--accent-color); box-shadow: none; }
+
+        /* Archive Grid */
+        .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .archive-slot { background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); border-radius: 6px; padding: 0; cursor: pointer; transition: 0.2s; font-size: 0.7rem; font-weight: bold; color: var(--accent-color); aspect-ratio: 2/3; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .archive-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .archive-slot.locked { opacity: 0.4; cursor: not-allowed; border-style: dashed; }
+        .archive-slot:hover:not(.locked) { filter: brightness(1.1); }
+
+        .archive-detail-panel { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px; text-align: left; }
+
+        #shatter-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
+        .anim-shatter-flash { animation: flashShatter 1s ease-out forwards; }
+        @keyframes flashShatter { 0% { opacity: 0; } 10% { opacity: 1; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        .anim-break-container { animation: breakContainer 1s forwards; }
+        @keyframes breakContainer { 0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); } 20% { transform: scale(1.05) rotate(-2deg); filter: brightness(2); } 100% { transform: translateY(100vh) rotate(15deg) scale(0.8); opacity: 0; filter: brightness(0); } }
+        .anim-fade-in { animation: fadeIn 1.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .muted { --muted: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+<div id="shatter-flash"></div>
+
+<div id="app-wrapper">
+    <div class="top-nav">
+        <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="screen-start" class="container-box">
+        <h1 class="glitch-text">Sugar Cage</h1>
+        <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal;" data-text="subtitle">パートナーマッチング</h2>
+        <p style="font-size: 0.95rem; line-height: 1.6; margin-top: 20px; margin-bottom: 30px; font-weight: bold;" data-text="start_desc">
+            あなたの隠れた「ほんとうのキモチ」<br>診断してみませんか？♡
+        </p>
+        <button class="main-btn" onclick="startQuiz()" data-text="start_btn">START</button>
+        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn">図鑑 (ARCHIVE)</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="screen-quiz" class="container-box hidden">
+        <div class="status-container">
+            <div class="status-title glitch-text">STATUS</div>
+            <div class="stat-row"><span class="stat-label">P</span><div class="stat-bar-bg"><div id="bar-P" class="stat-bar-fill"></div></div><span id="val-P" class="stat-val">5</span></div>
+            <div class="stat-row"><span class="stat-label">M</span><div class="stat-bar-bg"><div id="bar-M" class="stat-bar-fill"></div></div><span id="val-M" class="stat-val">5</span></div>
+            <div class="stat-row"><span class="stat-label">I</span><div class="stat-bar-bg"><div id="bar-I" class="stat-bar-fill"></div></div><span id="val-I" class="stat-val">5</span></div>
+            <div class="stat-row"><span class="stat-label">E</span><div class="stat-bar-bg"><div id="bar-E" class="stat-bar-fill"></div></div><span id="val-E" class="stat-val">5</span></div>
+        </div>
+
+        <h3 id="question-number" class="glitch-text" style="font-family: var(--font-title); margin: 0 0 15px 0; color: var(--accent-color); font-size: 1.2rem;">Q1 / 15</h3>
+        <div id="question-text" class="question-text"></div>
+        
+        <div class="scale-labels">
+            <span data-text="agree">わかる</span>
+            <span data-text="disagree">ちがう</span>
+        </div>
+        <div id="options-container" class="scale-container"></div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="screen-result" class="container-box hidden">
+        <h1 class="glitch-text" style="color:var(--accent-color);">Analysis Complete</h1>
+        
+        <div id="result-selection">
+            <p style="font-size: 0.9rem; margin-bottom: 20px; font-weight: bold; line-height: 1.6;" data-text="result_desc">
+                あなたの深淵に適合する器が3体抽出されました。<br><br><span style="font-size:0.75rem; opacity:0.8; font-weight: normal;">（最も共鳴している個体は微かに発光しています。<br>ですが、どの破滅を選ぶかはあなたの自由です）</span>
+            </p>
+            <div class="blind-cards-container" id="blind-cards-container"></div>
+        </div>
+
+        <div id="result-details" class="hidden">
+            <div class="char-image-section">
+                <div class="image-label">SAFE VERSION</div>
+                <img id="result-image-safe" class="char-image" src="" alt="Safe">
+            </div>
+
+            <div id="result-details-text">
+                <div class="detail-name" id="detail-name"></div>
+                <div class="detail-desc" id="detail-desc"></div>
+            </div>
+
+            <button class="expand-sensitive" id="expand-btn" onclick="toggleSensitive(this, 'result')" data-text="expand_btn">もっと深く知る覚悟はある？</button>
+
+            <div class="sensitive-content" id="result-sensitive-content">
+                <div class="char-image-section">
+                    <div class="image-label">SENSITIVE VERSION</div>
+                    <img id="result-image-sensitive" class="char-image" src="" alt="Sensitive">
+                </div>
+                <div class="sensitive-text" id="result-sensitive-text"></div>
+            </div>
+
+            <div class="correlations hidden" id="result-correlations">
+                <div class="corr-title" data-text="correlations">関係性</div>
+                <div id="result-corr-list"></div>
+            </div>
+
+            <button class="main-btn" onclick="shareResult()" style="margin-top: 15px;" data-text="share_btn">SHARE</button>
+        </div>
+
+        <div id="share-btn-container" class="hidden">
+            <button class="main-btn sub-btn" onclick="resetQuiz()" data-text="restart_btn">再起動 (Restart)</button>
+        </div>
+    </div>
+
+    <!-- Archive Screen -->
+    <div id="screen-archive" class="container-box hidden">
+        <h1 class="glitch-text" data-text="archive_title">ARCHIVE</h1>
+        
+        <div id="archive-grid-view">
+            <p style="font-size: 0.85rem; margin-bottom: 15px; font-weight: bold;" data-text="archive_desc">観測済みの個体データ</p>
+            <div class="archive-grid" id="archive-grid-container"></div>
+            <button class="main-btn sub-btn" onclick="closeArchive()" data-text="back_btn">戻る (BACK)</button>
+        </div>
+
+        <div id="archive-detail-view" class="hidden">
+            <div class="archive-detail-panel">
+                <div class="char-image-section">
+                    <div class="image-label">SAFE VERSION</div>
+                    <img id="archive-image-safe" class="char-image" src="" alt="Safe">
+                </div>
+
+                <div id="archive-details-text">
+                    <div class="detail-name" id="arc-detail-name"></div>
+                    <div class="detail-desc" id="arc-detail-desc"></div>
+                </div>
+
+                <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">もっと深く知る覚悟はある？</button>
+
+                <div class="sensitive-content" id="archive-sensitive-content">
+                    <div class="char-image-section">
+                        <div class="image-label">SENSITIVE VERSION</div>
+                        <img id="archive-image-sensitive" class="char-image" src="" alt="Sensitive">
+                    </div>
+                    <div class="sensitive-text" id="archive-sensitive-text"></div>
+                </div>
+
+                <div class="correlations hidden" id="archive-correlations">
+                    <div class="corr-title" data-text="correlations">関係性</div>
+                    <div id="archive-corr-list"></div>
+                </div>
+            </div>
+
+            <button class="main-btn sub-btn" onclick="backToArchiveGrid()" style="margin-top: 15px;" data-text="back_btn">戻る (BACK)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'ja';
+    let stats = { P: 5, M: 5, I: 5, E: 5 };
+    let currentQuestionIndex = 0;
+    let top3Results = [];
+    let unlockedCharIds = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // Demo: 1-12 unlocked
+
+    // UI Texts Dictionary
+    const ui = {
+        subtitle: { ja: "パートナーマッチング", en: "Partner Matching" },
+        start_desc: { ja: "あなたの隠れた「ほんとうのキモチ」\n診断してみませんか？♡", en: "Care to diagnose your hidden\n'true feelings'? ♡" },
+        start_btn: { ja: "START", en: "START" },
+        archive_btn: { ja: "図鑑 (ARCHIVE)", en: "ENCYCLOPEDIA" },
+        agree: { ja: "わかる", en: "Agree" },
+        disagree: { ja: "ちがう", en: "Disagree" },
+        result_desc: { ja: "あなたの深淵に適合する器が3体抽出されました。\n\n<span style='font-size:0.75rem; opacity:0.8; font-weight: normal;'>（最も共鳴している個体は微かに発光しています。\nですが、どの破滅を選ぶかはあなたの自由です）</span>", en: "3 vessels suited to your abyss have been extracted.\n\n<span style='font-size:0.75rem; opacity:0.8; font-weight: normal;'>(The most resonant individual glows faintly.\nHowever, which ruin you choose is entirely up to you.)</span>" },
+        expand_btn: { ja: "もっと深く知る覚悟はある？", en: "Ready to know more?" },
+        share_btn: { ja: "共有 (SHARE)", en: "SHARE" },
+        restart_btn: { ja: "再起動 (Restart)", en: "RESTART" },
+        archive_title: { ja: "観測記録", en: "ARCHIVE" },
+        archive_desc: { ja: "観測済みの個体データ", en: "Observed Individual Data" },
+        back_btn: { ja: "戻る (BACK)", en: "BACK" },
+        correlations: { ja: "関係性", en: "Relations" }
+    };
+
+    // 15 Psychological Questions
+    const questions = [
+        { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: 2, E: -1 } },
+        { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: 2, I: 0, E: 1 } },
+        { q: { ja: "秘密や嘘は、愛を深めるスパイスになる。", en: "Secrets and lies are spices that deepen love." }, effects: { P: 0, M: -1, I: -2, E: 2 } },
+        { q: { ja: "相手を完全に支配し、コントロールしたい。", en: "I want to completely dominate and control my partner." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
+        { q: { ja: "愛情表現は言葉よりも、肉体的な痛みが伴う方が信じられる。", en: "Physical pain makes expressions of love more believable than mere words." }, effects: { P: 1, M: 2, I: 0, E: -1 } },
+        { q: { ja: "誰にも言えない性癖や願望がある。", en: "I have sexual desires and fetishes I can't tell anyone." }, effects: { P: 0, M: 1, I: -1, E: 2 } },
+        { q: { ja: "恋人が他の誰かに惹かれていくのを見ることに、興奮を覚えるかもしれない。", en: "I might feel aroused watching my lover be attracted to someone else." }, effects: { P: -1, M: 2, I: -2, E: 2 } },
+        { q: { ja: "相手の人生や価値観を、自分の手でめちゃくちゃに壊してみたい。", en: "I want to completely ruin my partner's life and values with my own hands." }, effects: { P: 2, M: 0, I: 1, E: 1 } },
+        { q: { ja: "自分の存在価値は、誰かに消費されることでしか見出せない。", en: "I can only find my worth by being consumed by someone else." }, effects: { P: -2, M: 2, I: 2, E: 0 } },
+        { q: { ja: "相手の絶望した顔こそが、最も美しいと思う。", en: "My partner's face in despair is the most beautiful thing." }, effects: { P: 2, M: -1, I: 0, E: 2 } },
+        { q: { ja: "愛する人のためなら、社会的な地位や名誉を失ってもいい。", en: "For the one I love, I don't mind losing my social status and honor." }, effects: { P: 0, M: 2, I: 2, E: -1 } },
+        { q: { ja: "美しいものより、汚れて堕ちていくものに惹かれる。", en: "I am more attracted to things that are dirty and falling than beautiful things." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
+        { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 } },
+        { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -1, I: 2, E: 0 } },
+        { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: 0, E: 2 } }
+    ];
+
+    // Character Data - ENHANCED
+    const characters = [
+        { 
+            id: 1, 
+            name: { ja: "ミナリ", en: "Minari" }, 
+            P: 8, M: 2, I: 8, E: 3, 
+            tags: { ja: ["家出少女", "メスガキ", "依存"], en: ["Runaway", "Brat", "Dependence"] },
+            imageSafe: "/images/characters/01_minari_safe.png",
+            imageSensitive: "/images/characters/01_minari_sensitive.png",
+            desc: { 
+                ja: "ネズミの耳と長いピンクの尻尾を持つ家出少女。劣悪な環境で育ち、腹部には消えない痣がある。自分の価値を他者に乱暴に扱われることでしか実感できず、男たちの情欲のゴミ箱として無様に奉仕し続ける。", 
+                en: "A runaway girl with mouse ears and a long pink tail. Raised in a terrible environment, she has unhealing bruises on her stomach. She can only feel her worth by being treated violently, serving pathetically as a garbage dump for men's lust." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキストはここに入ります。ユーザーが「もっと深く知る」を押すと表示されます）",
+                en: "(Sensitive text goes here. Displayed when user clicks 'Ready to know more?')"
+            },
+            correlations: [
+                { id: 3, type: { ja: "同級生", en: "Classmate" } },
+                { id: 6, type: { ja: "友人", en: "Friend" } }
+            ]
+        },
+        { 
+            id: 2, 
+            name: { ja: "ベルペット", en: "Bell Pet" }, 
+            P: 1, M: 9, I: 9, E: 2, 
+            tags: { ja: ["家政婦", "マゾヒスト", "性奴隷"], en: ["Maid", "Masochist", "Sex Slave"] },
+            imageSafe: "/images/characters/02_bellpet_safe.png",
+            imageSensitive: "/images/characters/02_bellpet_sensitive.png",
+            desc: { 
+                ja: "牛の角と耳を持つ元バレリーナの家政婦。豊満なJカップの肉体を持ち、皮膚病の痕を桜のタトゥーで隠している。自らを「供物」として捧げ、主人に徹底的に調教されることに至上の喜びを感じる重度のマゾヒスト。", 
+                en: "A former ballerina maid with ox horns and ears. She hides skin scars with cherry blossom tattoos on her voluptuous J-cup body. A severe masochist who offers herself as a 'sacrifice' and finds ultimate joy in being thoroughly trained by her master." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: [
+                { id: 5, type: { ja: "姉", en: "Sister" } }
+            ]
+        },
+        { 
+            id: 3, 
+            name: { ja: "ラコ", en: "Rako" }, 
+            P: 3, M: 8, I: 5, E: 8, 
+            tags: { ja: ["メンヘラ", "緊縛", "リベンジポルノ"], en: ["Mental", "Bondage", "Revenge Porn"] },
+            imageSafe: "/images/characters/03_rako_safe.png",
+            imageSensitive: "/images/characters/03_rako_sensitive.png",
+            desc: { 
+                ja: "虎の耳と尾を持つ高校生。腕や太ももには無数の自傷痕がある。承認欲求と孤独感からオンラインでの露出や緊縛に依存しており、自身の破滅的な姿をネットの海に晒し続けることで空虚な心を満たしている。", 
+                en: "A high schooler with tiger ears and tail. She has countless self-harm scars on her arms and thighs. Addicted to online exhibitionism and bondage out of a need for approval, she fills her empty heart by exposing her ruined self to the internet." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: [
+                { id: 1, type: { ja: "同級生", en: "Classmate" } }
+            ]
+        },
+        { 
+            id: 4, 
+            name: { ja: "バーニ", en: "Bani" }, 
+            P: 7, M: 3, I: 3, E: 9, 
+            tags: { ja: ["逆バニー", "ファーリー", "寝取り"], en: ["Reverse Bunny", "Furry", "NTR"] },
+            imageSafe: "/images/characters/04_bani_safe.png",
+            imageSensitive: "/images/characters/04_bani_sensitive.png",
+            desc: { 
+                ja: "白い体毛に覆われたウサギのアマル。股間部分だけが漆黒の毛で覆われている。ショークラブで働き、その異常な身体の柔軟性を活かして、他人の男を誘惑し搾り取る「寝取り」のスペシャリスト。", 
+                en: "A rabbit Amal covered in white fur, except for her pitch-black crotch. Working at a show club, she uses her abnormal physical flexibility to seduce and drain other women's men, specializing in cuckolding." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: []
+        },
+        { 
+            id: 5, 
+            name: { ja: "リウ", en: "Riu" }, 
+            P: 6, M: 4, I: 7, E: 6, 
+            tags: { ja: ["パパ活", "姉妹", "パイパン"], en: ["Sugar Baby", "Sisters", "Hairless"] },
+            imageSafe: "/images/characters/05_riu_safe.png",
+            imageSensitive: "/images/characters/05_riu_sensitive.png",
+            desc: { 
+                ja: "牛の角と耳、そして蛇のような瞳を持つ女子大生。完全な医療脱毛とボディピアスで自らの肉体を「高級な商品」として維持し、妹と共に富裕層の男たちを相手にパパ活と姉妹丼を繰り返している。", 
+                en: "A college student with ox horns, ears, and snake-like eyes. Maintaining her body as a 'luxury product' with complete hair removal and piercings, she repeatedly engages in sugar daddy activities and threesomes with her sister." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: [
+                { id: 6, type: { ja: "妹", en: "Sister" } }
+            ]
+        },
+        { 
+            id: 6, 
+            name: { ja: "アウネ", en: "Aune" }, 
+            P: 5, M: 5, I: 6, E: 7, 
+            tags: { ja: ["パパ活", "スプリットタン", "微毒"], en: ["Sugar Baby", "Split Tongue", "Weak Venom"] },
+            imageSafe: "/images/characters/06_aune_safe.png",
+            imageSensitive: "/images/characters/06_aune_sensitive.png",
+            desc: { 
+                ja: "爬虫類の瞳と長いスプリットタンを持つ女子大生（リウの妹）。姉とは対照的にあえて体毛を残し、「普通の可愛い女子大生」の皮を被ることで男を油断させ、微弱な毒と共に絡め取る。", 
+                en: "A college student (Riu's sister) with reptilian eyes and a long split tongue. Contrasting her sister, she leaves her body hair natural to play the 'ordinary cute girl', catching men off guard and ensnaring them with weak venom." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: [
+                { id: 5, type: { ja: "姉", en: "Sister" } },
+                { id: 1, type: { ja: "友人", en: "Friend" } }
+            ]
+        },
+        { 
+            id: 7, 
+            name: { ja: "ヒロイベオ", en: "Heroibeo" }, 
+            P: 1, M: 10, I: 10, E: 2, 
+            tags: { ja: ["アルビノ", "ドール", "拡張"], en: ["Albino", "Doll", "Expansion"] },
+            imageSafe: "/images/characters/07_heroibeo_safe.png",
+            imageSensitive: "/images/characters/07_heroibeo_sensitive.png",
+            desc: { 
+                ja: "白髪赤目のポニーのアマル。芸能事務所社長の個人的な「生きた剥製」として飼われている。未発達な身体の穴は年齢に見合わない巨大な玩具を受け入れるまでに拡張されており、人形のようにされるがままの存在。", 
+                en: "An albino pony Amal kept as a personal 'living stuffed animal' by an agency president. Her underdeveloped orifices have been expanded to accept giant toys far beyond her age, existing merely as a passive doll." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: []
+        },
+        { 
+            id: 8, 
+            name: { ja: "ぱふ先生", en: "Pafu-sensei" }, 
+            P: 4, M: 6, I: 4, E: 8, 
+            tags: { ja: ["保育士", "不倫", "母性"], en: ["Nursery Teacher", "Adultery", "Motherly"] },
+            imageSafe: "/images/characters/08_pafu_safe.png",
+            imageSensitive: "/images/characters/08_pafu_sensitive.png",
+            desc: { 
+                ja: "羊の耳と巻角を持つ保育士。Iカップの規格外の質量と、こげ茶の体毛に包まれた母性の具現化のような身体を持つ。誰でも受け入れる寛容さで、来るもの拒まずの淫らな関係を夜な夜な楽しんでいる。", 
+                en: "A nursery teacher with sheep ears and curled horns. She possesses an I-cup body that is the embodiment of motherhood, covered in dark brown fur. With absolute tolerance, she freely enjoys promiscuous relationships every night." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: []
+        },
+        { 
+            id: 9, 
+            name: { ja: "マユゥ", en: "Mayuu" }, 
+            P: 5, M: 5, I: 8, E: 6, 
+            tags: { ja: ["市役所職員", "裏垢女子", "玩具依存"], en: ["City Official", "Secret Acc", "Toy Addiction"] },
+            imageSafe: "/images/characters/09_mayuu_safe.png",
+            imageSensitive: "/images/characters/09_mayuu_sensitive.png",
+            desc: { 
+                ja: "動物的特徴を持たない市役所の新人職員。昼は平凡だが、夜は大量の大人のおもちゃをコレクションする裏垢女子。陰毛の手入れすらしない怠慢さと、独りよがりな極限の開発を施した性癖の持ち主。", 
+                en: "A new city hall employee with no animal traits. Ordinary by day, she runs a secret account by night, collecting a massive amount of adult toys. Neglecting basic grooming, she indulges entirely in self-centered, extreme sexual addiction." 
+            },
+            descSensitive: {
+                ja: "（センシティブなテキスト）",
+                en: "(Sensitive text)"
+            },
+            correlations: []
+        },
+        { 
+            id: 10, 
+            name: { ja: "ユゥナリナ", en: "Yuunarina" }, 
+            P: 9, M: 1, I: 6, E: 9, 
+            tags: { ja: ["名家の娘", "ストリッパー", "花電車"], en: ["Noble Daughter", "Stripper", "Flower Train"] },
+            imageSafe: "/images/characters/10_yuunarina_safe.png",
+            imageSensitive: "/images/characters/10_yuunarina_sensitive.png",
+            desc: { 
+                ja: "ユゥナリナのことは多くの人が知っています。花電車芸のできる踊り子は数えるほどしかおらず、その美貌は西の新町の顔でもあります。彼女が暮らすその歓楽街で、隠そうともしない地元の方言は、さらに南西に生まれたことを教えてくれます。故郷ではもっと有名で、ユゥナリナを知らぬものはいないほどです。彼女の出自はその地で最も大きな名家なのですから。", 
+                en: "Yuunarina's name is widely known. Dancers capable of the 'flower train' art are exceedingly rare, making her beauty the face of the western pleasure district..." 
+            },
+            descSensitive: {
+                ja: "（長いセンシティブテキスト...）",
+                en: "(Long sensitive text...)"
+            },
+            correlations: []
+        },
+        { 
+            id: 11, 
+            name: { ja: "モコクン", en: "Mokokun" }, 
+            P: 2, M: 8, I: 4, E: 7, 
+            tags: { ja: ["ギャル", "首輪", "悲惨な転落"], en: ["Gal", "Collar", "Tragic Downfall"] },
+            imageSafe: "/images/characters/11_mokokun_safe.png",
+            imageSensitive: "/images/characters/11_mokokun_sensitive.png",
+            desc: { 
+                ja: "ある日、モコクンからの返信に明らかに元気がないときがありました。あまりにも呆気なく彼女はマッチングアプリを卒業し、派手にデコられた傷だらけのスマートフォンから、そのアイコンもきれいさっぱり削除されました。", 
+                en: "One day, Mokokun stopped replying with her usual energy. She disappeared from the app, leaving behind a damaged phone..." 
+            },
+            descSensitive: {
+                ja: "（長いセンシティブテキスト...）",
+                en: "(Long sensitive text...)"
+            },
+            correlations: []
+        },
+        { 
+            id: 12, 
+            name: { ja: "瑞珠", en: "Mizutama" }, 
+            P: 6, M: 7, I: 8, E: 9, 
+            tags: { ja: ["美容整形", "ルッキズム", "スカトロ"], en: ["Plastic Surgery", "Lookism", "Scat/Ruin"] },
+            imageSafe: "/images/characters/12_mizutama_safe.png",
+            imageSensitive: "/images/characters/12_mizutama_sensitive.png",
+            desc: { 
+                ja: "瑞珠のぱちりとした大きな目、すらりとした鼻筋（整形済み）、そして形のいい大きな乳房（Gカップ）。それらは彼女自身が望んだ自分ではありましたが、手にしてみれば案外味気ないもので、夢想していたほど世界が色づくことはありませんでした。", 
+                en: "Mizutama's large eyes, slender (surgically altered) nose, and perfectly shaped G-cup breasts were exactly what she wanted, yet obtaining them left her feeling hollow..." 
+            },
+            descSensitive: {
+                ja: "（長いセンシティブテキスト...）",
+                en: "(Long sensitive text...)"
+            },
+            correlations: []
+        }
+    ];
+
+    // Add dummy characters for 13-40
+    for(let i = 13; i <= 40; i++) {
+        characters.push({
+            id: i, 
+            name: { ja: "???", en: "???" }, 
+            P: 5, M: 5, I: 5, E: 5,
+            tags: { ja: ["未解放"], en: ["Locked"] },
+            imageSafe: "/images/characters/locked.png",
+            imageSensitive: "/images/characters/locked.png",
+            desc: { ja: "Coming Soon...", en: "Coming Soon..." },
+            descSensitive: { ja: "", en: "" },
+            correlations: [],
+            locked: true
+        });
+    }
+
+    // Colors Phase Array
+    const colorPhases = [
+        { bg: "#fce4ec", box: "rgba(255,255,255,0.98)", text: "#2b1f24", acc: "#e91e63", bdr: "#f48fb1", statBg: "rgba(0,0,0,0.05)" },
+        { bg: "#f8dee7", box: "rgba(255,252,253,0.98)", text: "#2b1f24", acc: "#e61d62", bdr: "#f18ba9", statBg: "rgba(0,0,0,0.05)" },
+        { bg: "#f4d8e1", box: "rgba(255,248,251,0.98)", text: "#291d22", acc: "#e21c60", bdr: "#ee86a0", statBg: "rgba(0,0,0,0.06)" },
+        { bg: "#f0d0dc", box: "rgba(255,245,250,0.98)", text: "#241b1f", acc: "#d81b60", bdr: "#e07a9e", statBg: "rgba(0,0,0,0.08)" },
+        { bg: "#e9c8d5", box: "rgba(250,236,243,0.98)", text: "#21181c", acc: "#d1195d", bdr: "#d86f94", statBg: "rgba(0,0,0,0.1)" }, 
+        { bg: "#e3c1cd", box: "rgba(245,228,237,0.98)", text: "#1d1316", acc: "#ca175a", bdr: "#d0658a", statBg: "rgba(0,0,0,0.12)" },
+        { bg: "#dcbac6", box: "rgba(240,220,230,0.98)", text: "#1a1013", acc: "#c2185b", bdr: "#c85a80", statBg: "rgba(0,0,0,0.15)" },
+        { bg: "#c19fad", box: "rgba(186,163,173,0.98)", text: "#180d10", acc: "#b02263", bdr: "#bb5b7c", statBg: "rgba(0,0,0,0.18)" },
+        { bg: "#a68595", box: "rgba(133,106,116,0.98)", text: "#160a0d", acc: "#9d2c6b", bdr: "#af5d78", statBg: "rgba(0,0,0,0.2)" }, 
+        { bg: "#8c6072", box: "rgba(80,50,60,0.98)",    text: "#fdf5f8", acc: "#ff4081", bdr: "#a35a78", statBg: "rgba(255,255,255,0.1)" },
+        { bg: "#6d4757", box: "rgba(58,35,43,0.98)",    text: "#fdf5f8", acc: "#fa5c90", bdr: "#9a4362", statBg: "rgba(255,255,255,0.1)" },
+        { bg: "#4d2e3b", box: "rgba(36,20,26,0.98)",    text: "#fdf5f8", acc: "#f777a0", bdr: "#912c4c", statBg: "rgba(255,255,255,0.1)" },
+        { bg: "#2e1920", box: "rgba(25,15,18,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#8a1d3b", statBg: "rgba(255,255,255,0.15)" },
+        { bg: "#1d1115", box: "rgba(22,13,16,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#891535", statBg: "rgba(255,255,255,0.15)" },
+        { bg: "#0d090a", box: "rgba(20,11,14,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#880e4f", statBg: "rgba(255,255,255,0.15)" }
+    ];
+
+    // Translation Utility
+    function t(key) {
+        return ui[key] ? ui[key][currentLang] : "";
+    }
+
+    function toggleLang() {
+        currentLang = currentLang === 'ja' ? 'en' : 'ja';
+        document.getElementById('lang-btn').innerText = currentLang === 'ja' ? 'EN' : 'JA';
+        updateUITexts();
+        
+        if (!document.getElementById('screen-quiz').classList.contains('hidden')) {
+            showQuestion(false);
+        }
+        
+        if (!document.getElementById('result-selection').classList.contains('hidden') && top3Results.length > 0) {
+            renderBlindCards();
+        }
+        
+        if (!document.getElementById('result-details').classList.contains('hidden')) {
+            const charId = parseInt(document.getElementById('detail-name').getAttribute('data-char-id'));
+            if(charId) revealResult(characters[charId-1]);
+        }
+        
+        if (!document.getElementById('screen-archive').classList.contains('hidden')) {
+            renderArchive();
+            if (!document.getElementById('archive-detail-view').classList.contains('hidden')) {
+                const charId = parseInt(document.getElementById('arc-detail-name').getAttribute('data-char-id'));
+                if(charId) showArchiveDetail(characters[charId-1]);
+            }
+        }
+    }
+
+    function updateUITexts() {
+        document.querySelectorAll('[data-text]').forEach(el => {
+            const key = el.getAttribute('data-text');
+            if (ui[key]) el.innerHTML = ui[key][currentLang];
+        });
+    }
+
+    function applySmoothColorPhase() {
+        let idx = Math.min(currentQuestionIndex, 14);
+        const c = colorPhases[idx];
+        
+        const root = document.documentElement;
+        root.style.setProperty('--bg-color', c.bg);
+        root.style.setProperty('--box-bg', c.box);
+        root.style.setProperty('--text-color', c.text);
+        root.style.setProperty('--accent-color', c.acc);
+        root.style.setProperty('--border-color', c.bdr);
+        root.style.setProperty('--stat-bg', c.statBg);
+        
+        root.style.setProperty('--glitch-intensity', (idx * 0.1) + 'px');
+    }
+
+    function updateStatusUI() {
+        ['P', 'M', 'I', 'E'].forEach(key => {
+            stats[key] = Math.max(0, Math.min(10, stats[key]));
+            document.getElementById(`val-${key}`).innerText = stats[key];
+            document.getElementById(`bar-${key}`).style.width = `${(stats[key] / 10) * 100}%`;
+        });
+    }
+
+    function resetQuiz() {
+        stats = { P: 5, M: 5, I: 5, E: 5 };
+        currentQuestionIndex = 0;
+        applySmoothColorPhase();
+
+        const quizScreen = document.getElementById('screen-quiz');
+        quizScreen.classList.remove('anim-break-container');
+        document.getElementById('screen-result').classList.remove('anim-fade-in');
+
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('result-selection').classList.remove('hidden');
+        document.getElementById('result-details').classList.add('hidden');
+        document.getElementById('share-btn-container').classList.add('hidden');
+        document.getElementById('screen-start').classList.remove('hidden');
+        updateStatusUI();
+    }
+
+    function startQuiz() {
+        document.getElementById('screen-start').classList.add('hidden');
+        const quizScreen = document.getElementById('screen-quiz');
+        quizScreen.classList.remove('hidden', 'anim-break-container');
+        updateStatusUI();
+        showQuestion(true);
+    }
+
+    function showQuestion(advance = true) {
+        applySmoothColorPhase();
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = `Q${currentQuestionIndex + 1} / 15`;
+        document.getElementById('question-text').innerText = q.q[currentLang];
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        const multipliers = [2, 1, 0, -1, -2]; 
+        multipliers.forEach((mult) => {
+            const btn = document.createElement('div');
+            btn.className = 'scale-btn';
+            btn.onclick = () => selectOption(q.effects, mult);
+            container.appendChild(btn);
+        });
+    }
+
+    function selectOption(effects, multiplier) {
+        ['P', 'M', 'I', 'E'].forEach(key => {
+            if(effects[key]) stats[key] += (effects[key] * (multiplier > 0 ? 1 : (multiplier < 0 ? -1 : 0)));
+        });
+
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            updateStatusUI();
+            showQuestion(true);
+        } else {
+            playShatterTransition();
+        }
+    }
+
+    function playShatterTransition() {
+        const flash = document.getElementById('shatter-flash');
+        flash.classList.add('anim-shatter-flash');
+        const quizScreen = document.getElementById('screen-quiz');
+        quizScreen.classList.add('anim-break-container');
+
+        setTimeout(() => {
+            quizScreen.classList.add('hidden');
+            const resultScreen = document.getElementById('screen-result');
+            resultScreen.classList.remove('hidden');
+            resultScreen.classList.add('anim-fade-in');
+            processResult();
+        }, 500);
+
+        setTimeout(() => {
+            flash.classList.remove('anim-shatter-flash');
+        }, 1200);
+    }
+
+    function processResult() {
+        let availableChars = characters.filter(c => unlockedCharIds.has(c.id));
+        let ranked = availableChars.map(char => {
+            let dist = Math.abs(stats.P - char.P) + Math.abs(stats.M - char.M) + 
+                       Math.abs(stats.I - char.I) + Math.abs(stats.E - char.E);
+            return { ...char, dist: dist };
+        }).sort((a, b) => a.dist - b.dist);
+
+        let top3 = ranked.slice(0, 3);
+        if (top3.length > 0) top3[0].isBest = true;
+
+        top3Results = top3.sort(() => Math.random() - 0.5);
+        renderBlindCards();
+    }
+
+    function renderBlindCards() {
+        const container = document.getElementById('blind-cards-container');
+        container.innerHTML = '';
+
+        top3Results.forEach((char) => {
+            const card = document.createElement('div');
+            card.className = `blind-card ${char.isBest ? 'glow' : ''}`;
+            const tagsText = char.tags[currentLang] ? char.tags[currentLang].map(t => `#${t}`).join(' ') : '#???';
+            card.innerHTML = `
+                <div class="card-icon-mystery">♡</div>
+                <div class="card-tags">${tagsText}</div>
+            `;
+            card.onclick = () => revealResult(char);
+            container.appendChild(card);
+        });
+    }
+
+    function revealResult(char) {
+        document.getElementById('result-selection').classList.add('hidden');
+        document.getElementById('result-details').classList.remove('hidden');
+        document.getElementById('share-btn-container').classList.remove('hidden');
+        
+        const nameEl = document.getElementById('detail-name');
+        nameEl.innerText = `No.${char.id} ${char.name[currentLang]}`;
+        nameEl.setAttribute('data-char-id', char.id);
+        
+        document.getElementById('result-image-safe').src = char.imageSafe;
+        document.getElementById('detail-desc').innerText = char.desc[currentLang];
+
+        // Reset sensitive section
+        document.getElementById('result-sensitive-content').classList.remove('expanded');
+        document.getElementById('expand-btn').classList.remove('expanded');
+        document.getElementById('expand-btn').innerText = ui.expand_btn[currentLang];
+        document.getElementById('result-image-sensitive').src = char.imageSensitive;
+        document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
+
+        // Correlations
+        const corrEl = document.getElementById('result-correlations');
+        if (char.correlations && char.correlations.length > 0) {
+            corrEl.classList.remove('hidden');
+            const corrList = document.getElementById('result-corr-list');
+            corrList.innerHTML = '';
+            char.correlations.forEach(corr => {
+                const corrChar = characters[corr.id - 1];
+                const isLocked = !unlockedCharIds.has(corr.id);
+                const item = document.createElement('div');
+                item.className = 'corr-item';
+                item.innerHTML = `
+                    <span class="corr-label">${corr.type[currentLang]}</span>：
+                    <span class="corr-name ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `showArchiveDetail(characters[${corr.id - 1}])`}">
+                        ${isLocked ? '???' : corrChar.name[currentLang]}
+                    </span>
+                `;
+                corrList.appendChild(item);
+            });
+        } else {
+            corrEl.classList.add('hidden');
+        }
+    }
+
+    function toggleSensitive(btn, type) {
+        const contentId = type === 'result' ? 'result-sensitive-content' : 'archive-sensitive-content';
+        const content = document.getElementById(contentId);
+        const btnId = type === 'result' ? 'expand-btn' : 'arc-expand-btn';
+        const btnEl = document.getElementById(btnId);
+
+        content.classList.toggle('expanded');
+        btnEl.classList.toggle('expanded');
+        
+        if (content.classList.contains('expanded')) {
+            btnEl.innerText = currentLang === 'ja' ? '確認済み' : 'Confirmed';
+        } else {
+            btnEl.innerText = ui.expand_btn[currentLang];
+        }
+    }
+    
+    function shareResult() {
+        alert(currentLang === 'ja' ? '共有リンクをコピーしました（ダミー）' : 'Share link copied (Dummy)');
+    }
+
+    // Archive Functions
+    function openArchive() {
+        document.getElementById('screen-start').classList.add('hidden');
+        document.getElementById('screen-archive').classList.remove('hidden');
+        backToArchiveGrid();
+        renderArchive();
+    }
+
+    function closeArchive() {
+        document.getElementById('screen-archive').classList.add('hidden');
+        document.getElementById('screen-start').classList.remove('hidden');
+    }
+
+    function renderArchive() {
+        const container = document.getElementById('archive-grid-container');
+        container.innerHTML = '';
+        
+        characters.forEach(char => {
+            const slot = document.createElement('div');
+            const isLocked = !unlockedCharIds.has(char.id);
+            slot.className = `archive-slot ${isLocked ? 'locked' : ''}`;
+            
+            if (isLocked) {
+                const lockedImg = document.createElement('img');
+                lockedImg.src = char.imageSafe;
+                lockedImg.style.opacity = '0.3';
+                lockedImg.style.filter = 'blur(5px)';
+                slot.appendChild(lockedImg);
+            } else {
+                const img = document.createElement('img');
+                img.src = char.imageSafe;
+                slot.appendChild(img);
+                slot.onclick = () => showArchiveDetail(char);
+            }
+            
+            container.appendChild(slot);
+        });
+    }
+
+    function showArchiveDetail(char) {
+        document.getElementById('archive-grid-view').classList.add('hidden');
+        document.getElementById('archive-detail-view').classList.remove('hidden');
+        
+        const nameEl = document.getElementById('arc-detail-name');
+        nameEl.innerText = `No.${char.id} ${char.name[currentLang]}`;
+        nameEl.setAttribute('data-char-id', char.id);
+        
+        document.getElementById('archive-image-safe').src = char.imageSafe;
+        document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
+
+        // Reset sensitive
+        document.getElementById('archive-sensitive-content').classList.remove('expanded');
+        document.getElementById('arc-expand-btn').classList.remove('expanded');
+        document.getElementById('arc-expand-btn').innerText = ui.expand_btn[currentLang];
+        document.getElementById('archive-image-sensitive').src = char.imageSensitive;
+        document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
+
+        // Correlations
+        const corrEl = document.getElementById('archive-correlations');
+        if (char.correlations && char.correlations.length > 0) {
+            corrEl.classList.remove('hidden');
+            const corrList = document.getElementById('archive-corr-list');
+            corrList.innerHTML = '';
+            char.correlations.forEach(corr => {
+                const corrChar = characters[corr.id - 1];
+                const isLocked = !unlockedCharIds.has(corr.id);
+                const item = document.createElement('div');
+                item.className = 'corr-item';
+                item.innerHTML = `
+                    <span class="corr-label">${corr.type[currentLang]}</span>：
+                    <span class="corr-name ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `showArchiveDetail(characters[${corr.id - 1}])`}">
+                        ${isLocked ? '???' : corrChar.name[currentLang]}
+                    </span>
+                `;
+                corrList.appendChild(item);
+            });
+        } else {
+            corrEl.classList.add('hidden');
+        }
+    }
+
+    function backToArchiveGrid() {
+        document.getElementById('archive-detail-view').classList.add('hidden');
+        document.getElementById('archive-grid-view').classList.remove('hidden');
+    }
+
+    // Init
+    updateUITexts();
+
+</script>
+</body>
+</html>

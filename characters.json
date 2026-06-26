@@ -15,7 +15,11 @@
         "ホームレス",
         "メスガキ"
       ],
-      "en": []
+      "en": [
+        "Runaway",
+        "homeless",
+        "young girl"
+      ]
     },
     "quote": {
       "ja": "えー！？ 大人なのにザコすぎ！",
@@ -27,13 +31,13 @@
     },
     "descSensitive": {
       "ja": "ミナリのその生意気な態度は、決して強さや反抗心から来るものではありません。ミナリは、本来ならばこれから花開くはずだったネズミアマルの強い生命力が、十分に育つ前に路地裏の大人たちの悪欲によって根こそぎ使い切られてしまった「ボロ雑巾」です。服に隠された下腹部の痛々しい痣や、自らの意思で排泄すら制御できなくなっている緩みきった身体。自分がすでに擦り切れたボロ雑巾であることすら理解できない無知ゆえに、食べ物さえ渡せば誰にでも寄ってくる底なしの馬鹿らしさを抱えています。\n\nこの非合法なマッチングアプリのアルゴリズムが、彼女をあなたにレコメンドした理由は明確です。あなたもまた、彼女を無残に食い物にしている路地裏の有象無象のハイエナの一人にふさわしい人間だからです。無知ゆえに見合わない安価な報酬でもすり寄ってくる馬鹿らしさを利用し、反撃されても害のない弱い玩具として手軽に搾取できる格好の存在としてみているのです。\n\nしかし、もしあなたが真の意味でミナリを慈しむ覚悟があるのなら、道は一つだけ残されています。それは、この底抜けの馬鹿を完全にあなたの生活へ迎え入れ、無償の施しを与え続けること。ミナリが自ら垂れ流す汚物や過ちすらも丁寧に処理してやり、ヒトとしての愛と良識を骨の髄まで教え込むのです。そして時には、ミナリを蝕んできた路地裏の環境から完全に隔離するため、外の悪意に対して「暴力的な正義」を振るえるならば。すべての自由を奪い、あなたなしでは生きられないように飼い殺すことこそが、ミナリへの唯一の救済となるでしょう。",
-      "en": "Minari's arrogant attitude doesn't stem from strength or rebellion. Minari is a \"rag,\" a rat whose strong life force, which should have blossomed, was completely drained by the wicked desires of the adults in the back alleys before it could fully develop. The painful bruises hidden beneath her clothes on her lower abdomen, and her flabby body that can no longer even control its own excretion—she's so ignorant she doesn't even realize she's a worn-out rag, possessing an insatiable foolishness that makes her flock to anyone who offers her food.\n\nThe reason this illegal dating app's algorithm recommended her to you is clear: you, too, are worthy of being one of the countless hyenas in the back alleys who brutally prey on her. They see her as a perfect target for exploitation, a weak toy that can be easily exploited, even if she fights back, by taking advantage of her foolishness—her ignorance that makes her cling to them for disproportionately low rewards.\n\n\nHowever, if you are truly prepared to cherish Minari, there is only one path left. That is to fully welcome this utter fool into your life and continue to give her unconditional kindness. Carefully clean up even the filth and mistakes that Minari herself spills, and instill in her, to the core, human love and good sense. And at times, if you are able to wield \"violent justice\" against the malice outside, in order to completely isolate Minari from the back-alley environment that has corroded her. Stripping her of all freedom and keeping her captive so that she cannot live without you will be the only salvation for Minari."
+      "en": "Minari's arrogant attitude doesn't stem from strength or rebellion. Minari is a \"rag,\" a rat whose strong life force, which should have blossomed, was completely drained by the wicked desires of the adults in the back alleys before it could fully develop. The painful bruises hidden beneath her clothes on her lower abdomen, and her flabby body that can no longer even control its own excretion—she's so ignorant she doesn't even realize she's a worn-out rag, possessing an insatiable foolishness that makes her flock to anyone who offers her food.\n\nThe reason this illegal dating app's algorithm recommended her to you is clear: you, too, are worthy of being one of the countless hyenas in the back alleys who brutally prey on her. They see her as a perfect target for exploitation, a weak toy that can be easily exploited, even if she fights back, by taking advantage of her foolishness—her ignorance that makes her cling to them for disproportionately low rewards.\n\n\nHowever, if you are truly prepared to cherish Minari, there is only one path left. That is to fully welcome this utter fool into your life and continue to give her unconditional kindness. Carefully clean up even the filth and mistakes that Minari herself spills, and instill in her, to the core, human love and good sense. And at times, if you are able to wield \"violent justice\" against the malice outside to completely isolate Minari from the back-alley environment that has corroded her. Stripping her of all freedom and keeping her captive so that she cannot live without you will be the only salvation for Minari."
     },
     "imageSafe": "/images/characters/01_safe.png",
     "imageSensitive": "/images/characters/01_sensitive.png",
     "correlations": [
       {
-        "id": 8,
+        "id": 9,
         "type": {
           "ja": "ごはんくれる",
           "en": ""
@@ -57,7 +61,11 @@
         "タトゥー",
         "メイド"
       ],
-      "en": []
+      "en": [
+        "Apathy",
+        "tattoos",
+        "maid"
+      ]
     },
     "quote": {
       "ja": "はぁ。今日はなにしましょう",
@@ -99,7 +107,11 @@
         "自傷癖",
         "リベンジポルノ"
       ],
-      "en": []
+      "en": [
+        "Need for approval",
+        "self-harm",
+        "revenge porn"
+      ]
     },
     "quote": {
       "ja": "やだ。やらない。興味ない",
@@ -111,7 +123,7 @@
     },
     "descSensitive": {
       "ja": "悪意あるマッチングアプリが、あなたとラコを結びつけたのは、ラコがあなたを「選択」し、一歩踏み込んだ関係になる程度には相性が良いと判断したからです。閉ざされたやり取りに切り替わってから、若い高校生の彼女を言葉巧みに言いくるめることで、承認欲求に飢えたそのメンヘラ気質ゆえに、あなたの望みは比較的容易に叶えられます。\n\nあなたの影響もあり、タイムラインのポストは日ごとに過激になり、自らの手腕に優越感を覚えたこともあるでしょう。しかし、聡明なあなたはすぐに気が付くはずです。いままでの会話には一度も上がったことのない「趣」が垣間見えることに。見よう見まねの自縛ではない、本格的な赤い縄。その痕が、自傷の切り傷とともに、白い肌に鮮烈な縞模様を深く刻み込んでいました。やがてラコは、あなたの知らない誰かとのやり取りの果てに、あなたごと唐突に終わりを迎えました。その後も会話はできるけれども、一切の要求はにべもなく棄却され、薄皮一枚で繋がっているだけです。\n\nそう、アプリがあなたにラコをあてがった真の理由は、「支配したつもりで、彼女に爪痕を残すこともできない無力な傍観者」という、あなたの惨めな本性を突きつけるためです。それでもまだラコに執着するというのならば──、どうやって彼女の真の救いになるかは別として、あなたは自らその薄い繋がりを断ち切るべきです。いつか別人として正しい場所で出会い、ラコの過去を知らぬ者として永遠の秘密とし、今度こそ彼女の「SOS」に気が付き、情欲を孕まない支援をする……そんな都合のいい奇跡を望むことくらいは、勝手にすればいいでしょう。",
-      "en": "The malicious dating app connected you and Rako because Rako \"chose\" you, judging you to be compatible enough to take the relationship to the next level. Once the conversation shifted to private exchanges, your desires were relatively easily fulfilled due to her emotionally unstable nature and desperate need for validation, thanks to your skillful manipulation of this young high school girl.\n\nYour influence likely contributed to her increasingly extreme posts on her timeline, and she probably felt a sense of superiority over her own abilities. However, your intelligence would soon lead you to notice something new: a \"flavor\" never before present in your conversations. Not a imitation of self-bondage, but genuine red rope. The marks, along with self-inflicted cuts, left vivid, deep stripes on her pale skin. Eventually, Rako abruptly ended her relationship with someone you didn't know, bringing an end to everything, including you. While you could still communicate, all your requests were ruthlessly rejected, leaving you connected only by a thin thread.\n\n\nYes, the real reason the app paired you with Laco is to expose your miserable true nature: that of a powerless bystander who thinks he's in control but can't even leave a lasting impression on her. If you still cling to Laco after that—regardless of how that would truly save her—you should sever that fragile connection yourself. You're free to wish for a convenient miracle: that one day you'll meet her in the right place as different people, keeping her past a secret forever, finally noticing her \"SOS\" and offering support without any lust involved."
+      "en": "The malicious dating app connected you and Rako because Rako \"chose\" you, judging you to be compatible enough to take the relationship a step further. Once the conversation shifted to private exchanges, your desires were relatively easily fulfilled by skillfully manipulating this young high school girl, who, due to her desperate need for validation and emotionally unstable nature, easily satisfied your wishes.\n\nPartly due to your influence, her timeline posts became increasingly extreme each day, and you likely felt a sense of superiority in your own abilities. However, your intelligence would soon notice something. A \"flavor\" never before mentioned in your conversations began to emerge. Not a mere imitation of self-bondage, but genuine red rope. The marks, along with self-inflicted cuts, left vivid, deep stripes on her pale skin. Eventually, Rako abruptly ended her relationship with someone you didn't know, bringing an end to everything, including you. While you could still communicate afterward, all your requests were ruthlessly rejected, leaving you connected only by a thin thread.\n\n\nYes, the real reason the app paired you with Laco is to expose your miserable true nature: that of a powerless bystander who thinks he's in control but can't even leave a lasting impression on her. If you still cling to Laco after that—regardless of how that would truly save her—you should sever that fragile connection yourself. You're free to wish for a convenient miracle: that one day you'll meet her in the right place as different people, keeping her past a secret forever, finally noticing her \"SOS\" and offering support without any lust involved."
     },
     "imageSafe": "/images/characters/03_safe.png",
     "imageSensitive": "/images/characters/03_sensitive.png",
@@ -141,7 +153,11 @@
         "ダンサー",
         "NTR"
       ],
-      "en": []
+      "en": [
+        "Bunny girl",
+        "dancer",
+        "NTR"
+      ]
     },
     "quote": {
       "ja": "月を眺めるだけなの？",
@@ -183,7 +199,11 @@
         "舌ピアス",
         "パパ活"
       ],
-      "en": []
+      "en": [
+        "Miss Campus",
+        "tongue piercing",
+        "sugar daddy"
+      ]
     },
     "quote": {
       "ja": "会えてうれしい。これからも……。",
@@ -225,7 +245,11 @@
         "スプリットタン",
         "パパ活"
       ],
-      "en": []
+      "en": [
+        "Gal",
+        "split tongue",
+        "sugar daddy"
+      ]
     },
     "quote": {
       "ja": "いいモノ見つけちゃったねぇ",
@@ -267,7 +291,11 @@
         "芸能人",
         "人形"
       ],
-      "en": []
+      "en": [
+        "Albino",
+        "celebrities",
+        "dolls"
+      ]
     },
     "quote": {
       "ja": "…………？",
@@ -309,7 +337,11 @@
         "ドジ",
         "不倫"
       ],
-      "en": []
+      "en": [
+        "Nursery teacher",
+        "clumsy",
+        "adultery"
+      ]
     },
     "quote": {
       "ja": "もう、待ちくたびれてましたよ？　ふふ、私が",
@@ -343,7 +375,11 @@
         "コスプレ",
         "裏垢女子"
       ],
-      "en": []
+      "en": [
+        "Otaku",
+        "cosplay",
+        "secret account girls"
+      ]
     },
     "quote": {
       "ja": "へへ、や、やってやったぜ。　オタクなめんな！",
@@ -392,7 +428,11 @@
         "伝統",
         "ストリッパー"
       ],
-      "en": []
+      "en": [
+        "Talented woman",
+        "tradition",
+        "stripper"
+      ]
     },
     "quote": {
       "ja": "やけん、また会えるて思う",
@@ -434,7 +474,11 @@
         "恋人募集中",
         "ロマンス詐欺"
       ],
-      "en": []
+      "en": [
+        "Gal",
+        "Looking for a boyfriend",
+        "Romance scam"
+      ]
     },
     "quote": {
       "ja": "好き！　大好き！！　言いて～！",
@@ -476,7 +520,11 @@
         "アンニュイ",
         "ルッキズム"
       ],
-      "en": []
+      "en": [
+        "Esthetics",
+        "ennui",
+        "lookism"
+      ]
     },
     "quote": {
       "ja": "私はいいの……。お兄さんは、なにしてる人？",
@@ -518,7 +566,11 @@
         "Vlog",
         "立ちんぼ"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "Vlog",
+        "Standing"
+      ]
     },
     "quote": {
       "ja": "",
@@ -560,7 +612,11 @@
         "料理系",
         "白い粉"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "Cooking",
+        "White powder"
+      ]
     },
     "quote": {
       "ja": "",
@@ -602,7 +658,11 @@
         "バーチャル",
         "ピーターパンシンドローム"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "Virtual",
+        "Peter Pan Syndrome"
+      ]
     },
     "quote": {
       "ja": "",
@@ -644,7 +704,11 @@
         "ASMR",
         "エロイプ"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "ASMR",
+        "Erotic chat"
+      ]
     },
     "quote": {
       "ja": "",
@@ -678,7 +742,11 @@
         "美容系",
         "キラキラ女子"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "beauty-related",
+        "glamorous girl"
+      ]
     },
     "quote": {
       "ja": "",
@@ -720,7 +788,11 @@
         "踊ってみた",
         "ヤリサー"
       ],
-      "en": []
+      "en": [
+        "Streamer",
+        "Dance cover",
+        "Party circle"
+      ]
     },
     "quote": {
       "ja": "",
@@ -762,7 +834,11 @@
         "催眠",
         "ドミナント"
       ],
-      "en": []
+      "en": [
+        "General trading company",
+        "hypnosis",
+        "dominant"
+      ]
     },
     "quote": {
       "ja": "",
@@ -811,7 +887,11 @@
         "社畜",
         "マゾヒスト"
       ],
-      "en": []
+      "en": [
+        "Designer",
+        "corporate slave",
+        "masochist"
+      ]
     },
     "quote": {
       "ja": "",
@@ -853,7 +933,11 @@
         "職権乱用",
         "サブミッシブ"
       ],
-      "en": []
+      "en": [
+        "Casting",
+        "abuse of power",
+        "submissive"
+      ]
     },
     "quote": {
       "ja": "",
@@ -902,7 +986,11 @@
         "お嬢様",
         "サディスト"
       ],
-      "en": []
+      "en": [
+        "Major agency",
+        "young lady",
+        "sadist"
+      ]
     },
     "quote": {
       "ja": "",
@@ -951,7 +1039,11 @@
         "未亡人",
         "凋落"
       ],
-      "en": []
+      "en": [
+        "Yakuza wife",
+        "widow",
+        "decline"
+      ]
     },
     "quote": {
       "ja": "",
@@ -993,7 +1085,11 @@
         "スパイ",
         "中毒"
       ],
-      "en": []
+      "en": [
+        "Female police officer",
+        "spy",
+        "addict"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1035,7 +1131,11 @@
         "ステレオタイプ",
         "芸能界の闇"
       ],
-      "en": []
+      "en": [
+        "Superstars",
+        "stereotypes",
+        "the dark side of the entertainment industry"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1077,7 +1177,11 @@
         "不幸",
         "性分化疾患"
       ],
-      "en": []
+      "en": [
+        "Experimental subjects",
+        "misfortune",
+        "disorders of sex development"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1111,7 +1215,11 @@
         "侵略",
         "ハニートラップ"
       ],
-      "en": []
+      "en": [
+        "Mother",
+        "invasion",
+        "honey trap"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1153,7 +1261,11 @@
         "富豪の娘",
         "猟奇"
       ],
-      "en": []
+      "en": [
+        "Female doctor",
+        "daughter of a wealthy man",
+        "grotesque"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1195,7 +1307,11 @@
         "美容整形",
         "ルッキズム"
       ],
-      "en": []
+      "en": [
+        "Big-name actors",
+        "cosmetic surgery",
+        "lookism"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1237,7 +1353,11 @@
         "毒親",
         "メディアコンプレックス"
       ],
-      "en": []
+      "en": [
+        "Loneliness",
+        "toxic parents",
+        "media complex"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1279,7 +1399,11 @@
         "毒親",
         "トロフィーチャイルド"
       ],
-      "en": []
+      "en": [
+        "Rebellion",
+        "toxic parents",
+        "trophy child"
+      ]
     },
     "quote": {
       "ja": "",
@@ -1321,7 +1445,11 @@
         "毒親",
         "ヤングケアラー"
       ],
-      "en": []
+      "en": [
+        "Codependency",
+        "toxic parents",
+        "young carers"
+      ]
     },
     "quote": {
       "ja": "",

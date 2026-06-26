@@ -80,9 +80,9 @@
 
         .question-text { font-size: 1.05rem; margin-bottom: 35px; line-height: 1.7; min-height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; }
 
-        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 5px; opacity: 0.8; font-weight: bold; }
-        .scale-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
-        .scale-btn { width: 60px; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; }
+        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; }
+        .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
+        .scale-btn { flex: 1; max-width: 70px; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; }
         .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
 
         .hidden { display: none !important; }
@@ -96,8 +96,8 @@
         .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; }
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
 
-        /* RESULT DETAIL PANEL */
-        .detail-panel { background: rgba(0,0,0,0.02); padding: 24px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center; }
+        /* RESULT DETAIL PANEL - SIMPLIFIED */
+        .detail-panel { padding: 0; text-align: center; }
         
         .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 24px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
         .char-quote::before { content: '「'; }
@@ -106,7 +106,7 @@
         .char-image-section { margin: 20px 0; text-align: center; }
         .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
 
-        .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 20px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
+        .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 20px; padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
         
         .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
 
@@ -218,7 +218,6 @@
             font-size: 48px;
             opacity: 0.5;
         }
-        .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
         .archive-slot.unimplemented {
             background: #2a2a2a;
             cursor: not-allowed;
@@ -230,6 +229,7 @@
             color: #666;
             font-weight: bold;
         }
+        .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
         .archive-slot:hover:not(.locked):not(.unimplemented) { filter: brightness(1.15); transform: scale(1.02); }
 
         #shatter-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
@@ -248,7 +248,7 @@
             .container-box { padding: 28px; }
             .archive-grid { grid-template-columns: repeat(4, 1fr); }
             .corr-grid { grid-template-columns: repeat(2, 1fr); }
-            .scale-btn { width: 50px; }
+            .scale-btn { max-width: 60px; }
         }
     </style>
 </head>
@@ -287,7 +287,7 @@
         
         <div class="scale-labels">
             <span data-text="agree">わかる</span>
-            <span data-text="neutral">ニュートラル</span>
+            <span data-text="neutral">迷う</span>
             <span data-text="disagree">ちがう</span>
         </div>
         <div id="options-container" class="scale-container"></div>
@@ -344,7 +344,6 @@
         <h1 class="glitch-text" data-text="archive_title">ARCHIVE</h1>
         
         <div id="archive-grid-view">
-            <p style="font-size: 0.9rem; margin: 20px 0 25px; font-weight: 500;" data-text="archive_desc">観測済みの個体データ</p>
             <div class="archive-grid" id="archive-grid-container"></div>
             <div class="buttons-container">
                 <button class="main-btn sub-btn" onclick="closeArchive()" data-text="back_btn">BACK</button>
@@ -388,11 +387,11 @@
     let currentLang = 'ja';
     let stats = { P: 5, M: 5, I: 5, E: 5 };
     let currentQuestionIndex = 0;
-    let quizQuestions = []; // ランダムに選ばれた15問
-    let allQuestions = []; // 全30問
+    let quizQuestions = [];
+    let allQuestions = [];
     let top3Results = [];
     let characters = [];
-    let unlockedCharIds = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    let viewedCharIds = new Set();
 
     const ui = {
         subtitle: { ja: "パートナーマッチング", en: "Partner Matching" },
@@ -400,7 +399,7 @@
         start_btn: { ja: "START", en: "START" },
         archive_btn: { ja: "ARCHIVE", en: "ARCHIVE" },
         agree: { ja: "わかる", en: "Agree" },
-        neutral: { ja: "ニュートラル", en: "Neutral" },
+        neutral: { ja: "迷う", en: "Neutral" },
         disagree: { ja: "ちがう", en: "Disagree" },
         result_desc: { ja: "あなたに、♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ matches. Choose one to confirm your match." },
         expand_btn: { ja: "▼ もっと深く知る覚悟はある？", en: "▼ Ready to know more?" },
@@ -409,12 +408,10 @@
         follow_btn: { ja: "🔗 Follow @ai_be2", en: "🔗 Follow @ai_be2" },
         restart_btn: { ja: "RESTART", en: "RESTART" },
         archive_title: { ja: "観測記録", en: "ARCHIVE" },
-        archive_desc: { ja: "観測済みの個体データ", en: "Observed Individual Data" },
         back_btn: { ja: "戻る", en: "BACK" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
 
-    // 30問（後で置き換え）
     allQuestions = [
         { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: 2, E: -1 } },
         { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: 2, I: 0, E: 1 } },
@@ -431,21 +428,21 @@
         { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 } },
         { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -1, I: 2, E: 0 } },
         { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: 0, E: 2 } },
-        { q: { ja: "[ダミー質問 16]", en: "[Dummy Question 16]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 17]", en: "[Dummy Question 17]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 18]", en: "[Dummy Question 18]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 19]", en: "[Dummy Question 19]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 20]", en: "[Dummy Question 20]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 21]", en: "[Dummy Question 21]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 22]", en: "[Dummy Question 22]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 23]", en: "[Dummy Question 23]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 24]", en: "[Dummy Question 24]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 25]", en: "[Dummy Question 25]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 26]", en: "[Dummy Question 26]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 27]", en: "[Dummy Question 27]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 28]", en: "[Dummy Question 28]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 29]", en: "[Dummy Question 29]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
-        { q: { ja: "[ダミー質問 30]", en: "[Dummy Question 30]" }, effects: { P: 0, M: 0, I: 0, E: 0 } }
+        { q: { ja: "相手が自分に依存して泣き叫ぶ姿を、ずっと眺めていたい。", en: "I want to watch my partner cry out in dependency on me forever." }, effects: { P: 2, M: -1, I: 1, E: 1 } },
+        { q: { ja: "自分を粗末に扱う相手ほど、愛おしく感じてしまう。", en: "The more someone treats me poorly, the more lovable they seem." }, effects: { P: -2, M: 2, I: 1, E: 1 } },
+        { q: { ja: "美しい装飾品よりも、汚れた肉体の方が興奮する。", en: "I get more excited by a soiled body than by beautiful ornaments." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
+        { q: { ja: "社会的な道徳なんて、愛の前では無価値なゴミに過ぎない。", en: "Social morality is nothing but worthless trash in the face of love." }, effects: { P: 1, M: -2, I: 1, E: 1 } },
+        { q: { ja: "もし相手が犯罪を犯したら、迷わずその共犯者になりたい。", en: "If my partner committed a crime, I would want to be their accomplice without hesitation." }, effects: { P: 0, M: -1, I: 2, E: 2 } },
+        { q: { ja: "相手の過去や記憶を、すべて自分色に塗り替えたい。", en: "I want to repaint all of my partner's past and memories in my own colors." }, effects: { P: 2, M: -1, I: 1, E: 0 } },
+        { q: { ja: "自分の体は、相手のための「消耗品」だと理解している。", en: "I understand that my body is merely a 'consumable' for my partner." }, effects: { P: -2, M: 1, I: 1, E: 0 } },
+        { q: { ja: "相手に自分の価値を完全に否定されたいという願望がある。", en: "I have a desire to have my worth completely denied by my partner." }, effects: { P: -1, M: 1, I: 0, E: 1 } },
+        { q: { ja: "どれだけ傷ついても、相手から離れるという選択肢は存在しない。", en: "No matter how much I am hurt, the option to leave my partner does not exist." }, effects: { P: -1, M: 1, I: 1, E: 0 } },
+        { q: { ja: "相手を絶望の淵に突き落とし、その唯一の救い主でありたい。", en: "I want to plunge my partner into despair and be their only savior." }, effects: { P: 2, M: -1, I: 1, E: 1 } },
+        { q: { ja: "他者から見て軽蔑されるような性的な振る舞いに、言いようのない喜びを感じる。", en: "I feel an unspeakable joy in sexual behavior that others would despise." }, effects: { P: -1, M: -1, I: -1, E: 2 } },
+        { q: { ja: "相手を飼い殺しにして、自分なしでは生きていけない身体にしたい。", en: "I want to keep my partner caged, making them a body that cannot live without me." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
+        { q: { ja: "愛する人のために、自分の人生のすべてをドブに捨てても後悔はない。", en: "I would have no regrets throwing my entire life into the gutter for the one I love." }, effects: { P: 0, M: 2, I: 1, E: 0 } },
+        { q: { ja: "肉体的な快楽よりも、相手の精神を支配することに執着している。", en: "I am more obsessed with dominating my partner's mind than with physical pleasure." }, effects: { P: 2, M: -1, I: 0, E: 0 } },
+        { q: { ja: "互いのすべてを喰らい合い、形がなくなるまで混ざり合いたい。", en: "I want us to devour each other's everything and mix until we lose our forms." }, effects: { P: 1, M: 0, I: 1, E: 1 } }
     ];
 
     const colorPhases = [
@@ -465,6 +462,17 @@
         { bg: "#1d1115", box: "rgba(22,13,16,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#891535", statBg: "rgba(255,255,255,0.15)" },
         { bg: "#0d090a", box: "rgba(20,11,14,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#880e4f", statBg: "rgba(255,255,255,0.15)" }
     ];
+
+    function loadViewedChars() {
+        const saved = localStorage.getItem('sugar_cage_viewed');
+        if (saved) {
+            viewedCharIds = new Set(JSON.parse(saved));
+        }
+    }
+
+    function saveViewedChars() {
+        localStorage.setItem('sugar_cage_viewed', JSON.stringify(Array.from(viewedCharIds)));
+    }
 
     async function loadCharacters() {
         try {
@@ -540,7 +548,6 @@
     }
 
     function selectRandomQuestions() {
-        // 全30問をシャッフルして最初の15問を選ぶ
         let shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
         quizQuestions = shuffled.slice(0, 15);
     }
@@ -583,7 +590,6 @@
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         
-        // << < ≡ > >>
         const btns = [
             { label: '<<', mult: 2 },
             { label: '<', mult: 1 },
@@ -603,10 +609,9 @@
 
     function selectOption(effects, multiplier) {
         if (multiplier === 'random') {
-            // ランダムなステータスをランダムに変動
             const keys = ['P', 'M', 'I', 'E'];
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            const randomChange = Math.floor(Math.random() * 3) - 1; // -1, 0, 1
+            const randomChange = Math.floor(Math.random() * 3) - 1;
             stats[randomKey] += randomChange;
         } else {
             ['P', 'M', 'I', 'E'].forEach(key => {
@@ -643,7 +648,9 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => unlockedCharIds.has(c.id));
+        let availableChars = characters.filter(c => viewedCharIds.has(c.id) && c.id <= 12);
+        if (availableChars.length === 0) availableChars = characters.filter(c => c.id <= 12);
+        
         let ranked = availableChars.map(char => {
             let dist = Math.abs(stats.P - char.P) + Math.abs(stats.M - char.M) + 
                        Math.abs(stats.I - char.I) + Math.abs(stats.E - char.E);
@@ -672,6 +679,9 @@
     }
 
     function revealResult(char) {
+        viewedCharIds.add(char.id);
+        saveViewedChars();
+
         document.getElementById('result-selection').classList.add('hidden');
         document.getElementById('result-details').classList.remove('hidden');
         
@@ -697,7 +707,7 @@
             char.correlations.forEach(corr => {
                 const corrChar = characters.find(c => c.id === corr.id);
                 if (!corrChar) return;
-                const isLocked = !unlockedCharIds.has(corr.id);
+                const isLocked = !viewedCharIds.has(corr.id);
                 const corrCard = document.createElement('div');
                 corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
                 corrCard.onclick = () => {
@@ -709,8 +719,6 @@
         } else {
             corrEl.classList.add('hidden');
         }
-
-        unlockedCharIds.add(char.id);
     }
 
     function toggleSensitive(btn, type) {
@@ -769,19 +777,19 @@
         
         characters.forEach(char => {
             const slot = document.createElement('div');
-            const isLocked = !unlockedCharIds.has(char.id);
+            const isViewed = viewedCharIds.has(char.id);
             const isUnimplemented = char.id > 12;
             
             if (isUnimplemented) {
                 slot.className = 'archive-slot unimplemented';
-            } else if (isLocked) {
-                slot.className = 'archive-slot locked';
-            } else {
+            } else if (isViewed) {
                 slot.className = 'archive-slot unlocked';
                 const img = document.createElement('img');
-                img.src = char.imageSafe;
+                img.src = '/images/characters/' + String(char.id).padStart(2, '0') + '_icon.png';
                 slot.appendChild(img);
                 slot.onclick = () => showArchiveDetail(char);
+            } else {
+                slot.className = 'archive-slot locked';
             }
             
             container.appendChild(slot);
@@ -814,7 +822,7 @@
             char.correlations.forEach(corr => {
                 const corrChar = characters.find(c => c.id === corr.id);
                 if (!corrChar) return;
-                const isLocked = !unlockedCharIds.has(corr.id);
+                const isLocked = !viewedCharIds.has(corr.id);
                 const corrCard = document.createElement('div');
                 corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
                 corrCard.onclick = () => {
@@ -834,6 +842,7 @@
     }
 
     updateUITexts();
+    loadViewedChars();
     loadCharacters();
 
 </script>

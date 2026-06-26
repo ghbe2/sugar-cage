@@ -40,7 +40,7 @@
             transition: background-color 2s ease, color 2s ease;
         }
 
-        #app-wrapper { width: 100%; max-width: 900px; z-index: 10; position: relative; }
+        #app-wrapper { width: 100%; max-width: 1000px; z-index: 10; position: relative; }
 
         .container-box {
             background: var(--box-bg);
@@ -81,11 +81,9 @@
         .question-text { font-size: 1.05rem; margin-bottom: 35px; line-height: 1.7; min-height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; }
 
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 5px; opacity: 0.8; font-weight: bold; }
-        .scale-container { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 30px; }
-        .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; }
-        .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); }
-        .scale-btn::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); opacity: 0.3; transition: 0.2s; }
-        .scale-btn:hover::after { background: #fff; opacity: 1; }
+        .scale-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .scale-btn { width: 60px; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; }
+        .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
 
         .hidden { display: none !important; }
         
@@ -98,22 +96,21 @@
         .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; }
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
 
-        /* RESULT & ARCHIVE DETAIL PANEL - VERTICAL LAYOUT */
-        .detail-panel { background: rgba(0,0,0,0.02); padding: 28px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center; }
+        /* RESULT DETAIL PANEL */
+        .detail-panel { background: rgba(0,0,0,0.02); padding: 24px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center; }
         
-        .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 32px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
+        .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 24px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
         .char-quote::before { content: '「'; }
         .char-quote::after { content: '」'; }
 
-        .char-image-section { margin: 28px 0; text-align: center; }
-        .char-image { max-width: 100%; max-height: 380px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
-        .image-label { font-size: 0.75rem; color: rgba(0,0,0,0.5); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; }
+        .char-image-section { margin: 20px 0; text-align: center; }
+        .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
 
         .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 20px; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
         
-        .detail-desc { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; font-weight: 500; margin-bottom: 28px; text-align: left; }
+        .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
 
-        /* EXPAND SENSITIVE BUTTON - PROMINENT */
+        /* EXPAND SENSITIVE BUTTON */
         .expand-sensitive { 
             background: linear-gradient(135deg, var(--accent-color), #ff80ab);
             color: white; 
@@ -124,7 +121,7 @@
             font-size: 0.95rem; 
             font-weight: bold; 
             letter-spacing: 1px;
-            margin: 32px 0; 
+            margin: 28px 0; 
             transition: 0.3s;
             box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3);
             width: 100%;
@@ -142,18 +139,18 @@
         .sensitive-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
         .sensitive-content.expanded { max-height: 3000px; }
 
-        .sensitive-image-section { margin: 28px 0; text-align: center; }
-        .sensitive-text { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; font-weight: 500; color: var(--text-color); margin-top: 20px; text-align: left; }
+        .sensitive-image-section { margin: 20px 0; text-align: center; }
+        .sensitive-text { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; color: var(--text-color); margin-top: 20px; text-align: left; }
 
-        /* CORRELATIONS - CARD LAYOUT */
-        .correlations { background: rgba(128,128,128,0.05); padding: 20px; border-radius: 8px; margin-top: 28px; border: 1px solid var(--border-color); }
+        /* CORRELATIONS */
+        .correlations { background: rgba(128,128,128,0.05); padding: 20px; border-radius: 8px; margin-top: 24px; border: 1px solid var(--border-color); }
         .corr-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 16px; text-transform: uppercase; font-weight: bold; transition: color 2s ease; }
         
         .corr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 14px; }
         .corr-card { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; text-align: center; }
         .corr-icon { width: 70px; height: 70px; background: linear-gradient(135deg, var(--accent-color), #ff80ab); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; border: 2px solid var(--border-color); transition: 0.3s; }
         .corr-card:hover .corr-icon { transform: scale(1.08); box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3); }
-        .corr-card.locked .corr-icon { opacity: 0.3; background: rgba(128,128,128,0.2); border-style: dashed; }
+        .corr-card.locked .corr-icon { opacity: 0.3; background: rgba(128,128,128,0.2); border-style: dashed; cursor: not-allowed; }
         .corr-label { font-size: 0.7rem; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; margin-bottom: 3px; transition: color 2s ease; }
         .corr-name { font-size: 0.75rem; color: var(--text-color); font-weight: 600; }
         .corr-card.locked .corr-name { opacity: 0.4; }
@@ -183,33 +180,57 @@
         }
         .sub-btn:hover { background: var(--accent-color); color: white; }
 
-        .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 32px; flex-wrap: wrap; }
+        .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 28px; flex-wrap: wrap; }
 
-        /* ARCHIVE GRID - 8 COLUMNS */
+        /* ARCHIVE GRID - 4 columns */
         .archive-grid { 
             display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            gap: 12px; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 16px; 
             margin-bottom: 40px; 
             margin-top: 20px;
         }
         .archive-slot { 
             background: rgba(128,128,128,0.1); 
             border: 1px solid var(--border-color); 
-            border-radius: 6px; 
+            border-radius: 8px; 
             padding: 0; 
             cursor: pointer; 
             transition: 0.2s; 
-            aspect-ratio: 2/3; 
+            aspect-ratio: 1 / 1;
             overflow: hidden; 
             display: flex; 
             align-items: center; 
             justify-content: center;
+            position: relative;
         }
         .archive-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .archive-slot.locked { opacity: 0.25; cursor: not-allowed; border-style: dashed; }
+        .archive-slot.locked { 
+            background: #1a1a1a; 
+            cursor: not-allowed; 
+            border: 2px dashed rgba(128,128,128,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .archive-slot.locked::before {
+            content: '🔒';
+            font-size: 48px;
+            opacity: 0.5;
+        }
         .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
-        .archive-slot:hover:not(.locked) { filter: brightness(1.15); transform: scale(1.02); }
+        .archive-slot.unimplemented {
+            background: #2a2a2a;
+            cursor: not-allowed;
+            border: 2px dashed rgba(128,128,128,0.3);
+        }
+        .archive-slot.unimplemented::before {
+            content: '？';
+            font-size: 48px;
+            color: #666;
+            font-weight: bold;
+        }
+        .archive-slot:hover:not(.locked):not(.unimplemented) { filter: brightness(1.15); transform: scale(1.02); }
 
         #shatter-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .anim-shatter-flash { animation: flashShatter 1s ease-out forwards; }
@@ -220,13 +241,14 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 1200px) {
-            .archive-grid { grid-template-columns: repeat(6, 1fr); }
+            .archive-grid { grid-template-columns: repeat(4, 1fr); }
         }
 
         @media (max-width: 768px) {
             .container-box { padding: 28px; }
             .archive-grid { grid-template-columns: repeat(4, 1fr); }
             .corr-grid { grid-template-columns: repeat(2, 1fr); }
+            .scale-btn { width: 50px; }
         }
     </style>
 </head>
@@ -265,6 +287,7 @@
         
         <div class="scale-labels">
             <span data-text="agree">わかる</span>
+            <span data-text="neutral">ニュートラル</span>
             <span data-text="disagree">ちがう</span>
         </div>
         <div id="options-container" class="scale-container"></div>
@@ -286,7 +309,6 @@
                 <div id="result-quote" class="char-quote"></div>
 
                 <div class="char-image-section">
-                    <div class="image-label">SAFE VERSION</div>
                     <img id="result-image-safe" class="char-image" src="" alt="Safe">
                 </div>
 
@@ -297,7 +319,6 @@
 
                 <div class="sensitive-content" id="result-sensitive-content">
                     <div class="sensitive-image-section">
-                        <div class="image-label">SENSITIVE VERSION</div>
                         <img id="result-image-sensitive" class="char-image" src="" alt="Sensitive">
                     </div>
                     <div class="sensitive-text" id="result-sensitive-text"></div>
@@ -310,7 +331,9 @@
             </div>
 
             <div class="buttons-container">
-                <button class="main-btn" onclick="shareResult()" data-text="share_btn">SHARE</button>
+                <button class="main-btn" onclick="shareResultX()" data-text="share_btn">𝕏 SHARE</button>
+                <button class="main-btn sub-btn" onclick="openArchiveFromResult()" data-text="archive_link">ARCHIVE</button>
+                <button class="main-btn sub-btn" onclick="followX()" data-text="follow_btn">🔗 Follow @ai_be2</button>
                 <button class="main-btn sub-btn" onclick="resetQuiz()" data-text="restart_btn">RESTART</button>
             </div>
         </div>
@@ -333,7 +356,6 @@
                 <div id="archive-quote" class="char-quote"></div>
 
                 <div class="char-image-section">
-                    <div class="image-label">SAFE VERSION</div>
                     <img id="archive-image-safe" class="char-image" src="" alt="Safe">
                 </div>
 
@@ -344,7 +366,6 @@
 
                 <div class="sensitive-content" id="archive-sensitive-content">
                     <div class="sensitive-image-section">
-                        <div class="image-label">SENSITIVE VERSION</div>
                         <img id="archive-image-sensitive" class="char-image" src="" alt="Sensitive">
                     </div>
                     <div class="sensitive-text" id="archive-sensitive-text"></div>
@@ -367,6 +388,8 @@
     let currentLang = 'ja';
     let stats = { P: 5, M: 5, I: 5, E: 5 };
     let currentQuestionIndex = 0;
+    let quizQuestions = []; // ランダムに選ばれた15問
+    let allQuestions = []; // 全30問
     let top3Results = [];
     let characters = [];
     let unlockedCharIds = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -377,10 +400,13 @@
         start_btn: { ja: "START", en: "START" },
         archive_btn: { ja: "ARCHIVE", en: "ARCHIVE" },
         agree: { ja: "わかる", en: "Agree" },
+        neutral: { ja: "ニュートラル", en: "Neutral" },
         disagree: { ja: "ちがう", en: "Disagree" },
         result_desc: { ja: "あなたに、♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ matches. Choose one to confirm your match." },
         expand_btn: { ja: "▼ もっと深く知る覚悟はある？", en: "▼ Ready to know more?" },
-        share_btn: { ja: "SHARE", en: "SHARE" },
+        share_btn: { ja: "𝕏 SHARE", en: "𝕏 SHARE" },
+        archive_link: { ja: "ARCHIVE", en: "ARCHIVE" },
+        follow_btn: { ja: "🔗 Follow @ai_be2", en: "🔗 Follow @ai_be2" },
         restart_btn: { ja: "RESTART", en: "RESTART" },
         archive_title: { ja: "観測記録", en: "ARCHIVE" },
         archive_desc: { ja: "観測済みの個体データ", en: "Observed Individual Data" },
@@ -388,7 +414,8 @@
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
 
-    const questions = [
+    // 30問（後で置き換え）
+    allQuestions = [
         { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: 2, E: -1 } },
         { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: 2, I: 0, E: 1 } },
         { q: { ja: "秘密や嘘は、愛を深めるスパイスになる。", en: "Secrets and lies are spices that deepen love." }, effects: { P: 0, M: -1, I: -2, E: 2 } },
@@ -403,7 +430,22 @@
         { q: { ja: "美しいものより、汚れて堕ちていくものに惹かれる。", en: "I am more attracted to things that are dirty and falling than beautiful things." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
         { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 } },
         { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -1, I: 2, E: 0 } },
-        { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: 0, E: 2 } }
+        { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: 0, E: 2 } },
+        { q: { ja: "[ダミー質問 16]", en: "[Dummy Question 16]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 17]", en: "[Dummy Question 17]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 18]", en: "[Dummy Question 18]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 19]", en: "[Dummy Question 19]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 20]", en: "[Dummy Question 20]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 21]", en: "[Dummy Question 21]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 22]", en: "[Dummy Question 22]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 23]", en: "[Dummy Question 23]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 24]", en: "[Dummy Question 24]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 25]", en: "[Dummy Question 25]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 26]", en: "[Dummy Question 26]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 27]", en: "[Dummy Question 27]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 28]", en: "[Dummy Question 28]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 29]", en: "[Dummy Question 29]" }, effects: { P: 0, M: 0, I: 0, E: 0 } },
+        { q: { ja: "[ダミー質問 30]", en: "[Dummy Question 30]" }, effects: { P: 0, M: 0, I: 0, E: 0 } }
     ];
 
     const colorPhases = [
@@ -424,7 +466,6 @@
         { bg: "#0d090a", box: "rgba(20,11,14,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#880e4f", statBg: "rgba(255,255,255,0.15)" }
     ];
 
-    // GitHub から JSON を読み込む
     async function loadCharacters() {
         try {
             const response = await fetch('https://raw.githubusercontent.com/ghbe2/sugar-cage/main/characters.json');
@@ -493,9 +534,15 @@
     function updateStatusUI() {
         ['P', 'M', 'I', 'E'].forEach(key => {
             stats[key] = Math.max(0, Math.min(10, stats[key]));
-            document.getElementById(`val-${key}`).innerText = stats[key];
-            document.getElementById(`bar-${key}`).style.width = `${(stats[key] / 10) * 100}%`;
+            document.getElementById('val-' + key).innerText = stats[key];
+            document.getElementById('bar-' + key).style.width = (stats[key] / 10) * 100 + '%';
         });
+    }
+
+    function selectRandomQuestions() {
+        // 全30問をシャッフルして最初の15問を選ぶ
+        let shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 15);
     }
 
     function resetQuiz() {
@@ -519,6 +566,7 @@
             await loadCharacters();
         }
 
+        selectRandomQuestions();
         document.getElementById('screen-start').classList.add('hidden');
         const quizScreen = document.getElementById('screen-quiz');
         quizScreen.classList.remove('hidden', 'anim-break-container');
@@ -528,29 +576,46 @@
 
     function showQuestion(advance = true) {
         applySmoothColorPhase();
-        const q = questions[currentQuestionIndex];
-        document.getElementById('question-number').innerText = `Q${currentQuestionIndex + 1} / 15`;
+        const q = quizQuestions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = 'Q' + (currentQuestionIndex + 1) + ' / 15';
         document.getElementById('question-text').innerText = q.q[currentLang];
         
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         
-        const multipliers = [2, 1, 0, -1, -2]; 
-        multipliers.forEach((mult) => {
-            const btn = document.createElement('div');
-            btn.className = 'scale-btn';
-            btn.onclick = () => selectOption(q.effects, mult);
-            container.appendChild(btn);
+        // << < ≡ > >>
+        const btns = [
+            { label: '<<', mult: 2 },
+            { label: '<', mult: 1 },
+            { label: '≡', mult: 'random' },
+            { label: '>', mult: -1 },
+            { label: '>>', mult: -2 }
+        ];
+        
+        btns.forEach((btn) => {
+            const btnEl = document.createElement('button');
+            btnEl.className = 'scale-btn';
+            btnEl.innerText = btn.label;
+            btnEl.onclick = () => selectOption(q.effects, btn.mult);
+            container.appendChild(btnEl);
         });
     }
 
     function selectOption(effects, multiplier) {
-        ['P', 'M', 'I', 'E'].forEach(key => {
-            if(effects[key]) stats[key] += (effects[key] * (multiplier > 0 ? 1 : (multiplier < 0 ? -1 : 0)));
-        });
+        if (multiplier === 'random') {
+            // ランダムなステータスをランダムに変動
+            const keys = ['P', 'M', 'I', 'E'];
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            const randomChange = Math.floor(Math.random() * 3) - 1; // -1, 0, 1
+            stats[randomKey] += randomChange;
+        } else {
+            ['P', 'M', 'I', 'E'].forEach(key => {
+                if(effects[key]) stats[key] += (effects[key] * (multiplier > 0 ? 1 : (multiplier < 0 ? -1 : 0)));
+            });
+        }
 
         currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
+        if (currentQuestionIndex < 15) {
             updateStatusUI();
             showQuestion(true);
         } else {
@@ -598,12 +663,9 @@
 
         top3Results.forEach((char) => {
             const card = document.createElement('div');
-            card.className = `blind-card ${char.isBest ? 'glow' : ''}`;
-            const tagsText = char.tags[currentLang] ? char.tags[currentLang].map(t => `#${t}`).join(' ') : '#???';
-            card.innerHTML = `
-                <div class="card-icon-mystery">♡</div>
-                <div class="card-tags">${tagsText}</div>
-            `;
+            card.className = 'blind-card ' + (char.isBest ? 'glow' : '');
+            const tagsText = char.tags[currentLang] ? char.tags[currentLang].map(t => '#' + t).join(' ') : '#???';
+            card.innerHTML = '<div class="card-icon-mystery">♡</div><div class="card-tags">' + tagsText + '</div>';
             card.onclick = () => revealResult(char);
             container.appendChild(card);
         });
@@ -614,7 +676,7 @@
         document.getElementById('result-details').classList.remove('hidden');
         
         const nameEl = document.getElementById('detail-name');
-        nameEl.innerText = `No.${char.id} ${char.name[currentLang]}`;
+        nameEl.innerText = 'No.' + char.id + ' ' + char.name[currentLang];
         nameEl.setAttribute('data-char-id', char.id);
         
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
@@ -637,15 +699,11 @@
                 if (!corrChar) return;
                 const isLocked = !unlockedCharIds.has(corr.id);
                 const corrCard = document.createElement('div');
-                corrCard.className = `corr-card ${isLocked ? 'locked' : ''}`;
+                corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
                 corrCard.onclick = () => {
                     if (!isLocked) showArchiveDetail(corrChar);
                 };
-                corrCard.innerHTML = `
-                    <div class="corr-icon">♡</div>
-                    <div class="corr-label">${corr.type[currentLang]}</div>
-                    <div class="corr-name">${isLocked ? '???' : corrChar.name[currentLang]}</div>
-                `;
+                corrCard.innerHTML = '<div class="corr-icon">♡</div><div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + (isLocked ? '???' : corrChar.name[currentLang]) + '</div>';
                 corrList.appendChild(corrCard);
             });
         } else {
@@ -671,15 +729,33 @@
         }
     }
     
-    function shareResult() {
-        alert(currentLang === 'ja' ? '共有リンクをコピーしました（ダミー）' : 'Share link copied (Dummy)');
+    function shareResultX() {
+        const char = characters.find(c => c.id === parseInt(document.getElementById('detail-name').getAttribute('data-char-id')));
+        if (!char) return;
+        
+        const text = 'No.' + char.id + ' ' + char.name[currentLang] + '\n' + char.quote[currentLang] + '\n#SugarCageMatch';
+        const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=https://ghbe2.github.io/sugar-cage/';
+        window.open(url, '_blank');
+    }
+
+    function followX() {
+        window.open('https://twitter.com/intent/follow?screen_name=ai_be2', '_blank');
+    }
+
+    function openArchiveFromResult() {
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-archive').classList.remove('hidden');
+        renderArchive();
+        document.getElementById('archive-grid-view').classList.remove('hidden');
+        document.getElementById('archive-detail-view').classList.add('hidden');
     }
 
     function openArchive() {
         document.getElementById('screen-start').classList.add('hidden');
         document.getElementById('screen-archive').classList.remove('hidden');
-        backToArchiveGrid();
         renderArchive();
+        document.getElementById('archive-grid-view').classList.remove('hidden');
+        document.getElementById('archive-detail-view').classList.add('hidden');
     }
 
     function closeArchive() {
@@ -694,15 +770,14 @@
         characters.forEach(char => {
             const slot = document.createElement('div');
             const isLocked = !unlockedCharIds.has(char.id);
-            slot.className = `archive-slot ${isLocked ? 'locked' : 'unlocked'}`;
+            const isUnimplemented = char.id > 12;
             
-            if (isLocked) {
-                const lockedImg = document.createElement('img');
-                lockedImg.src = char.imageSafe;
-                lockedImg.style.opacity = '0.2';
-                lockedImg.style.filter = 'blur(6px)';
-                slot.appendChild(lockedImg);
+            if (isUnimplemented) {
+                slot.className = 'archive-slot unimplemented';
+            } else if (isLocked) {
+                slot.className = 'archive-slot locked';
             } else {
+                slot.className = 'archive-slot unlocked';
                 const img = document.createElement('img');
                 img.src = char.imageSafe;
                 slot.appendChild(img);
@@ -718,7 +793,7 @@
         document.getElementById('archive-detail-view').classList.remove('hidden');
         
         const nameEl = document.getElementById('arc-detail-name');
-        nameEl.innerText = `No.${char.id} ${char.name[currentLang]}`;
+        nameEl.innerText = 'No.' + char.id + ' ' + char.name[currentLang];
         nameEl.setAttribute('data-char-id', char.id);
         
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
@@ -741,15 +816,11 @@
                 if (!corrChar) return;
                 const isLocked = !unlockedCharIds.has(corr.id);
                 const corrCard = document.createElement('div');
-                corrCard.className = `corr-card ${isLocked ? 'locked' : ''}`;
+                corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
                 corrCard.onclick = () => {
                     if (!isLocked) showArchiveDetail(corrChar);
                 };
-                corrCard.innerHTML = `
-                    <div class="corr-icon">♡</div>
-                    <div class="corr-label">${corr.type[currentLang]}</div>
-                    <div class="corr-name">${isLocked ? '???' : corrChar.name[currentLang]}</div>
-                `;
+                corrCard.innerHTML = '<div class="corr-icon">♡</div><div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + (isLocked ? '???' : corrChar.name[currentLang]) + '</div>';
                 corrList.appendChild(corrCard);
             });
         } else {
@@ -762,7 +833,6 @@
         document.getElementById('archive-grid-view').classList.remove('hidden');
     }
 
-    // 初期化
     updateUITexts();
     loadCharacters();
 

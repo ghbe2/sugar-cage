@@ -82,7 +82,7 @@
 
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
-        .scale-btn { flex: 1; max-width: 70px; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; }
+        .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; }
         .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
 
         .hidden { display: none !important; }
@@ -215,7 +215,7 @@
         }
         .archive-slot.locked::before {
             content: '🔒';
-            font-size: 48px;
+            font-size: 24px;
             opacity: 0.5;
         }
         .archive-slot.unimplemented {
@@ -268,8 +268,8 @@
         <p style="font-size: 0.95rem; line-height: 1.7; margin: 30px 0 40px; font-weight: 500;" data-text="start_desc">
             このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡
         </p>
-        <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px;">START</button>
-        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px;">ARCHIVE</button>
+        <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 150px;">START</button>
+        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 150px;">ARCHIVE</button>
     </div>
 
     <!-- Quiz Screen -->
@@ -593,7 +593,7 @@
         const btns = [
             { label: '<<', mult: 2 },
             { label: '<', mult: 1 },
-            { label: '≡', mult: 'random' },
+            { label: '・', mult: 'random' },
             { label: '>', mult: -1 },
             { label: '>>', mult: -2 }
         ];
@@ -648,8 +648,7 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => viewedCharIds.has(c.id) && c.id <= 12);
-        if (availableChars.length === 0) availableChars = characters.filter(c => c.id <= 12);
+        let availableChars = characters.filter(c => c.id <= 12);
         
         let ranked = availableChars.map(char => {
             let dist = Math.abs(stats.P - char.P) + Math.abs(stats.M - char.M) + 
@@ -785,7 +784,7 @@
             } else if (isViewed) {
                 slot.className = 'archive-slot unlocked';
                 const img = document.createElement('img');
-                img.src = '/images/characters/' + String(char.id).padStart(2, '0') + '_icon.png';
+                img.src = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/' + String(char.id).padStart(2, '0') + '_icon.png';
                 slot.appendChild(img);
                 slot.onclick = () => showArchiveDetail(char);
             } else {

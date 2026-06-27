@@ -62,7 +62,7 @@
         .stat-bar-bg { flex: 1; height: 10px; background: var(--stat-bg); border-radius: 5px; overflow: hidden; margin: 0 12px; border: 1px solid var(--border-color); }
         .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
-        .question-text { font-size: 1.05rem; line-height: 1.7; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
+        .question-text { font-size: 1.05rem; line-height: 1.4; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
         .q-char { display: inline-block; white-space: pre; }
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
@@ -624,22 +624,27 @@
 
     function typeWriterFade(el, text, onComplete) {
         let i = 0;
+        const chunk = 2; // 一度に出す文字数
         function next() {
             if (i < text.length) {
-                const ch = text[i];
-                const span = document.createElement('span');
-                span.textContent = ch;
-                span.style.opacity = '0';
-                span.style.filter = 'blur(4px)';
-                span.style.display = 'inline';
-                span.style.transition = 'opacity 0.6s ease, filter 0.6s ease';
-                el.appendChild(span);
-                void span.offsetWidth;
-                span.style.opacity = '1';
-                span.style.filter = 'blur(0)';
-                i++;
+                let lastCh = '';
+                for (let k = 0; k < chunk && i < text.length; k++) {
+                    const ch = text[i];
+                    lastCh = ch;
+                    const span = document.createElement('span');
+                    span.textContent = ch;
+                    span.style.opacity = '0';
+                    span.style.filter = 'blur(3px)';
+                    span.style.display = 'inline';
+                    span.style.transition = 'opacity 0.35s ease, filter 0.35s ease';
+                    el.appendChild(span);
+                    void span.offsetWidth;
+                    span.style.opacity = '1';
+                    span.style.filter = 'blur(0)';
+                    i++;
+                }
                 // 句読点では少し長めに間を取る
-                const delay = (ch === '、' || ch === '。' || ch === '…') ? 260 : 90;
+                const delay = (lastCh === '、' || lastCh === '。' || lastCh === '…') ? 180 : 45;
                 setTimeout(next, delay);
             } else {
                 if (onComplete) onComplete();
@@ -769,18 +774,90 @@
         });
     }
 
+    // 関係性タイプの翻訳辞書（スプレッドにEN列がないためHTML側で翻訳）
+    const corrTypeDict = {
+        "恋人": "Lover",
+        "元恋人": "Ex-Lover",
+        "片想い": "Unrequited Love",
+        "両想い": "Mutual Love",
+        "友人": "Friend",
+        "親友": "Best Friend",
+        "幼馴染": "Childhood Friend",
+        "家族": "Family",
+        "姉妹": "Sisters",
+        "兄弟": "Brothers",
+        "姉": "Older Sister",
+        "妹": "Younger Sister",
+        "兄": "Older Brother",
+        "弟": "Younger Brother",
+        "母": "Mother",
+        "父": "Father",
+        "娘": "Daughter",
+        "息子": "Son",
+        "師弟": "Master & Apprentice",
+        "師匠": "Master",
+        "弟子": "Apprentice",
+        "先生": "Teacher",
+        "生徒": "Student",
+        "同僚": "Colleague",
+        "ライバル": "Rival",
+        "宿敵": "Nemesis",
+        "敵": "Enemy",
+        "共犯": "Accomplice",
+        "共犯者": "Accomplice",
+        "主従": "Master & Servant",
+        "主人": "Master",
+        "下僕": "Servant",
+        "飼い主": "Owner",
+        "ペット": "Pet",
+        "支配": "Dominator",
+        "被支配": "Subordinate",
+        "依存": "Dependent",
+        "共依存": "Codependent",
+        "崇拝": "Worship",
+        "信者": "Believer",
+        "加害者": "Perpetrator",
+        "被害者": "Victim",
+        "保護者": "Guardian",
+        "被保護者": "Ward",
+        "監視者": "Observer",
+        "観察対象": "Subject",
+        "獲物": "Prey",
+        "捕食者": "Predator",
+        "所有者": "Owner",
+        "所有物": "Possession",
+        "運命": "Destined",
+        "運命の相手": "Destined One",
+        "婚約者": "Fiancé(e)",
+        "夫婦": "Married Couple",
+        "不倫": "Affair",
+        "浮気相手": "Lover (Affair)",
+        "推し": "Idol",
+        "ファン": "Fan",
+        "同類": "Kindred",
+        "天敵": "Natural Enemy",
+        "崇拝者": "Worshipper"
+    };
+
     function getCorrType(corr) {
         if (!corr || !corr.type) return '';
-        // type がオブジェクト {ja, en} の場合
+        let jaVal = '';
+        let enVal = '';
         if (typeof corr.type === 'object') {
-            const v = corr.type[currentLang];
-            if (v && String(v).trim() !== '') return v;
-            // 現在言語が空ならもう一方の言語にフォールバック
-            const other = corr.type.ja || corr.type.en || '';
-            return other;
+            jaVal = corr.type.ja || '';
+            enVal = corr.type.en || '';
+        } else {
+            jaVal = corr.type;
         }
-        // type が文字列の場合
-        return corr.type;
+        if (currentLang === 'ja') {
+            return jaVal || enVal;
+        } else {
+            // EN表示: スプレッドのEN → 辞書翻訳 → JAのまま の優先順
+            if (enVal && String(enVal).trim() !== '') return enVal;
+            if (jaVal && corrTypeDict[jaVal]) return corrTypeDict[jaVal];
+            if (jaVal) console.log('[関係性辞書 未登録]:', jaVal);
+            return jaVal;
+        }
     }
 
     function buildCorrelationCard(corr) {

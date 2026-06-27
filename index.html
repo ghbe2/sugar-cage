@@ -99,7 +99,11 @@
         .char-quote::after { content: '」'; }
         .char-image-section { margin: 20px 0; text-align: center; }
         .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
-        .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 20px; padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
+        .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 12px; padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
+        .char-profile { font-size: 0.85rem; line-height: 1.8; margin-bottom: 24px; color: var(--text-color); opacity: 0.85; font-weight: 600; letter-spacing: 0.5px; }
+        .char-profile:empty { display: none; }
+        .char-profile .prof-row { display: inline-flex; gap: 4px; margin: 0 8px; }
+        .char-profile .prof-label { color: var(--accent-color); font-weight: bold; }
         .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
         .expand-sensitive { background: linear-gradient(135deg, var(--accent-color), #ff80ab); color: white; border: none; padding: 16px 28px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold; letter-spacing: 1px; margin: 28px 0; transition: 0.3s; box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); width: 100%; display: block; }
         .expand-sensitive:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233, 30, 99, 0.4); }
@@ -189,6 +193,7 @@
                 <div id="result-quote" class="char-quote"></div>
                 <div class="char-image-section"><img id="result-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="detail-name"></div>
+                <div class="char-profile" id="detail-profile"></div>
                 <div class="detail-desc" id="detail-desc"></div>
                 <button class="expand-sensitive" id="expand-btn" onclick="toggleSensitive(this, 'result')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="result-sensitive-content">
@@ -221,6 +226,7 @@
                 <div id="archive-quote" class="char-quote"></div>
                 <div class="char-image-section"><img id="archive-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="arc-detail-name"></div>
+                <div class="char-profile" id="arc-detail-profile"></div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="archive-sensitive-content">
@@ -263,7 +269,7 @@
         restart_btn: { ja: "RESTART", en: "RESTART" },
         back_result: { ja: "BACK TO RESULT", en: "Back to Result" },
         back_btn: { ja: "BACK", en: "BACK" },
-        archive_title: { ja: "マッチングしている相手♥", en: "Your Matches ♥" },
+        archive_title: { ja: "あなたとマッチング中♥", en: "Matched with You ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
 
@@ -380,6 +386,7 @@
     function refreshArchiveDetail(char) {
         document.getElementById('arc-detail-name').innerText = char.name[currentLang];
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
+        document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
@@ -404,6 +411,7 @@
     function revealResultRefresh(char) {
         document.getElementById('detail-name').innerText = char.name[currentLang];
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
+        document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
@@ -679,6 +687,7 @@
         nameEl.setAttribute('data-char-id', char.id);
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('result-image-safe').src = char.imageSafe;
+        document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
         document.getElementById('result-sensitive-content').classList.remove('expanded');
         document.getElementById('expand-btn').classList.remove('expanded');
@@ -716,7 +725,10 @@
     function shareCharById(id) {
         const char = characters.find(c => c.id === id);
         if (!char) return;
-        const text = char.name[currentLang] + '\n' + char.quote[currentLang] + '\n#SugarCageMatch';
+        const name = char.name[currentLang];
+        const text = (currentLang === 'ja')
+            ? 'わたしは「' + name + '」とマッチングしたよ💍\nあなたは誰とマッチングする？\n#SugarCageMatch'
+            : 'I matched with "' + name + '" 💍\nWho will you match with?\n#SugarCageMatch';
         const idStr = String(char.id).padStart(2, '0');
         const shareUrl = 'https://ghbe2.github.io/sugar-cage/c/' + idStr + '.html';
         const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
@@ -897,6 +909,27 @@
         }
     }
 
+    function buildProfileHtml(char) {
+        const p = char.profile || {};
+        const rows = [];
+        // 年齢（数字のみ）
+        if (p.age && String(p.age).trim() !== '') {
+            const label = currentLang === 'ja' ? '年齢' : 'Age';
+            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.age + '</span></span>');
+        }
+        // 身長（cm）
+        if (p.height && String(p.height).trim() !== '') {
+            const label = currentLang === 'ja' ? '身長' : 'Height';
+            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.height + 'cm</span></span>');
+        }
+        // バスト（カップ記号）
+        if (p.bust && String(p.bust).trim() !== '') {
+            const label = currentLang === 'ja' ? 'バスト' : 'Bust';
+            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.bust + '</span></span>');
+        }
+        return rows.join('');
+    }
+
     function buildCorrelationCard(corr) {
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
@@ -928,6 +961,7 @@
         nameEl.setAttribute('data-char-id', char.id);
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('archive-image-safe').src = char.imageSafe;
+        document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-content').classList.remove('expanded');
         document.getElementById('arc-expand-btn').classList.remove('expanded');

@@ -62,8 +62,8 @@
         .stat-bar-bg { flex: 1; height: 10px; background: var(--stat-bg); border-radius: 5px; overflow: hidden; margin: 0 12px; border: 1px solid var(--border-color); }
         .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
-        .question-text { font-size: 1.05rem; line-height: 1.4; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
-        .q-char { display: inline-block; white-space: pre; }
+        .question-text { font-size: 1.05rem; line-height: 1.5; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; align-content: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
+        .q-char { display: inline-block; white-space: pre; line-height: 1.5; }
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
         .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; color: var(--btn-text-color); }
@@ -624,7 +624,7 @@
 
     function typeWriterFade(el, text, onComplete) {
         let i = 0;
-        const chunk = 2; // 一度に出す文字数
+        const chunk = 1; // 一度に出す文字数
         function next() {
             if (i < text.length) {
                 let lastCh = '';
@@ -636,7 +636,7 @@
                     span.style.opacity = '0';
                     span.style.filter = 'blur(3px)';
                     span.style.display = 'inline';
-                    span.style.transition = 'opacity 0.35s ease, filter 0.35s ease';
+                    span.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
                     el.appendChild(span);
                     void span.offsetWidth;
                     span.style.opacity = '1';
@@ -644,7 +644,7 @@
                     i++;
                 }
                 // 句読点では少し長めに間を取る
-                const delay = (lastCh === '、' || lastCh === '。' || lastCh === '…') ? 180 : 45;
+                const delay = (lastCh === '、' || lastCh === '。' || lastCh === '…') ? 240 : 75;
                 setTimeout(next, delay);
             } else {
                 if (onComplete) onComplete();
@@ -849,12 +849,21 @@
         } else {
             jaVal = corr.type;
         }
+        jaVal = String(jaVal).trim();
+        enVal = String(enVal).trim();
         if (currentLang === 'ja') {
             return jaVal || enVal;
         } else {
-            // EN表示: スプレッドのEN → 辞書翻訳 → JAのまま の優先順
-            if (enVal && String(enVal).trim() !== '') return enVal;
+            // EN表示: スプレッドのEN → 辞書完全一致 → 辞書部分一致 → JAのまま
+            if (enVal !== '') return enVal;
             if (jaVal && corrTypeDict[jaVal]) return corrTypeDict[jaVal];
+            // 記号や装飾を除いて再照合（例: 「飼い主♥」→「飼い主」）
+            const cleaned = jaVal.replace(/[♥♡（）()【】「」\s・…！!？?。、]/g, '');
+            if (cleaned && corrTypeDict[cleaned]) return corrTypeDict[cleaned];
+            // 部分一致（辞書キーがjaValに含まれる）
+            for (const key in corrTypeDict) {
+                if (jaVal.indexOf(key) !== -1) return corrTypeDict[key];
+            }
             if (jaVal) console.log('[関係性辞書 未登録]:', jaVal);
             return jaVal;
         }

@@ -23,6 +23,7 @@
             background-color: var(--bg-color);
             background-image: linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
             background-size: 20px 20px;
+            animation: gridFlow 8s linear infinite;
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -51,7 +52,7 @@
         }
         .glitch-text { font-family: var(--font-title); text-shadow: calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5), calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5); transition: text-shadow 0.5s; }
         h1 { font-family: var(--font-title); font-size: 1.8rem; border-bottom: 2px dashed var(--accent-color); padding-bottom: 15px; margin-bottom: 30px; color: var(--accent-color); letter-spacing: 2px; transition: color 2s ease, border-color 2s ease; }
-        .top-nav { position: absolute; top: -44px; right: 10px; display: flex; gap: 10px; }
+        .top-nav { position: absolute; top: -44px; right: 10px; display: flex; gap: 10px; z-index: 20; }
         .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
         .small-btn:hover { background: var(--accent-color); color: white; transform: scale(1.05); }
         .status-container { background: rgba(128,128,128,0.1); padding: 16px; border-radius: 8px; margin-bottom: 30px; text-align: left; border: 1px solid var(--border-color); transition: border-color 2s ease; }
@@ -114,6 +115,14 @@
         .archive-slot.unimplemented { background: #2a2a2a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); font-size: 36px; }
         .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
         .archive-slot:hover:not(.locked):not(.unimplemented) { filter: brightness(1.15); transform: scale(1.02); }
+        @keyframes gridFlow { 0% { background-position: 0 0, 0 0; } 100% { background-position: 20px 20px, 20px 20px; } }
+        @keyframes textShake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1px, 1px); } 40% { transform: translate(1px, -1px); } 60% { transform: translate(-1px, -1px); } 80% { transform: translate(1px, 1px); } }
+        @keyframes softFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } }
+        body.dark-mode .glitch-text { animation: textShake 0.3s ease-in-out infinite; }
+        .card-icon-mystery.filled { opacity: 1; animation: heartBeat 1.8s ease-in-out infinite; color: #fff; }
+        .main-btn, .scale-btn { will-change: transform; }
+        .container-box h1 { animation: softFloat 4s ease-in-out infinite; }
         #shatter-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .anim-shatter-flash { animation: flashShatter 1s ease-out forwards; }
         @keyframes flashShatter { 0% { opacity: 0; } 10% { opacity: 1; } 50% { opacity: 1; } 100% { opacity: 0; } }
@@ -128,10 +137,10 @@
 <div id="shatter-flash"></div>
 <div id="ssr-screen" class="hidden"><div class="ssr-quote"><div class="typewriter" id="typewriter"></div></div></div>
 <div id="app-wrapper">
+    <div class="top-nav">
+        <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
+    </div>
     <div id="screen-start" class="container-box">
-        <div class="top-nav">
-            <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
-        </div>
         <h1 class="glitch-text">Sugar Cage</h1>
         <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 20px;" data-text="subtitle">パートナーマッチング</h2>
         <p style="font-size: 0.95rem; line-height: 1.7; margin: 30px 0 40px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
@@ -140,7 +149,6 @@
         <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; width: 240px; box-sizing: border-box;">ARCHIVE</button>
     </div>
     <div id="screen-quiz" class="container-box hidden">
-        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-quiz">EN</button></div>
         <div class="status-container">
             <div class="status-title glitch-text">STATUS</div>
             <div class="stat-row"><span class="stat-label">P</span><div class="stat-bar-bg"><div id="bar-P" class="stat-bar-fill"></div></div><span id="val-P" class="stat-val">5</span></div>
@@ -154,7 +162,6 @@
         <div id="options-container" class="scale-container"></div>
     </div>
     <div id="screen-result" class="container-box hidden">
-        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-result">EN</button></div>
         <h1 class="glitch-text" style="color:var(--accent-color);">Analysis Complete</h1>
         <div id="result-selection">
             <p style="font-size: 0.9rem; margin: 25px 0; font-weight: 500; line-height: 1.8;" data-text="result_desc">あなたに、♡が届いています。一人を選んでマッチングしましょう</p>
@@ -185,7 +192,6 @@
         </div>
     </div>
     <div id="screen-archive" class="container-box hidden">
-        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-archive">EN</button></div>
         <h1 class="glitch-text" data-text="archive_title">ARCHIVE</h1>
         <div id="archive-grid-view">
             <div class="archive-grid" id="archive-grid-container"></div>
@@ -332,6 +338,12 @@
         root.style.setProperty('--stat-bg', c.statBg);
         root.style.setProperty('--btn-text-color', c.btnText);
         root.style.setProperty('--glitch-intensity', (idx * 0.1) + 'px');
+        // 後半（暗くなったら）文字揺れを有効化
+        if (idx >= 9) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
     }
 
     function resetColorPhase() {
@@ -345,6 +357,7 @@
         root.style.setProperty('--stat-bg', c.statBg);
         root.style.setProperty('--btn-text-color', c.btnText);
         root.style.setProperty('--glitch-intensity', '0px');
+        document.body.classList.remove('dark-mode');
     }
 
     function updateStatusUI() {
@@ -485,30 +498,44 @@
         const typewriterEl = document.getElementById('typewriter');
         typewriterEl.innerHTML = '';
         const quote = char.quote[currentLang] || '';
-        let charIndex = 0;
-        const interval = setInterval(() => {
-            if (charIndex < quote.length) {
-                typewriterEl.innerHTML += quote[charIndex];
-                charIndex++;
-            } else {
-                clearInterval(interval);
+        typeWriterFade(typewriterEl, quote, () => {
+            setTimeout(() => {
+                // 先に裏で結果詳細を用意（選択画面→詳細へ切替）
+                revealResult(char);
+                // 黒→白へ色を変えながら、SSR画面をフェードアウト
+                resetColorPhase();
+                ssrScreen.style.transition = 'opacity 1.2s ease';
+                ssrScreen.style.opacity = '0';
+                const resultScreen = document.getElementById('screen-result');
+                resultScreen.classList.remove('anim-fade-in');
+                void resultScreen.offsetWidth;
+                resultScreen.classList.add('anim-fade-in');
                 setTimeout(() => {
-                    // 黒→白へ切り替え、SSR画面をフェードアウト
-                    resetColorPhase();
-                    ssrScreen.style.transition = 'opacity 1s ease';
-                    ssrScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        ssrScreen.classList.add('hidden');
-                        ssrScreen.style.transition = '';
-                        revealResult(char);
-                        const resultScreen = document.getElementById('screen-result');
-                        resultScreen.classList.remove('anim-fade-in');
-                        void resultScreen.offsetWidth;
-                        resultScreen.classList.add('anim-fade-in');
-                    }, 1000);
-                }, 1500);
+                    ssrScreen.classList.add('hidden');
+                    ssrScreen.style.transition = '';
+                }, 1200);
+            }, 1200);
+        });
+    }
+
+    function typeWriterFade(el, text, onComplete) {
+        let i = 0;
+        function next() {
+            if (i < text.length) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                span.style.opacity = '0';
+                span.style.transition = 'opacity 0.4s ease';
+                el.appendChild(span);
+                void span.offsetWidth;
+                span.style.opacity = '1';
+                i++;
+                setTimeout(next, 70);
+            } else {
+                if (onComplete) onComplete();
             }
-        }, 50);
+        }
+        next();
     }
 
     function revealResult(char) {

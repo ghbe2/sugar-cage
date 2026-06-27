@@ -40,7 +40,7 @@
         "id": 9,
         "type": {
           "ja": "ごはんくれる",
-          "en": ""
+          "en": "Give me food"
         }
       }
     ]
@@ -86,7 +86,7 @@
         "id": 23,
         "type": {
           "ja": "ご主人様の知り合い？",
-          "en": ""
+          "en": "Is she an acquaintance of your husband?"
         }
       }
     ]
@@ -132,7 +132,14 @@
         "id": 11,
         "type": {
           "ja": "幼馴染",
-          "en": 9
+          "en": "Childhood friend"
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "ja": "先生♡",
+          "en": "Teacher♡"
         }
       }
     ]
@@ -178,7 +185,7 @@
         "id": 10,
         "type": {
           "ja": "知り合い",
-          "en": ""
+          "en": "acquaintance"
         }
       }
     ]
@@ -224,7 +231,14 @@
         "id": 6,
         "type": {
           "ja": "妹",
-          "en": 17
+          "en": "younger sister"
+        }
+      },
+      {
+        "id": 17,
+        "type": {
+          "ja": "大学の知り合い",
+          "en": "University acquaintances"
         }
       }
     ]
@@ -270,7 +284,14 @@
         "id": 5,
         "type": {
           "ja": "お姉ちゃん",
-          "en": 15
+          "en": "Big sister"
+        }
+      },
+      {
+        "id": 15,
+        "type": {
+          "ja": "推し♡",
+          "en": "My favorite ♡"
         }
       }
     ]
@@ -316,7 +337,14 @@
         "id": 25,
         "type": {
           "ja": "しゃちょう",
-          "en": 21
+          "en": "President"
+        }
+      },
+      {
+        "id": 21,
+        "type": {
+          "ja": "おしごとの人",
+          "en": "People at work"
         }
       }
     ]
@@ -400,14 +428,21 @@
         "id": 1,
         "type": {
           "ja": "ほっとけない！",
-          "en": 3
+          "en": "I can't just leave it!"
         }
       },
       {
-        "id": "先生じゃない",
+        "id": 3,
         "type": {
-          "ja": 11,
-          "en": "ご主人様じゃない"
+          "ja": "先生じゃない",
+          "en": "Not a teacher"
+        }
+      },
+      {
+        "id": 11,
+        "type": {
+          "ja": "ご主人様じゃない",
+          "en": "He's not my master."
         }
       }
     ]
@@ -439,8 +474,8 @@
       "en": "That's why I think we'll meet again."
     },
     "desc": {
-      "ja": "あなたが「ユゥナリナ」と初めて対面したときの話は、そうそう他人には言えないでしょう。その出会いは古いビルの円柱状のガラスドアを抜けた先にある、年季の入ったストリップ劇場で、ダンサーと観客としてだったからです。和洋折衷さまざまな衣装と音楽で踊るダンサーの中で、誰よりも目を引いた一人。黒い着物に身を包み、厳かにしなやかに、ターコイズブルーとオレンジに交互に輝くブロンドヘアを揺らしながら端正な麗人でした。\n\n激しさを増すダンスとともに着物は徐々にはだけていき、白い肩や鎖骨、長い手足がスポットライトのキャンバスになって飾られ、そして上半身が完全に露出し形のいいバストが観客の瞳に突き出されたとき、同時に、頬をぶたれたような衝撃でした。激しい破裂音が空気を割き、その背から大きく広がった黒い翼が現れたのです。汗と共に舞い散る黒曜石の羽根がステージにひらひらと落ち、着物がすとんと足元に下がって、一糸まとわぬ黒翼の天使があなたを見降ろしていました。\n\n誰もが呼吸を忘れ、翼も、突起も、アンダーヘアまでをも網膜に焼き付けているのをたっぷりと待ちながら目を伏せ、ゆっくりと沈み込んで床に尻を押し付け、大きく開脚してまだ秘めていたそこを露にしたのです。丁寧に肉のクレバスを押し開き、生花を活け、矢を吹き、卵を産んでと、自らの秘部を惜しみなく使う卑猥で過激な演目の数々は観客を熱狂させ続けたのです。\n\n誰よりも才気に恵まれ、飛び立つ翼も持つトリのアマルが、なぜ薄暗い地下で卑猥に踊っているのか。それは、初めてユゥナリナを目にした誰しもが抱く疑問です。ユゥナリナという真実を知りたくば、彼女について丁寧に紐解いていけばいずれたどり着けるかもしれません。\n",
-      "en": "You probably can't tell just anyone about your first encounter with \"Yuuna Lina.\" That encounter took place in a well-worn strip club, beyond the cylindrical glass doors of an old building, as dancer and audience member. Among the dancers, performing in a variety of Japanese and Western-style costumes and music, she stood out more than anyone else. Clad in a black kimono, she was a refined beauty, gracefully and dignified, her blonde hair, alternating between turquoise and orange, swaying with each movement.\n\nAs her dance intensified, her kimono gradually parted, her white shoulders, collarbone, and long limbs becoming a canvas under the spotlight. Then, as her upper body was fully exposed and her beautifully shaped bust was thrust before the audience's eyes, it was a shock like being slapped across the face. A violent popping sound ripped through the air, and large black wings spread from her back. Obsidian feathers, scattered with sweat, fluttered onto the stage, her kimono slumped to her feet, and a naked, black-winged angel looked down upon you.\n\nEveryone forgot to breathe, their eyes closed, waiting patiently for the wings, the protrusions, even the pubic hair, to be imprinted on their retinas. She slowly sank down, pressing her hips against the floor, spreading her legs wide to reveal what she had kept hidden. Carefully pushing open the crevice of her flesh, arranging fresh flowers, blowing arrows, laying eggs—her lewd and extreme acts, using her private parts without reservation, continued to thrill the audience.\n\nWhy was Amal, the star performer blessed with more talent than anyone else and possessing the wings to soar, dancing so obscenely in the dimly lit basement? That is the question everyone who sees Yunarina for the first time has. If you want to know the truth about Yunarina, carefully unraveling her story may eventually lead you there.\n\n"
+      "ja": "あなたが「ユゥナリナ」と初めて対面したときの話は、そうそう他人には言えないでしょう。その出会いは古いビルの円柱状のガラスドアを抜けた先にある、年季の入ったストリップ劇場で、ダンサーと観客としてだったからです。和洋折衷さまざまな衣装と音楽で踊るダンサーの中で、誰よりも目を引いた一人。黒い着物に身を包み、厳かにしなやかに、ターコイズブルーとオレンジに交互に輝くブロンドヘアを揺らしながら端正な麗人でした。\n\n激しさを増すダンスとともに着物は徐々にはだけていき、白い肩や鎖骨、長い手足がスポットライトのキャンバスになって飾られ、そして上半身が完全に露出し形のいいバストが観客の瞳に突き出されたとき、同時に、頬をぶたれたような衝撃でした。激しい破裂音が空気を割き、その背から大きく広がった黒い翼が現れたのです。汗と共に舞い散る黒曜石の羽根がステージにひらひらと落ち、着物がすとんと足元に下がって、一糸まとわぬ黒翼の天使があなたを見降ろしていました。\n\n誰もが呼吸を忘れ、翼も、突起も、アンダーヘアまでをも網膜に焼き付けているのをたっぷりと待ちながら目を伏せ、ゆっくりと沈み込んで床に尻を押し付け、大きく開脚してまだ秘めていたそこを露にしたのです。丁寧に肉のクレバスを押し開き、生花を活け、矢を吹き、卵を産んでと、自らの秘部を惜しみなく使う卑猥で過激な演目の数々は観客を熱狂させ続けたのです。\n\n誰よりも才気に恵まれ、飛び立つ翼も持つトリのアマルが、なぜ薄暗い地下で卑猥に踊っているのか。それは、初めてユゥナリナを目にした誰しもが抱く疑問です。ユゥナリナという真実を知りたくば、彼女について丁寧に紐解いていけばいずれたどり着けるかもしれません。",
+      "en": "You probably can't tell just anyone about your first encounter with \"Yuuna Lina.\" That encounter took place in a well-worn strip club, beyond the cylindrical glass doors of an old building, as dancer and audience member. Among the dancers, performing in a variety of Japanese and Western-style costumes and music, she stood out more than anyone else. Clad in a black kimono, she was a refined beauty, gracefully and dignified, her blonde hair, alternating between turquoise and orange, swaying with each movement.\n\nAs her dance intensified, her kimono gradually parted, her white shoulders, collarbone, and long limbs becoming a canvas under the spotlight. Then, as her upper body was fully exposed and her beautifully shaped bust was thrust before the audience's eyes, it was a shock like being slapped across the face. A violent popping sound ripped through the air, and large black wings spread from her back. Obsidian feathers, scattered with sweat, fluttered onto the stage, her kimono slumped to her feet, and a naked, black-winged angel looked down upon you.\n\nEveryone forgot to breathe, their eyes closed, waiting patiently for the wings, the protrusions, even the pubic hair, to be imprinted on their retinas. She slowly sank down, pressing her hips against the floor, spreading her legs wide to reveal what she had kept hidden. Carefully pushing open the crevice of her flesh, arranging fresh flowers, blowing arrows, laying eggs—her lewd and extreme acts, using her private parts without reservation, continued to thrill the audience.\n\nWhy was Amal, the star performer blessed with more talent than anyone else and possessing the wings to soar, dancing so obscenely in the dimly lit basement? That is the question everyone who sees Yunarina for the first time has. If you want to know the truth about Yunarina, carefully unraveling her story may eventually lead you there."
     },
     "descSensitive": {
       "ja": "ユゥナリナのことは多くの人が知っています。花電車芸のできる踊り子は数えるほどしかおらず、その美貌は西の新町の顔でもあります。彼女が暮らすその歓楽街で、隠そうともしない地元の方言は、さらに南西に生まれたことを教えてくれます。故郷ではもっと有名で、ユゥナリナを知らぬものはいないほどです。彼女の出自はその地で最も大きな名家なのですから。\r\n\r\nその家は、古くは貴族の警護や武芸指南を担った名門で、戦国のあらゆる決定や娯楽において、家系の男子同士の決闘が重要な役目を果たしました。故に家系図には殊更に優秀な決闘鶏士が名を連ね、いまやトリのアマル特徴が色濃く現れる特別な血となりました。そして、その時代の才ある男子4名には「天草四王」の称号が与えられるのです。\r\n\r\nしかし、現代においてその名誉に最も相応しく生まれたのはユゥナリナでした。体躯に武芸の才、漆黒の翼に美しい髪。歴史にもないような才覚の数々は名家の期待を優に上回るものでした。ユゥナリナはただ一つ、血の期待を裏切りました。それは女子として生まれたことです。由緒ある称号は才ある男子たちを選びましたが、その才のいずれも女子に勝っているとは認められず、男子に勝る女子はたちまち呪いとなったのです。\r\n\r\nこの悪意あるマッチングアプリは、ユゥナリナの無自覚の悪意と完全に同期を果たしました。ただ生まれただけなのに忌み子として同族に呪われる不幸。ユゥナリナが後を濁して立ち、鳥無き里の蝙蝠たちと遠ざけながらも、同じ血の流れる我が身をさらに薄暗い世界に捧げるのは、それが自身を呪いから解放させるのだと淡く願っているためです。そして、その解呪の儀式には、あなたのような血眼で群がる観衆が一人でも多く必要なのです。",
@@ -453,7 +488,7 @@
         "id": 4,
         "type": {
           "ja": "よか人",
-          "en": ""
+          "en": "Good person"
         }
       }
     ]
@@ -499,7 +534,14 @@
         "id": 3,
         "type": {
           "ja": "親友",
-          "en": 9
+          "en": "best friend"
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "ja": "ご主人様♡",
+          "en": "My dear master ♡"
         }
       }
     ]
@@ -545,7 +587,7 @@
         "id": 29,
         "type": {
           "ja": "憧れ",
-          "en": ""
+          "en": "longing"
         }
       }
     ]
@@ -591,7 +633,14 @@
         "id": 14,
         "type": {
           "ja": "友達",
-          "en": 15
+          "en": "friend"
+        }
+      },
+      {
+        "id": 15,
+        "type": {
+          "ja": "なにかした？",
+          "en": "Did you do something?"
         }
       }
     ]
@@ -637,7 +686,7 @@
         "id": 13,
         "type": {
           "ja": "友達",
-          "en": ""
+          "en": "friend"
         }
       }
     ]
@@ -683,7 +732,14 @@
         "id": 13,
         "type": {
           "ja": "気に食わない",
-          "en": 6
+          "en": "I don't like it"
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "ja": "近衛兵（リスナー）",
+          "en": "Royal Guard (listener)"
         }
       }
     ]
@@ -767,7 +823,14 @@
         "id": 5,
         "type": {
           "ja": "ライバル",
-          "en": 28
+          "en": "rival"
+        }
+      },
+      {
+        "id": 28,
+        "type": {
+          "ja": "憧れ",
+          "en": "longing"
         }
       }
     ]
@@ -813,7 +876,7 @@
         "id": 4,
         "type": {
           "ja": "夢",
-          "en": ""
+          "en": "dream"
         }
       }
     ]
@@ -859,14 +922,21 @@
         "id": 21,
         "type": {
           "ja": "まだダメ",
-          "en": 20
+          "en": "Not yet."
         }
       },
       {
-        "id": "優秀な取引先",
+        "id": 20,
         "type": {
-          "ja": 22,
-          "en": "競合"
+          "ja": "優秀な取引先",
+          "en": "Excellent business partners"
+        }
+      },
+      {
+        "id": 22,
+        "type": {
+          "ja": "競合",
+          "en": "Competitors"
         }
       }
     ]
@@ -912,7 +982,14 @@
         "id": 22,
         "type": {
           "ja": "服従",
-          "en": 19
+          "en": "Obedience"
+        }
+      },
+      {
+        "id": 19,
+        "type": {
+          "ja": "お得意様",
+          "en": "Our valued customers"
         }
       }
     ]
@@ -958,14 +1035,21 @@
         "id": 19,
         "type": {
           "ja": "我慢できない",
-          "en": 22
+          "en": "I can't stand it"
         }
       },
       {
-        "id": "無茶なクライアント",
+        "id": 22,
         "type": {
-          "ja": 25,
-          "en": "業界のレジェンド"
+          "ja": "無茶なクライアント",
+          "en": "Unreasonable client"
+        }
+      },
+      {
+        "id": 25,
+        "type": {
+          "ja": "業界のレジェンド",
+          "en": "Industry legend"
         }
       }
     ]
@@ -1011,14 +1095,21 @@
         "id": 20,
         "type": {
           "ja": "ストレス発散",
-          "en": 7
+          "en": "Stress relief"
         }
       },
       {
-        "id": "ほしい",
+        "id": 7,
         "type": {
-          "ja": 1,
-          "en": "代替品"
+          "ja": "ほしい",
+          "en": "I want"
+        }
+      },
+      {
+        "id": 1,
+        "type": {
+          "ja": "代替品",
+          "en": "replacement product"
         }
       }
     ]
@@ -1064,7 +1155,7 @@
         "id": 2,
         "type": {
           "ja": "見た顔だね",
-          "en": ""
+          "en": "I recognize that face."
         }
       }
     ]
@@ -1110,7 +1201,7 @@
         "id": 14,
         "type": {
           "ja": "利用者リスト",
-          "en": ""
+          "en": "User list"
         }
       }
     ]
@@ -1156,7 +1247,14 @@
         "id": 22,
         "type": {
           "ja": "対等な相手",
-          "en": 7
+          "en": "Equal opponent"
+        }
+      },
+      {
+        "id": 7,
+        "type": {
+          "ja": "至宝",
+          "en": "Treasure"
         }
       }
     ]
@@ -1240,7 +1338,14 @@
         "id": 30,
         "type": {
           "ja": "愛人の娘",
-          "en": 22
+          "en": "The mistress's daughter"
+        }
+      },
+      {
+        "id": 22,
+        "type": {
+          "ja": "クライアント",
+          "en": "client"
         }
       }
     ]
@@ -1286,7 +1391,14 @@
         "id": 26,
         "type": {
           "ja": "実験に関与",
-          "en": 17
+          "en": "Involved in the experiment"
+        }
+      },
+      {
+        "id": 17,
+        "type": {
+          "ja": "利用",
+          "en": "use"
         }
       }
     ]
@@ -1332,7 +1444,7 @@
         "id": 12,
         "type": {
           "ja": "患者",
-          "en": ""
+          "en": "patient"
         }
       }
     ]
@@ -1378,7 +1490,14 @@
         "id": 31,
         "type": {
           "ja": "親友",
-          "en": 32
+          "en": "best friend"
+        }
+      },
+      {
+        "id": 32,
+        "type": {
+          "ja": "親友",
+          "en": "best friend"
         }
       }
     ]
@@ -1424,7 +1543,14 @@
         "id": 32,
         "type": {
           "ja": "親友",
-          "en": 30
+          "en": "best friend"
+        }
+      },
+      {
+        "id": 30,
+        "type": {
+          "ja": "親友",
+          "en": "best friend"
         }
       }
     ]
@@ -1470,7 +1596,14 @@
         "id": 30,
         "type": {
           "ja": "親友",
-          "en": 31
+          "en": "best friend"
+        }
+      },
+      {
+        "id": 31,
+        "type": {
+          "ja": "親友……",
+          "en": "Best friend..."
         }
       }
     ]

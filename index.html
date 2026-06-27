@@ -392,7 +392,8 @@
         }
         // ボタンラベルも更新
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
+        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
         }
@@ -712,12 +713,24 @@
         }
     }
 
-    function shareResultX() {
-        const char = characters.find(c => c.id === parseInt(document.getElementById('detail-name').getAttribute('data-char-id')));
+    function shareCharById(id) {
+        const char = characters.find(c => c.id === id);
         if (!char) return;
         const text = char.name[currentLang] + '\n' + char.quote[currentLang] + '\n#SugarCageMatch';
-        const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=https://ghbe2.github.io/sugar-cage/';
+        const idStr = String(char.id).padStart(2, '0');
+        const shareUrl = 'https://ghbe2.github.io/sugar-cage/c/' + idStr + '.html';
+        const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
         window.open(url, '_blank');
+    }
+
+    function shareResultX() {
+        const id = parseInt(document.getElementById('detail-name').getAttribute('data-char-id'));
+        shareCharById(id);
+    }
+
+    function shareArchiveX() {
+        const id = parseInt(document.getElementById('arc-detail-name').getAttribute('data-char-id'));
+        shareCharById(id);
     }
 
     function followX() {
@@ -934,12 +947,12 @@
             corrEl.classList.add('hidden');
         }
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
+        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
         }
         buttonsContainer.innerHTML = btnHtml;
-        scrollScreensTop();
     }
 
     function backToArchiveGrid() {

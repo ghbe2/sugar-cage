@@ -6,27 +6,22 @@
     <title>Sugar Cage Match</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
-
         :root {
             --font-title: 'DotGothic16', monospace, sans-serif;
             --font-main: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-            
             --bg-color: #fce4ec;
             --box-bg: rgba(255, 255, 255, 0.98);
             --text-color: #2b1f24;
             --accent-color: #e91e63;
             --border-color: #f48fb1;
-            
+            --btn-text-color: #2b1f24;
             --glitch-intensity: 0px;
             --stat-bg: rgba(0,0,0,0.05);
         }
-
         body {
             font-family: var(--font-main);
             background-color: var(--bg-color);
-            background-image: 
-                linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px),
-                linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
             background-size: 20px 20px;
             color: var(--text-color);
             display: flex;
@@ -39,13 +34,11 @@
             overflow: hidden;
             transition: background-color 2s ease, color 2s ease;
         }
-
         #app-wrapper { width: 100%; max-width: 1000px; z-index: 10; position: relative; }
-
         .container-box {
             background: var(--box-bg);
             border-radius: 12px;
-            padding: 40px;
+            padding: 40px 40px 40px 40px;
             width: 100%;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             text-align: center;
@@ -54,22 +47,13 @@
             transition: background 2s ease, border-color 2s ease, color 2s ease;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
         }
-
-        .glitch-text {
-            font-family: var(--font-title);
-            text-shadow: 
-                calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5),
-                calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5);
-            transition: text-shadow 0.5s;
-        }
-
+        .glitch-text { font-family: var(--font-title); text-shadow: calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5), calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5); transition: text-shadow 0.5s; }
         h1 { font-family: var(--font-title); font-size: 1.8rem; border-bottom: 2px dashed var(--accent-color); padding-bottom: 15px; margin-bottom: 30px; color: var(--accent-color); letter-spacing: 2px; transition: color 2s ease, border-color 2s ease; }
-        
-        .top-nav { position: absolute; top: 0; right: 0; display: flex; gap: 10px; }
-        .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
-        .small-btn:hover { background: var(--accent-color); color: #fff; }
-
+        .top-nav { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        .small-btn:hover { background: var(--accent-color); color: white; transform: scale(1.05); }
         .status-container { background: rgba(128,128,128,0.1); padding: 16px; border-radius: 8px; margin-bottom: 30px; text-align: left; border: 1px solid var(--border-color); transition: border-color 2s ease; }
         .status-title { font-family: var(--font-title); font-size: 0.85rem; color: var(--accent-color); margin-bottom: 12px; text-align: center; letter-spacing: 2px; transition: color 2s ease; }
         .stat-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.85rem; font-family: var(--font-title); }
@@ -77,76 +61,39 @@
         .stat-bar-bg { flex: 1; height: 10px; background: var(--stat-bg); border-radius: 5px; overflow: hidden; margin: 0 12px; border: 1px solid var(--border-color); }
         .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
-
-        .question-text { font-size: 1.05rem; line-height: 1.7; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; }
-
-        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; }
+        .question-text { font-size: 1.05rem; line-height: 1.7; height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; }
+        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
-        .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; }
-        .scale-btn:hover, .scale-btn:active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
-
+        .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; color: var(--btn-text-color); }
+        .scale-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: white; transform: scale(1.05); }
         .hidden { display: none !important; }
-        
         .blind-cards-container { display: flex; flex-direction: column; gap: 14px; margin-bottom: 35px; }
         .blind-card { background: var(--box-bg); border: 2px solid var(--border-color); border-radius: 8px; padding: 18px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; }
         .blind-card:hover { transform: scale(1.02); filter: brightness(1.1); }
         .blind-card.glow { border: 2px solid #ff4081; box-shadow: 0 0 15px rgba(255, 64, 129, 0.5); animation: neonPulse 1.5s infinite alternate; }
         @keyframes neonPulse { from { box-shadow: 0 0 5px #f06292; } to { box-shadow: 0 0 20px #e91e63; } }
-        
-        .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; }
+        .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; transition: 0.3s; }
         .card-icon-mystery.filled { opacity: 1; }
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
-
-        /* SSR演出画面 */
         #ssr-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .ssr-quote { font-size: 2rem; font-style: italic; color: var(--accent-color); text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .ssr-quote { font-size: 2rem; font-style: italic; color: #e91e63; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .typewriter { min-height: 100px; }
-
-        /* RESULT DETAIL PANEL */
         .detail-panel { padding: 0; text-align: center; }
-        
         .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 24px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
         .char-quote::before { content: '「'; }
         .char-quote::after { content: '」'; }
-
         .char-image-section { margin: 20px 0; text-align: center; }
         .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
-
         .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 20px; padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
-        
         .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
-
-        .expand-sensitive { 
-            background: linear-gradient(135deg, var(--accent-color), #ff80ab);
-            color: white; 
-            border: none;
-            padding: 16px 28px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 0.95rem; 
-            font-weight: bold; 
-            letter-spacing: 1px;
-            margin: 28px 0; 
-            transition: 0.3s;
-            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3);
-            width: 100%;
-            display: block;
-        }
-        .expand-sensitive:hover { 
-            filter: brightness(1.1); 
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(233, 30, 99, 0.4);
-        }
-
+        .expand-sensitive { background: linear-gradient(135deg, var(--accent-color), #ff80ab); color: white; border: none; padding: 16px 28px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold; letter-spacing: 1px; margin: 28px 0; transition: 0.3s; box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); width: 100%; display: block; }
+        .expand-sensitive:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233, 30, 99, 0.4); }
         .sensitive-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
         .sensitive-content.expanded { max-height: 3000px; }
-
         .sensitive-image-section { margin: 20px 0; text-align: center; }
         .sensitive-text { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; color: var(--text-color); margin-top: 20px; text-align: left; }
-
         .correlations { background: rgba(128,128,128,0.05); padding: 20px; border-radius: 8px; margin-top: 24px; border: 1px solid var(--border-color); }
         .corr-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 16px; text-transform: uppercase; font-weight: bold; transition: color 2s ease; }
-        
         .corr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 14px; }
         .corr-card { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; text-align: center; }
         .corr-icon { width: 70px; height: 70px; background: linear-gradient(135deg, var(--accent-color), #ff80ab); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; border: 2px solid var(--border-color); transition: 0.3s; }
@@ -155,69 +102,18 @@
         .corr-label { font-size: 0.7rem; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; margin-bottom: 3px; transition: color 2s ease; }
         .corr-name { font-size: 0.75rem; color: var(--text-color); font-weight: 600; }
         .corr-card.locked .corr-name { opacity: 0.4; }
-
-        .main-btn { 
-            font-family: var(--font-main); 
-            background: var(--accent-color); 
-            color: white; 
-            border: none; 
-            padding: 13px 24px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 0.9rem; 
-            transition: 0.2s; 
-            font-weight: bold; 
-            letter-spacing: 1px;
-            display: inline-block;
-            margin: 8px;
-        }
-        .main-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-
-        .sub-btn { 
-            background: transparent; 
-            color: var(--accent-color); 
-            border: 2px solid var(--accent-color); 
-        }
+        .main-btn { font-family: var(--font-main); background: var(--accent-color); color: white; border: none; padding: 13px 24px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: 0.3s; font-weight: bold; letter-spacing: 1px; display: inline-block; margin: 8px; }
+        .main-btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .sub-btn { background: transparent; color: var(--accent-color); border: 2px solid var(--accent-color); }
         .sub-btn:hover { background: var(--accent-color); color: white; }
-
         .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 28px; flex-wrap: wrap; }
-
-        .archive-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 16px; 
-            margin-bottom: 40px; 
-            margin-top: 20px;
-        }
-        .archive-slot { 
-            background: rgba(128,128,128,0.1); 
-            border: 1px solid var(--border-color); 
-            border-radius: 8px; 
-            padding: 0; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            aspect-ratio: 1 / 1;
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
+        .archive-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; margin-top: 20px; }
+        .archive-slot { background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; cursor: pointer; transition: 0.3s; aspect-ratio: 1 / 1; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .archive-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .archive-slot.locked { 
-            background: #1a1a1a; 
-            cursor: not-allowed; 
-            border: 2px dashed rgba(128,128,128,0.3);
-            font-size: 16px;
-        }
-        .archive-slot.unimplemented {
-            background: #2a2a2a;
-            cursor: not-allowed;
-            border: 2px dashed rgba(128,128,128,0.3);
-            font-size: 36px;
-        }
+        .archive-slot.locked { background: #1a1a1a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); }
+        .archive-slot.unimplemented { background: #2a2a2a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); font-size: 36px; }
         .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
         .archive-slot:hover:not(.locked):not(.unimplemented) { filter: brightness(1.15); transform: scale(1.02); }
-
         #shatter-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; z-index: 9999; opacity: 0; pointer-events: none; }
         .anim-shatter-flash { animation: flashShatter 1s ease-out forwards; }
         @keyframes flashShatter { 0% { opacity: 0; } 10% { opacity: 1; } 50% { opacity: 1; } 100% { opacity: 0; } }
@@ -225,32 +121,25 @@
         @keyframes breakContainer { 0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); } 20% { transform: scale(1.05) rotate(-2deg); filter: brightness(2); } 100% { transform: translateY(100vh) rotate(15deg) scale(0.8); opacity: 0; filter: brightness(0); } }
         .anim-fade-in { animation: fadeIn 1.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            .container-box { padding: 28px; }
-            .archive-grid { grid-template-columns: repeat(4, 1fr); }
-        }
+        @media (max-width: 768px) { .container-box { padding: 40px 20px; } .top-nav { top: 15px; right: 15px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
-
 <div id="shatter-flash"></div>
 <div id="ssr-screen" class="hidden"><div class="ssr-quote"><div class="typewriter" id="typewriter"></div></div></div>
-
 <div id="app-wrapper">
-    <div class="top-nav">
-        <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
-    </div>
-
     <div id="screen-start" class="container-box">
+        <div class="top-nav">
+            <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
+        </div>
         <h1 class="glitch-text">Sugar Cage</h1>
         <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 20px;" data-text="subtitle">パートナーマッチング</h2>
         <p style="font-size: 0.95rem; line-height: 1.7; margin: 30px 0 40px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
         <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 160px;">START</button>
         <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 160px;">ARCHIVE</button>
     </div>
-
     <div id="screen-quiz" class="container-box hidden">
+        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-quiz">EN</button></div>
         <div class="status-container">
             <div class="status-title glitch-text">STATUS</div>
             <div class="stat-row"><span class="stat-label">P</span><div class="stat-bar-bg"><div id="bar-P" class="stat-bar-fill"></div></div><span id="val-P" class="stat-val">5</span></div>
@@ -263,8 +152,8 @@
         <div class="scale-labels"><span data-text="agree">わかる</span><span data-text="neutral">迷う</span><span data-text="disagree">ちがう</span></div>
         <div id="options-container" class="scale-container"></div>
     </div>
-
     <div id="screen-result" class="container-box hidden">
+        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-result">EN</button></div>
         <h1 class="glitch-text" style="color:var(--accent-color);">Analysis Complete</h1>
         <div id="result-selection">
             <p style="font-size: 0.9rem; margin: 25px 0; font-weight: 500; line-height: 1.8;" data-text="result_desc">あなたに、♡が届いています。一人を選んでマッチングしましょう</p>
@@ -294,13 +183,13 @@
             </div>
         </div>
     </div>
-
     <div id="screen-archive" class="container-box hidden">
+        <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-archive">EN</button></div>
         <h1 class="glitch-text" data-text="archive_title">ARCHIVE</h1>
         <div id="archive-grid-view">
             <div class="archive-grid" id="archive-grid-container"></div>
             <div class="buttons-container">
-                <button class="main-btn sub-btn" onclick="closeArchive()" data-text="back_btn">BACK</button>
+                <button class="main-btn sub-btn" onclick="backFromArchive()" id="back-archive-btn" data-text="back_btn">BACK</button>
             </div>
         </div>
         <div id="archive-detail-view" class="hidden">
@@ -319,14 +208,10 @@
                     <div class="corr-grid" id="archive-corr-list"></div>
                 </div>
             </div>
-            <div class="buttons-container">
-                <button class="main-btn sub-btn" onclick="backToResultFromArchive()" data-text="back_result">分析結果に戻る</button>
-                <button class="main-btn sub-btn" onclick="resetQuizFromArchive()" data-text="restart_btn" style="min-width: 160px;">リスタート</button>
-            </div>
+            <div class="buttons-container" id="archive-detail-buttons"></div>
         </div>
     </div>
 </div>
-
 <script>
     let currentLang = 'ja';
     let stats = { P: 5, M: 5, I: 5, E: 5 };
@@ -336,7 +221,7 @@
     let top3Results = [];
     let characters = [];
     let viewedCharIds = new Set();
-    let comingFromArchive = false;
+    let comingFromResult = false;
 
     const ui = {
         subtitle: { ja: "パートナーマッチング", en: "Partner Matching" },
@@ -353,8 +238,8 @@
         follow_btn: { ja: "🔗 Follow @ai_be2", en: "🔗 Follow @ai_be2" },
         restart_btn: { ja: "RESTART", en: "RESTART" },
         back_result: { ja: "分析結果に戻る", en: "Back to Result" },
-        archive_title: { ja: "観測記録", en: "ARCHIVE" },
         back_btn: { ja: "戻る", en: "BACK" },
+        archive_title: { ja: "観測記録", en: "ARCHIVE" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
 
@@ -392,21 +277,21 @@
     ];
 
     const colorPhases = [
-        { bg: "#fce4ec", box: "rgba(255,255,255,0.98)", text: "#2b1f24", acc: "#e91e63", bdr: "#f48fb1", statBg: "rgba(0,0,0,0.05)" },
-        { bg: "#f8dee7", box: "rgba(255,252,253,0.98)", text: "#2b1f24", acc: "#e61d62", bdr: "#f18ba9", statBg: "rgba(0,0,0,0.05)" },
-        { bg: "#f4d8e1", box: "rgba(255,248,251,0.98)", text: "#291d22", acc: "#e21c60", bdr: "#ee86a0", statBg: "rgba(0,0,0,0.06)" },
-        { bg: "#f0d0dc", box: "rgba(255,245,250,0.98)", text: "#241b1f", acc: "#d81b60", bdr: "#e07a9e", statBg: "rgba(0,0,0,0.08)" },
-        { bg: "#e9c8d5", box: "rgba(250,236,243,0.98)", text: "#21181c", acc: "#d1195d", bdr: "#d86f94", statBg: "rgba(0,0,0,0.1)" }, 
-        { bg: "#e3c1cd", box: "rgba(245,228,237,0.98)", text: "#1d1316", acc: "#ca175a", bdr: "#d0658a", statBg: "rgba(0,0,0,0.12)" },
-        { bg: "#dcbac6", box: "rgba(240,220,230,0.98)", text: "#1a1013", acc: "#c2185b", bdr: "#c85a80", statBg: "rgba(0,0,0,0.15)" },
-        { bg: "#c19fad", box: "rgba(186,163,173,0.98)", text: "#180d10", acc: "#b02263", bdr: "#bb5b7c", statBg: "rgba(0,0,0,0.18)" },
-        { bg: "#a68595", box: "rgba(133,106,116,0.98)", text: "#160a0d", acc: "#9d2c6b", bdr: "#af5d78", statBg: "rgba(0,0,0,0.2)" }, 
-        { bg: "#8c6072", box: "rgba(80,50,60,0.98)",    text: "#fdf5f8", acc: "#ff4081", bdr: "#a35a78", statBg: "rgba(255,255,255,0.1)" },
-        { bg: "#6d4757", box: "rgba(58,35,43,0.98)",    text: "#fdf5f8", acc: "#fa5c90", bdr: "#9a4362", statBg: "rgba(255,255,255,0.1)" },
-        { bg: "#4d2e3b", box: "rgba(36,20,26,0.98)",    text: "#fdf5f8", acc: "#f777a0", bdr: "#912c4c", statBg: "rgba(255,255,255,0.1)" },
-        { bg: "#2e1920", box: "rgba(25,15,18,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#8a1d3b", statBg: "rgba(255,255,255,0.15)" },
-        { bg: "#1d1115", box: "rgba(22,13,16,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#891535", statBg: "rgba(255,255,255,0.15)" },
-        { bg: "#0d090a", box: "rgba(20,11,14,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#880e4f", statBg: "rgba(255,255,255,0.15)" }
+        { bg: "#fce4ec", box: "rgba(255,255,255,0.98)", text: "#2b1f24", acc: "#e91e63", bdr: "#f48fb1", statBg: "rgba(0,0,0,0.05)", btnText: "#2b1f24" },
+        { bg: "#f8dee7", box: "rgba(255,252,253,0.98)", text: "#2b1f24", acc: "#e61d62", bdr: "#f18ba9", statBg: "rgba(0,0,0,0.05)", btnText: "#2b1f24" },
+        { bg: "#f4d8e1", box: "rgba(255,248,251,0.98)", text: "#291d22", acc: "#e21c60", bdr: "#ee86a0", statBg: "rgba(0,0,0,0.06)", btnText: "#291d22" },
+        { bg: "#f0d0dc", box: "rgba(255,245,250,0.98)", text: "#241b1f", acc: "#d81b60", bdr: "#e07a9e", statBg: "rgba(0,0,0,0.08)", btnText: "#241b1f" },
+        { bg: "#e9c8d5", box: "rgba(250,236,243,0.98)", text: "#21181c", acc: "#d1195d", bdr: "#d86f94", statBg: "rgba(0,0,0,0.1)", btnText: "#21181c" }, 
+        { bg: "#e3c1cd", box: "rgba(245,228,237,0.98)", text: "#1d1316", acc: "#ca175a", bdr: "#d0658a", statBg: "rgba(0,0,0,0.12)", btnText: "#1d1316" },
+        { bg: "#dcbac6", box: "rgba(240,220,230,0.98)", text: "#1a1013", acc: "#c2185b", bdr: "#c85a80", statBg: "rgba(0,0,0,0.15)", btnText: "#1a1013" },
+        { bg: "#c19fad", box: "rgba(186,163,173,0.98)", text: "#180d10", acc: "#b02263", bdr: "#bb5b7c", statBg: "rgba(0,0,0,0.18)", btnText: "#180d10" },
+        { bg: "#a68595", box: "rgba(133,106,116,0.98)", text: "#160a0d", acc: "#9d2c6b", bdr: "#af5d78", statBg: "rgba(0,0,0,0.2)", btnText: "#160a0d" }, 
+        { bg: "#8c6072", box: "rgba(80,50,60,0.98)",    text: "#fdf5f8", acc: "#ff4081", bdr: "#a35a78", statBg: "rgba(255,255,255,0.1)", btnText: "#fdf5f8" },
+        { bg: "#6d4757", box: "rgba(58,35,43,0.98)",    text: "#fdf5f8", acc: "#fa5c90", bdr: "#9a4362", statBg: "rgba(255,255,255,0.1)", btnText: "#fdf5f8" },
+        { bg: "#4d2e3b", box: "rgba(36,20,26,0.98)",    text: "#fdf5f8", acc: "#f777a0", bdr: "#912c4c", statBg: "rgba(255,255,255,0.1)", btnText: "#fdf5f8" },
+        { bg: "#2e1920", box: "rgba(25,15,18,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#8a1d3b", statBg: "rgba(255,255,255,0.15)", btnText: "#ffffff" },
+        { bg: "#1d1115", box: "rgba(22,13,16,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#891535", statBg: "rgba(255,255,255,0.15)", btnText: "#ffffff" },
+        { bg: "#0d090a", box: "rgba(20,11,14,0.98)",    text: "#ffffff", acc: "#f48fb1", bdr: "#880e4f", statBg: "rgba(255,255,255,0.15)", btnText: "#ffffff" }
     ];
 
     function loadViewedChars() {
@@ -424,23 +309,14 @@
             if (!response.ok) throw new Error('JSON読み込み失敗');
             characters = await response.json();
         } catch (error) {
-            console.error('❌ エラー:', error);
-            alert('キャラクターデータの読み込みに失敗しました。ページをリロードしてください。');
+            alert('キャラクターデータの読み込みに失敗しました。');
         }
-    }
-
-    function t(key) {
-        return ui[key] ? ui[key][currentLang] : "";
     }
 
     function toggleLang() {
         currentLang = currentLang === 'ja' ? 'en' : 'ja';
-        document.getElementById('lang-btn').innerText = currentLang === 'ja' ? 'EN' : 'JA';
-        document.querySelectorAll('[data-text]').forEach(el => {
-            const key = el.getAttribute('data-text');
-            if (ui[key]) el.innerHTML = ui[key][currentLang];
-        });
-        if (!document.getElementById('screen-quiz').classList.contains('hidden')) showQuestion(false);
+        document.querySelectorAll('[id*="lang-btn"]').forEach(btn => btn.innerText = currentLang === 'ja' ? 'EN' : 'JA');
+        document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
     }
 
     function applySmoothColorPhase() {
@@ -453,6 +329,7 @@
         root.style.setProperty('--accent-color', c.acc);
         root.style.setProperty('--border-color', c.bdr);
         root.style.setProperty('--stat-bg', c.statBg);
+        root.style.setProperty('--btn-text-color', c.btnText);
         root.style.setProperty('--glitch-intensity', (idx * 0.1) + 'px');
     }
 
@@ -465,6 +342,7 @@
         root.style.setProperty('--accent-color', c.acc);
         root.style.setProperty('--border-color', c.bdr);
         root.style.setProperty('--stat-bg', c.statBg);
+        root.style.setProperty('--btn-text-color', c.btnText);
         root.style.setProperty('--glitch-intensity', '0px');
     }
 
@@ -485,18 +363,7 @@
         resetColorPhase();
         stats = { P: 5, M: 5, I: 5, E: 5 };
         currentQuestionIndex = 0;
-        comingFromArchive = false;
-        document.getElementById('screen-result').classList.add('hidden');
-        document.getElementById('screen-archive').classList.add('hidden');
-        document.getElementById('screen-start').classList.remove('hidden');
-        updateStatusUI();
-    }
-
-    function resetQuizFromArchive() {
-        resetColorPhase();
-        stats = { P: 5, M: 5, I: 5, E: 5 };
-        currentQuestionIndex = 0;
-        comingFromArchive = false;
+        comingFromResult = false;
         document.getElementById('screen-result').classList.add('hidden');
         document.getElementById('screen-archive').classList.add('hidden');
         document.getElementById('screen-start').classList.remove('hidden');
@@ -513,20 +380,14 @@
         showQuestion(true);
     }
 
-    function showQuestion(advance = true) {
+    function showQuestion() {
         applySmoothColorPhase();
         const q = quizQuestions[currentQuestionIndex];
         document.getElementById('question-number').innerText = 'Q' + (currentQuestionIndex + 1) + ' / 15';
         document.getElementById('question-text').innerText = q.q[currentLang];
         const container = document.getElementById('options-container');
         container.innerHTML = '';
-        const btns = [
-            { label: '<<', mult: 2 },
-            { label: '<', mult: 1 },
-            { label: '・', mult: 'random' },
-            { label: '>', mult: -1 },
-            { label: '>>', mult: -2 }
-        ];
+        const btns = [{ label: '<<', mult: 2 }, { label: '<', mult: 1 }, { label: '・', mult: 'random' }, { label: '>', mult: -1 }, { label: '>>', mult: -2 }];
         btns.forEach((btn) => {
             const btnEl = document.createElement('button');
             btnEl.className = 'scale-btn';
@@ -550,7 +411,7 @@
         currentQuestionIndex++;
         if (currentQuestionIndex < 15) {
             updateStatusUI();
-            showQuestion(true);
+            showQuestion();
         } else {
             playShatterTransition();
         }
@@ -681,7 +542,10 @@
     }
 
     function openArchiveFromResult() {
-        comingFromArchive = true;
+        comingFromResult = true;
+        resetColorPhase();
+        document.getElementById('result-selection').classList.remove('hidden');
+        document.getElementById('result-details').classList.add('hidden');
         document.getElementById('screen-result').classList.add('hidden');
         document.getElementById('screen-archive').classList.remove('hidden');
         renderArchive();
@@ -690,7 +554,8 @@
     }
 
     function openArchive() {
-        comingFromArchive = false;
+        comingFromResult = false;
+        resetColorPhase();
         document.getElementById('screen-start').classList.add('hidden');
         document.getElementById('screen-archive').classList.remove('hidden');
         renderArchive();
@@ -698,16 +563,16 @@
         document.getElementById('archive-detail-view').classList.add('hidden');
     }
 
-    function closeArchive() {
+    function backFromArchive() {
         document.getElementById('screen-archive').classList.add('hidden');
-        document.getElementById('screen-start').classList.remove('hidden');
-    }
-
-    function backToResultFromArchive() {
-        document.getElementById('archive-detail-view').classList.add('hidden');
-        document.getElementById('archive-grid-view').classList.add('hidden');
-        document.getElementById('screen-archive').classList.add('hidden');
-        document.getElementById('screen-result').classList.remove('hidden');
+        if (comingFromResult) {
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('result-selection').classList.add('hidden');
+            document.getElementById('result-details').classList.remove('hidden');
+        } else {
+            resetColorPhase();
+            document.getElementById('screen-start').classList.remove('hidden');
+        }
     }
 
     function renderArchive() {
@@ -766,14 +631,18 @@
         } else {
             corrEl.classList.add('hidden');
         }
+        const buttonsContainer = document.getElementById('archive-detail-buttons');
+        buttonsContainer.innerHTML = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">戻る</button><button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">リスタート</button>';
     }
 
-    document.querySelectorAll('[data-text]').forEach(el => {
-        const key = el.getAttribute('data-text');
-        if (ui[key]) el.innerHTML = ui[key][currentLang];
-    });
+    function backToArchiveGrid() {
+        document.getElementById('archive-detail-view').classList.add('hidden');
+        document.getElementById('archive-grid-view').classList.remove('hidden');
+    }
+
     loadViewedChars();
     loadCharacters();
+    document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
 </script>
 </body>
 </html>

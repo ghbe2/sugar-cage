@@ -62,7 +62,8 @@
         .stat-bar-bg { flex: 1; height: 10px; background: var(--stat-bg); border-radius: 5px; overflow: hidden; margin: 0 12px; border: 1px solid var(--border-color); }
         .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
-        .question-text { font-size: 1.05rem; line-height: 1.7; height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; }
+        .question-text { font-size: 1.05rem; line-height: 1.7; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
+        .q-char { display: inline-block; white-space: pre; }
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
         .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; color: var(--btn-text-color); }
@@ -78,8 +79,6 @@
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
         #ssr-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 40px; box-sizing: border-box; }
         .ssr-quote { font-size: 1.7rem; font-style: italic; color: #e91e63; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; max-width: 600px; line-height: 1.6; }
-        .ssr-quote::before { content: '「'; }
-        .ssr-quote::after { content: '」'; }
         .typewriter { min-height: 100px; }
         .detail-panel { padding: 0; text-align: center; }
         .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 24px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
@@ -122,7 +121,6 @@
         @keyframes softFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
         @keyframes heartBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } }
         @keyframes charWobble { 0%, 100% { transform: translate(0,0) rotate(0deg); } 25% { transform: translate(-1px, -1.5px) rotate(-2deg); } 50% { transform: translate(1px, 1px) rotate(1deg); } 75% { transform: translate(-1px, 1px) rotate(-1deg); } }
-        .q-char { display: inline-block; }
         .q-char.wobble { animation: charWobble 0.4s ease-in-out; }
         .card-icon-mystery.filled { opacity: 1; animation: heartBeat 1.8s ease-in-out infinite; color: #fff; }
         .main-btn, .scale-btn { will-change: transform; }
@@ -325,6 +323,14 @@
     }
 
     function toggleLang() {
+        // 現在表示中のcontainer-boxのスクロール位置を保存
+        let activeBox = null;
+        let savedScroll = 0;
+        document.querySelectorAll('.container-box').forEach(box => {
+            if (!box.classList.contains('hidden')) { activeBox = box; savedScroll = box.scrollTop; }
+        });
+        const savedWindowScroll = window.scrollY;
+
         currentLang = currentLang === 'ja' ? 'en' : 'ja';
         document.querySelectorAll('[id*="lang-btn"]').forEach(btn => btn.innerText = currentLang === 'ja' ? 'EN' : 'JA');
         document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
@@ -343,12 +349,39 @@
             const c = characters.find(x => x.id === id);
             if (c) revealResultRefresh(c);
         }
-        // アーカイブ詳細表示中: その キャラを再描画
+        // アーカイブ詳細表示中: その キャラを再描画（スクロールしない版）
         if (!document.getElementById('screen-archive').classList.contains('hidden') && !document.getElementById('archive-detail-view').classList.contains('hidden')) {
             const id = parseInt(document.getElementById('arc-detail-name').getAttribute('data-char-id'));
             const c = characters.find(x => x.id === id);
-            if (c) showArchiveDetail(c);
+            if (c) refreshArchiveDetail(c);
         }
+
+        // スクロール位置を復元
+        if (activeBox) activeBox.scrollTop = savedScroll;
+        window.scrollTo(0, savedWindowScroll);
+    }
+
+    // 言語切替時のアーカイブ詳細再描画（スクロールしない）
+    function refreshArchiveDetail(char) {
+        document.getElementById('arc-detail-name').innerText = char.name[currentLang];
+        document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
+        document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
+        document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
+        const expanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
+        document.getElementById('arc-expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        const corrEl = document.getElementById('archive-correlations');
+        if (char.correlations && char.correlations.length > 0) {
+            const corrList = document.getElementById('archive-corr-list');
+            corrList.innerHTML = '';
+            char.correlations.forEach(corr => { const card = buildCorrelationCard(corr); if (card) corrList.appendChild(card); });
+        }
+        // ボタンラベルも更新
+        const buttonsContainer = document.getElementById('archive-detail-buttons');
+        let btnHtml = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + (currentLang === 'ja' ? '戻る' : 'BACK') + '</button>';
+        if (comingFromResult) {
+            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + (currentLang === 'ja' ? 'リスタート' : 'RESTART') + '</button>';
+        }
+        buttonsContainer.innerHTML = btnHtml;
     }
 
     // 言語切替時の結果詳細再描画（viewedに追加せず表示だけ更新）
@@ -736,6 +769,20 @@
         });
     }
 
+    function getCorrType(corr) {
+        if (!corr || !corr.type) return '';
+        // type がオブジェクト {ja, en} の場合
+        if (typeof corr.type === 'object') {
+            const v = corr.type[currentLang];
+            if (v && String(v).trim() !== '') return v;
+            // 現在言語が空ならもう一方の言語にフォールバック
+            const other = corr.type.ja || corr.type.en || '';
+            return other;
+        }
+        // type が文字列の場合
+        return corr.type;
+    }
+
     function buildCorrelationCard(corr) {
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
@@ -751,7 +798,9 @@
         } else {
             iconHtml = '<div class="corr-icon">♡</div>';
         }
-        corrCard.innerHTML = iconHtml + '<div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + ((isLocked || isUnimplemented) ? '???' : corrChar.name[currentLang]) + '</div>';
+        const typeLabel = getCorrType(corr);
+        const nameLabel = (isLocked || isUnimplemented) ? '???' : corrChar.name[currentLang];
+        corrCard.innerHTML = iconHtml + '<div class="corr-label">' + typeLabel + '</div><div class="corr-name">' + nameLabel + '</div>';
         return corrCard;
     }
 

@@ -29,7 +29,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 60px 20px 20px 20px;
             box-sizing: border-box;
             overflow: hidden;
             transition: background-color 2s ease, color 2s ease;
@@ -51,7 +51,7 @@
         }
         .glitch-text { font-family: var(--font-title); text-shadow: calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5), calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5); transition: text-shadow 0.5s; }
         h1 { font-family: var(--font-title); font-size: 1.8rem; border-bottom: 2px dashed var(--accent-color); padding-bottom: 15px; margin-bottom: 30px; color: var(--accent-color); letter-spacing: 2px; transition: color 2s ease, border-color 2s ease; }
-        .top-nav { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .top-nav { position: absolute; top: -44px; right: 10px; display: flex; gap: 10px; }
         .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
         .small-btn:hover { background: var(--accent-color); color: white; transform: scale(1.05); }
         .status-container { background: rgba(128,128,128,0.1); padding: 16px; border-radius: 8px; margin-bottom: 30px; text-align: left; border: 1px solid var(--border-color); transition: border-color 2s ease; }
@@ -121,7 +121,7 @@
         @keyframes breakContainer { 0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); } 20% { transform: scale(1.05) rotate(-2deg); filter: brightness(2); } 100% { transform: translateY(100vh) rotate(15deg) scale(0.8); opacity: 0; filter: brightness(0); } }
         .anim-fade-in { animation: fadeIn 1.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .container-box { padding: 40px 20px; } .top-nav { top: 15px; right: 15px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) { .container-box { padding: 40px 20px; } .top-nav { top: -42px; right: 5px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
@@ -135,8 +135,9 @@
         <h1 class="glitch-text">Sugar Cage</h1>
         <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 20px;" data-text="subtitle">パートナーマッチング</h2>
         <p style="font-size: 0.95rem; line-height: 1.7; margin: 30px 0 40px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
-        <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 160px;">START</button>
-        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; min-width: 160px;">ARCHIVE</button>
+        <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; width: 240px; box-sizing: border-box; border: 2px solid var(--accent-color);">START</button>
+        <br>
+        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 48px; font-size: 1rem; letter-spacing: 2px; width: 240px; box-sizing: border-box;">ARCHIVE</button>
     </div>
     <div id="screen-quiz" class="container-box hidden">
         <div class="top-nav"><button onclick="toggleLang()" class="small-btn" id="lang-btn-quiz">EN</button></div>
@@ -364,20 +365,39 @@
         stats = { P: 5, M: 5, I: 5, E: 5 };
         currentQuestionIndex = 0;
         comingFromResult = false;
+        quizQuestions = [];
+        top3Results = [];
         document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('anim-fade-in');
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-quiz').classList.remove('anim-break-container');
         document.getElementById('screen-archive').classList.add('hidden');
+        document.getElementById('result-selection').classList.remove('hidden');
+        document.getElementById('result-details').classList.add('hidden');
+        document.getElementById('archive-grid-view').classList.remove('hidden');
+        document.getElementById('archive-detail-view').classList.add('hidden');
         document.getElementById('screen-start').classList.remove('hidden');
         updateStatusUI();
     }
 
     async function startQuiz() {
         if (characters.length === 0) await loadCharacters();
+        stats = { P: 5, M: 5, I: 5, E: 5 };
+        currentQuestionIndex = 0;
+        top3Results = [];
+        comingFromResult = false;
         selectRandomQuestions();
         resetColorPhase();
         document.getElementById('screen-start').classList.add('hidden');
-        document.getElementById('screen-quiz').classList.remove('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('anim-fade-in');
+        document.getElementById('screen-archive').classList.add('hidden');
+        document.getElementById('result-selection').classList.remove('hidden');
+        document.getElementById('result-details').classList.add('hidden');
+        const quizScreen = document.getElementById('screen-quiz');
+        quizScreen.classList.remove('hidden', 'anim-break-container');
         updateStatusUI();
-        showQuestion(true);
+        showQuestion();
     }
 
     function showQuestion() {
@@ -461,6 +481,7 @@
     function playSSRAnimation(char) {
         const ssrScreen = document.getElementById('ssr-screen');
         ssrScreen.classList.remove('hidden');
+        ssrScreen.style.opacity = '1';
         const typewriterEl = document.getElementById('typewriter');
         typewriterEl.innerHTML = '';
         const quote = char.quote[currentLang] || '';
@@ -472,9 +493,20 @@
             } else {
                 clearInterval(interval);
                 setTimeout(() => {
-                    ssrScreen.classList.add('hidden');
-                    revealResult(char);
-                }, 2000);
+                    // 黒→白へ切り替え、SSR画面をフェードアウト
+                    resetColorPhase();
+                    ssrScreen.style.transition = 'opacity 1s ease';
+                    ssrScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        ssrScreen.classList.add('hidden');
+                        ssrScreen.style.transition = '';
+                        revealResult(char);
+                        const resultScreen = document.getElementById('screen-result');
+                        resultScreen.classList.remove('anim-fade-in');
+                        void resultScreen.offsetWidth;
+                        resultScreen.classList.add('anim-fade-in');
+                    }, 1000);
+                }, 1500);
             }
         }, 50);
     }

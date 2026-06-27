@@ -76,8 +76,10 @@
         .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; transition: 0.3s; }
         .card-icon-mystery.filled { opacity: 1; }
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
-        #ssr-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .ssr-quote { font-size: 2rem; font-style: italic; color: #e91e63; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        #ssr-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 40px; box-sizing: border-box; }
+        .ssr-quote { font-size: 1.7rem; font-style: italic; color: #e91e63; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; max-width: 600px; line-height: 1.6; }
+        .ssr-quote::before { content: '「'; }
+        .ssr-quote::after { content: '」'; }
         .typewriter { min-height: 100px; }
         .detail-panel { padding: 0; text-align: center; }
         .char-quote { font-size: 1.1rem; font-style: italic; color: var(--accent-color); margin-bottom: 24px; line-height: 1.8; font-weight: bold; letter-spacing: 0.5px; }
@@ -119,7 +121,9 @@
         @keyframes textShake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1px, 1px); } 40% { transform: translate(1px, -1px); } 60% { transform: translate(-1px, -1px); } 80% { transform: translate(1px, 1px); } }
         @keyframes softFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
         @keyframes heartBeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } }
-        body.dark-mode .glitch-text { animation: textShake 0.3s ease-in-out infinite; }
+        @keyframes charWobble { 0%, 100% { transform: translate(0,0) rotate(0deg); } 25% { transform: translate(-1px, -1.5px) rotate(-2deg); } 50% { transform: translate(1px, 1px) rotate(1deg); } 75% { transform: translate(-1px, 1px) rotate(-1deg); } }
+        .q-char { display: inline-block; }
+        .q-char.wobble { animation: charWobble 0.4s ease-in-out; }
         .card-icon-mystery.filled { opacity: 1; animation: heartBeat 1.8s ease-in-out infinite; color: #fff; }
         .main-btn, .scale-btn { will-change: transform; }
         .container-box h1 { animation: softFloat 4s ease-in-out infinite; }
@@ -164,7 +168,7 @@
     <div id="screen-result" class="container-box hidden">
         <h1 class="glitch-text" style="color:var(--accent-color);">Analysis Complete</h1>
         <div id="result-selection">
-            <p style="font-size: 0.9rem; margin: 25px 0; font-weight: 500; line-height: 1.8;" data-text="result_desc">あなたに、♡が届いています。一人を選んでマッチングしましょう</p>
+            <p style="font-size: 0.9rem; margin: 25px 0; font-weight: 500; line-height: 1.8;" data-text="result_desc">あなたにいいね♡が届いています。一人を選んでマッチングしましょう</p>
             <div class="blind-cards-container" id="blind-cards-container"></div>
         </div>
         <div id="result-details" class="hidden">
@@ -238,7 +242,7 @@
         agree: { ja: "わかる", en: "Agree" },
         neutral: { ja: "迷う", en: "Neutral" },
         disagree: { ja: "ちがう", en: "Disagree" },
-        result_desc: { ja: "あなたに、♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ matches. Choose one to confirm your match." },
+        result_desc: { ja: "あなたにいいね♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ likes. Choose one to confirm your match." },
         expand_btn: { ja: "▼ もっと深く知る覚悟はある？", en: "▼ Ready to know more?" },
         share_btn: { ja: "𝕏 SHARE", en: "𝕏 SHARE" },
         archive_link: { ja: "ARCHIVE", en: "ARCHIVE" },
@@ -246,7 +250,7 @@
         restart_btn: { ja: "RESTART", en: "RESTART" },
         back_result: { ja: "分析結果に戻る", en: "Back to Result" },
         back_btn: { ja: "戻る", en: "BACK" },
-        archive_title: { ja: "観測記録", en: "ARCHIVE" },
+        archive_title: { ja: "マッチングしている相手♥", en: "Your Matches ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
 
@@ -324,6 +328,43 @@
         currentLang = currentLang === 'ja' ? 'en' : 'ja';
         document.querySelectorAll('[id*="lang-btn"]').forEach(btn => btn.innerText = currentLang === 'ja' ? 'EN' : 'JA');
         document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
+
+        // クイズ中: 質問文を再描画
+        if (!document.getElementById('screen-quiz').classList.contains('hidden') && quizQuestions.length > 0) {
+            showQuestion();
+        }
+        // 3人選択カードを再描画
+        if (!document.getElementById('result-selection').classList.contains('hidden') && top3Results.length > 0) {
+            renderBlindCards();
+        }
+        // 結果詳細表示中: その キャラを再描画
+        if (!document.getElementById('result-details').classList.contains('hidden')) {
+            const id = parseInt(document.getElementById('detail-name').getAttribute('data-char-id'));
+            const c = characters.find(x => x.id === id);
+            if (c) revealResultRefresh(c);
+        }
+        // アーカイブ詳細表示中: その キャラを再描画
+        if (!document.getElementById('screen-archive').classList.contains('hidden') && !document.getElementById('archive-detail-view').classList.contains('hidden')) {
+            const id = parseInt(document.getElementById('arc-detail-name').getAttribute('data-char-id'));
+            const c = characters.find(x => x.id === id);
+            if (c) showArchiveDetail(c);
+        }
+    }
+
+    // 言語切替時の結果詳細再描画（viewedに追加せず表示だけ更新）
+    function revealResultRefresh(char) {
+        document.getElementById('detail-name').innerText = char.name[currentLang];
+        document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
+        document.getElementById('detail-desc').innerText = char.desc[currentLang];
+        document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
+        const expanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
+        document.getElementById('expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        const corrEl = document.getElementById('result-correlations');
+        if (char.correlations && char.correlations.length > 0) {
+            const corrList = document.getElementById('result-corr-list');
+            corrList.innerHTML = '';
+            char.correlations.forEach(corr => { const card = buildCorrelationCard(corr); if (card) corrList.appendChild(card); });
+        }
     }
 
     function applySmoothColorPhase() {
@@ -413,11 +454,22 @@
         showQuestion();
     }
 
+    let wobbleTimer = null;
+
     function showQuestion() {
         applySmoothColorPhase();
         const q = quizQuestions[currentQuestionIndex];
         document.getElementById('question-number').innerText = 'Q' + (currentQuestionIndex + 1) + ' / 15';
-        document.getElementById('question-text').innerText = q.q[currentLang];
+        const qText = q.q[currentLang];
+        const qEl = document.getElementById('question-text');
+        qEl.innerHTML = '';
+        for (const ch of qText) {
+            const span = document.createElement('span');
+            span.className = 'q-char';
+            span.textContent = ch;
+            qEl.appendChild(span);
+        }
+        startWobble();
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         const btns = [{ label: '<<', mult: 2 }, { label: '<', mult: 1 }, { label: '・', mult: 'random' }, { label: '>', mult: -1 }, { label: '>>', mult: -2 }];
@@ -428,6 +480,24 @@
             btnEl.onclick = () => selectOption(q.effects, btn.mult);
             container.appendChild(btnEl);
         });
+    }
+
+    function startWobble() {
+        if (wobbleTimer) clearInterval(wobbleTimer);
+        wobbleTimer = setInterval(() => {
+            // 暗いフェーズ（Q10以降）のみ揺らす
+            if (currentQuestionIndex < 9) return;
+            const chars = document.querySelectorAll('#question-text .q-char');
+            if (chars.length === 0) return;
+            // ランダムに1〜3文字を選んで揺らす
+            const count = 1 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < count; i++) {
+                const target = chars[Math.floor(Math.random() * chars.length)];
+                if (!target || target.classList.contains('wobble')) continue;
+                target.classList.add('wobble');
+                setTimeout(() => target.classList.remove('wobble'), 400);
+            }
+        }, 350);
     }
 
     function selectOption(effects, multiplier) {
@@ -451,6 +521,7 @@
     }
 
     function playShatterTransition() {
+        if (wobbleTimer) { clearInterval(wobbleTimer); wobbleTimer = null; }
         const flash = document.getElementById('shatter-flash');
         flash.classList.add('anim-shatter-flash');
         const quizScreen = document.getElementById('screen-quiz');
@@ -522,15 +593,21 @@
         let i = 0;
         function next() {
             if (i < text.length) {
+                const ch = text[i];
                 const span = document.createElement('span');
-                span.textContent = text[i];
+                span.textContent = ch;
                 span.style.opacity = '0';
-                span.style.transition = 'opacity 0.4s ease';
+                span.style.filter = 'blur(4px)';
+                span.style.display = 'inline';
+                span.style.transition = 'opacity 0.6s ease, filter 0.6s ease';
                 el.appendChild(span);
                 void span.offsetWidth;
                 span.style.opacity = '1';
+                span.style.filter = 'blur(0)';
                 i++;
-                setTimeout(next, 70);
+                // 句読点では少し長めに間を取る
+                const delay = (ch === '、' || ch === '。' || ch === '…') ? 260 : 90;
+                setTimeout(next, delay);
             } else {
                 if (onComplete) onComplete();
             }
@@ -560,14 +637,8 @@
             const corrList = document.getElementById('result-corr-list');
             corrList.innerHTML = '';
             char.correlations.forEach(corr => {
-                const corrChar = characters.find(c => c.id === corr.id);
-                if (!corrChar) return;
-                const isLocked = !viewedCharIds.has(corr.id);
-                const corrCard = document.createElement('div');
-                corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
-                corrCard.onclick = () => { if (!isLocked) showArchiveDetail(corrChar); };
-                corrCard.innerHTML = '<div class="corr-icon">♡</div><div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + (isLocked ? '???' : corrChar.name[currentLang]) + '</div>';
-                corrList.appendChild(corrCard);
+                const card = buildCorrelationCard(corr);
+                if (card) corrList.appendChild(card);
             });
         } else {
             corrEl.classList.add('hidden');
@@ -610,6 +681,12 @@
         renderArchive();
         document.getElementById('archive-grid-view').classList.remove('hidden');
         document.getElementById('archive-detail-view').classList.add('hidden');
+        scrollScreensTop();
+    }
+
+    function scrollScreensTop() {
+        document.querySelectorAll('.container-box').forEach(box => { box.scrollTop = 0; });
+        window.scrollTo(0, 0);
     }
 
     function openArchive() {
@@ -620,6 +697,7 @@
         renderArchive();
         document.getElementById('archive-grid-view').classList.remove('hidden');
         document.getElementById('archive-detail-view').classList.add('hidden');
+        scrollScreensTop();
     }
 
     function backFromArchive() {
@@ -658,9 +736,30 @@
         });
     }
 
+    function buildCorrelationCard(corr) {
+        const corrChar = characters.find(c => c.id === corr.id);
+        if (!corrChar) return null;
+        const isLocked = !viewedCharIds.has(corr.id);
+        const isUnimplemented = corr.id > 12;
+        const corrCard = document.createElement('div');
+        corrCard.className = 'corr-card ' + ((isLocked || isUnimplemented) ? 'locked' : '');
+        let iconHtml;
+        if (!isLocked && !isUnimplemented) {
+            const iconSrc = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/' + String(corr.id).padStart(2, '0') + '_icon.png';
+            iconHtml = '<div class="corr-icon" style="padding:0;overflow:hidden;background:none;"><img src="' + iconSrc + '" style="width:100%;height:100%;object-fit:cover;"></div>';
+            corrCard.onclick = () => { showArchiveDetail(corrChar); };
+        } else {
+            iconHtml = '<div class="corr-icon">♡</div>';
+        }
+        corrCard.innerHTML = iconHtml + '<div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + ((isLocked || isUnimplemented) ? '???' : corrChar.name[currentLang]) + '</div>';
+        return corrCard;
+    }
+
     function showArchiveDetail(char) {
         document.getElementById('archive-grid-view').classList.add('hidden');
         document.getElementById('archive-detail-view').classList.remove('hidden');
+        document.getElementById('screen-archive').classList.remove('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
         const nameEl = document.getElementById('arc-detail-name');
         nameEl.innerText = char.name[currentLang];
         nameEl.setAttribute('data-char-id', char.id);
@@ -678,25 +777,26 @@
             const corrList = document.getElementById('archive-corr-list');
             corrList.innerHTML = '';
             char.correlations.forEach(corr => {
-                const corrChar = characters.find(c => c.id === corr.id);
-                if (!corrChar) return;
-                const isLocked = !viewedCharIds.has(corr.id);
-                const corrCard = document.createElement('div');
-                corrCard.className = 'corr-card ' + (isLocked ? 'locked' : '');
-                corrCard.onclick = () => { if (!isLocked) showArchiveDetail(corrChar); };
-                corrCard.innerHTML = '<div class="corr-icon">♡</div><div class="corr-label">' + corr.type[currentLang] + '</div><div class="corr-name">' + (isLocked ? '???' : corrChar.name[currentLang]) + '</div>';
-                corrList.appendChild(corrCard);
+                const card = buildCorrelationCard(corr);
+                if (card) corrList.appendChild(card);
             });
         } else {
             corrEl.classList.add('hidden');
         }
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        buttonsContainer.innerHTML = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">戻る</button><button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">リスタート</button>';
+        let btnHtml = '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + (currentLang === 'ja' ? '戻る' : 'BACK') + '</button>';
+        if (comingFromResult) {
+            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + (currentLang === 'ja' ? 'リスタート' : 'RESTART') + '</button>';
+        }
+        buttonsContainer.innerHTML = btnHtml;
+        scrollScreensTop();
     }
 
     function backToArchiveGrid() {
         document.getElementById('archive-detail-view').classList.add('hidden');
         document.getElementById('archive-grid-view').classList.remove('hidden');
+        document.getElementById('screen-archive').classList.remove('hidden');
+        scrollScreensTop();
     }
 
     loadViewedChars();

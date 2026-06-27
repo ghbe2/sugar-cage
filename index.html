@@ -2,7 +2,17 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="Sugar Cage Match">
+    <meta property="og:description" content="あなたの真の恋愛観を暴き出す、ダーク・パートナーマッチング♡">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ghbe2.github.io/sugar-cage/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sugar Cage Match">
+    <meta name="twitter:description" content="あなたの真の恋愛観を暴き出す、ダーク・パートナーマッチング♡">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/ogp.png">
+    <meta name="twitter:site" content="@ai_be2">
     <title>Sugar Cage Match</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
@@ -34,7 +44,10 @@
             box-sizing: border-box;
             overflow: hidden;
             transition: background-color 2s ease, color 2s ease;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
         }
+        * { -webkit-tap-highlight-color: transparent; }
         #app-wrapper { width: 100%; max-width: 1000px; z-index: 10; position: relative; }
         .container-box {
             background: var(--box-bg);
@@ -248,8 +261,8 @@
         archive_link: { ja: "ARCHIVE", en: "ARCHIVE" },
         follow_btn: { ja: "🔗 Follow @ai_be2", en: "🔗 Follow @ai_be2" },
         restart_btn: { ja: "RESTART", en: "RESTART" },
-        back_result: { ja: "分析結果に戻る", en: "Back to Result" },
-        back_btn: { ja: "戻る", en: "BACK" },
+        back_result: { ja: "BACK TO RESULT", en: "Back to Result" },
+        back_btn: { ja: "BACK", en: "BACK" },
         archive_title: { ja: "マッチングしている相手♥", en: "Your Matches ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
@@ -939,7 +952,7 @@
     // タップ/クリックで♡が飛び散るエフェクト
     function spawnHearts(x, y) {
         const hearts = ['♡', '♥', '❤', '💕', '💗'];
-        const count = 5 + Math.floor(Math.random() * 4); // 5〜8個
+        const count = 2 + Math.floor(Math.random() * 3); // 2〜4個
         for (let i = 0; i < count; i++) {
             const el = document.createElement('div');
             el.className = 'heart-particle';
@@ -970,6 +983,18 @@
             spawnHearts(t.clientX, t.clientY);
         }
     }, { passive: true });
+
+    // iOS Safari: ダブルタップによるズームを抑制
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+    // ピンチズーム抑制
+    document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
 
     loadViewedChars();
     loadCharacters();

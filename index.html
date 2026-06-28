@@ -77,7 +77,7 @@
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
         .question-text { font-size: 1.05rem; line-height: 1.5; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; align-content: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
         .q-char { display: inline-block; white-space: pre; line-height: 1.5; }
-        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); }
+        .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); transition: color 2s ease; }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
         .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: background 0.3s, border-color 2s ease, transform 0.3s, color 2s ease; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; color: var(--btn-text-color); }
         .scale-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: white; transform: scale(1.05); transition: background 0.2s, border-color 0.2s, transform 0.3s, color 0.15s; }
@@ -199,7 +199,7 @@
         </div>
         <h3 id="question-number" class="glitch-text" style="font-family: var(--font-title); margin: 0 0 20px 0; color: var(--accent-color); font-size: 1.2rem;">Q1 / 15</h3>
         <div id="question-text" class="question-text"></div>
-        <div class="scale-labels"><span data-text="agree">わかる</span><span data-text="neutral">迷う</span><span data-text="disagree">ちがう</span></div>
+        <div class="scale-labels"><span data-text="agree">わかる</span><span data-text="neutral">まよう</span><span data-text="disagree">ちがう</span></div>
         <div id="options-container" class="scale-container"></div>
     </div>
     <div id="screen-result" class="container-box hidden">
@@ -281,7 +281,7 @@
         start_btn: { ja: "START", en: "START" },
         archive_btn: { ja: "ARCHIVE", en: "ARCHIVE" },
         agree: { ja: "わかる", en: "Agree" },
-        neutral: { ja: "迷う", en: "Neutral" },
+        neutral: { ja: "まよう", en: "Unsure" },
         disagree: { ja: "ちがう", en: "Disagree" },
         result_desc: { ja: "あなたにいいね♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ likes. Choose one to confirm your match." },
         expand_btn: { ja: "▼ もっと深く知る覚悟はある？", en: "▼ Ready to know more?" },
@@ -552,14 +552,20 @@
         }
         startWobble();
         const container = document.getElementById('options-container');
-        container.innerHTML = '';
         const btns = [{ label: '<<', mult: 2 }, { label: '<', mult: 1 }, { label: '・', mult: 'random' }, { label: '>', mult: -1 }, { label: '>>', mult: -2 }];
-        btns.forEach((btn) => {
-            const btnEl = document.createElement('button');
-            btnEl.className = 'scale-btn';
-            btnEl.innerText = btn.label;
-            btnEl.onclick = () => selectOption(q.effects, btn.mult);
-            container.appendChild(btnEl);
+        // ボタンが未生成なら一度だけ作る（以降は再利用してフェードを効かせる）
+        if (container.children.length !== btns.length) {
+            container.innerHTML = '';
+            btns.forEach((btn) => {
+                const btnEl = document.createElement('button');
+                btnEl.className = 'scale-btn';
+                btnEl.innerText = btn.label;
+                container.appendChild(btnEl);
+            });
+        }
+        // onclick だけ毎問差し替え（要素自体は保持されるので色がフェードする）
+        Array.from(container.children).forEach((btnEl, idx) => {
+            btnEl.onclick = () => selectOption(q.effects, btns[idx].mult);
         });
     }
 

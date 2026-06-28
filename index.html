@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta property="og:title" content="Sugar Cage Match">
     <meta property="og:description" content="あなたの真の恋愛観を暴き出す、ダーク・パートナーマッチング♡">
     <meta property="og:type" content="website">
@@ -41,7 +41,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 70px 20px 80px 20px;
+            padding: calc(70px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(80px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
             box-sizing: border-box;
             overflow: hidden;
             transition: background-color 2s ease, color 2s ease;
@@ -191,7 +191,7 @@
         @keyframes breakContainer { 0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); } 20% { transform: scale(1.05) rotate(-2deg); filter: brightness(2); } 100% { transform: translateY(100vh) rotate(15deg) scale(0.8); opacity: 0; filter: brightness(0); } }
         .anim-fade-in { animation: fadeIn 1.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { body { padding: 64px 14px 80px 14px; } .container-box { padding: 40px 20px; } .top-nav { top: -42px; right: 5px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) { body { padding: calc(64px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(80px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left)); } .container-box { padding: 40px 20px; } .top-nav { top: -42px; right: 5px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>

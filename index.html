@@ -41,7 +41,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 60px 20px 20px 20px;
+            padding: 70px 20px 80px 20px;
             box-sizing: border-box;
             overflow: hidden;
             transition: background-color 2s ease, color 2s ease;
@@ -112,6 +112,10 @@
         .ms-match-label { font-size: 0.7rem; letter-spacing: 3px; color: var(--text-color); opacity: 0.7; font-weight: bold; }
         .ms-match-pct { font-family: var(--font-title); font-size: 2.6rem; font-weight: 900; line-height: 1.1; background: linear-gradient(135deg, #ff4081, #e91e63); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: matchPulse 2s ease-in-out infinite; }
         @keyframes matchPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        .best-match { text-align: center; margin-bottom: 22px; }
+        .best-match:empty { display: none; }
+        .best-match .bm-label { font-size: 0.7rem; letter-spacing: 2px; color: var(--text-color); opacity: 0.7; font-weight: bold; display: block; margin-bottom: 2px; }
+        .best-match .bm-pct { font-family: var(--font-title); font-size: 1.8rem; font-weight: 900; background: linear-gradient(135deg, #ff4081, #e91e63); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -150,7 +154,7 @@
         .main-btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .sub-btn { background: transparent; color: var(--accent-color); border: 2px solid var(--accent-color); }
         .sub-btn:hover { background: var(--accent-color); color: white; }
-        .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 28px; flex-wrap: wrap; }
+        .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 28px; margin-bottom: 12px; flex-wrap: wrap; }
         .archive-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; margin-top: 20px; }
         .archive-slot { background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; cursor: pointer; transition: 0.3s; aspect-ratio: 1 / 1; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .archive-slot img { width: 100%; height: 100%; object-fit: cover; }
@@ -176,7 +180,7 @@
         @keyframes breakContainer { 0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); } 20% { transform: scale(1.05) rotate(-2deg); filter: brightness(2); } 100% { transform: translateY(100vh) rotate(15deg) scale(0.8); opacity: 0; filter: brightness(0); } }
         .anim-fade-in { animation: fadeIn 1.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .container-box { padding: 40px 20px; } .top-nav { top: -42px; right: 5px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) { body { padding: 64px 14px 80px 14px; } .container-box { padding: 40px 20px; } .top-nav { top: -42px; right: 5px; } .archive-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
@@ -253,6 +257,7 @@
                 <div class="char-image-section"><img id="archive-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="arc-detail-name"></div>
                 <div class="char-profile" id="arc-detail-profile"></div>
+                <div class="best-match" id="arc-best-match"></div>
                 <div class="match-stats" id="arc-detail-stats"></div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
@@ -278,6 +283,26 @@
     let top3Results = [];
     let characters = [];
     let viewedCharIds = new Set();
+    let bestMatchRates = {}; // { charId: 最高マッチ率% }
+
+    function loadBestMatchRates() {
+        const saved = localStorage.getItem('sugar_cage_best_match');
+        if (saved) {
+            try { bestMatchRates = JSON.parse(saved); } catch (e) { bestMatchRates = {}; }
+        }
+    }
+
+    function saveBestMatchRates() {
+        localStorage.setItem('sugar_cage_best_match', JSON.stringify(bestMatchRates));
+    }
+
+    function recordMatchRate(charId, pct) {
+        const prev = bestMatchRates[charId] || 0;
+        if (pct > prev) {
+            bestMatchRates[charId] = pct;
+            saveBestMatchRates();
+        }
+    }
     let comingFromResult = false;
 
     const ui = {
@@ -414,6 +439,7 @@
         document.getElementById('arc-detail-name').innerText = char.name[currentLang];
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
@@ -634,6 +660,8 @@
         }).sort((a, b) => b.matchPct - a.matchPct);
         let top3 = ranked.slice(0, 3);
         if (top3.length > 0) top3[0].isBest = true;
+        // 3人候補全員のマッチ率を記録（最高値を更新）
+        top3.forEach(c => recordMatchRate(c.id, c.matchPct));
         top3Results = top3.sort(() => Math.random() - 0.5);
         renderBlindCards();
         const resultScreen = document.getElementById('screen-result');
@@ -1017,6 +1045,13 @@
         return '<div class="ms-title">' + title + '</div>' + matchHtml + rows + legend;
     }
 
+    function buildBestMatchHtml(char) {
+        const rate = bestMatchRates[char.id];
+        if (rate === undefined || rate === null) return '';
+        const label = currentLang === 'ja' ? '最高相性' : 'BEST MATCH';
+        return '<span class="bm-label">' + label + '</span><span class="bm-pct">' + rate + '%</span>';
+    }
+
     function buildProfileHtml(char) {
         const p = char.profile || {};
         const rows = [];
@@ -1070,6 +1105,7 @@
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('archive-image-safe').src = char.imageSafe;
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-content').classList.remove('expanded');
@@ -1096,6 +1132,7 @@
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
         }
         buttonsContainer.innerHTML = btnHtml;
+        scrollScreensTop();
     }
 
     function backToArchiveGrid() {
@@ -1153,6 +1190,7 @@
     document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
 
     loadViewedChars();
+    loadBestMatchRates();
     loadCharacters();
     document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
 </script>

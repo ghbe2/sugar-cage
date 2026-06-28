@@ -46,7 +46,13 @@
       "feature1": "ネズミ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 9,
@@ -104,7 +110,13 @@
       "feature1": "ウシ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 23,
@@ -167,6 +179,11 @@
         "type": "小説",
         "title": "愚者は己の鎖を編む",
         "url": "https://kakuyomu.jp/works/2912051596195396584/episodes/2912051596196005336"
+      },
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
       }
     ],
     "correlations": [
@@ -233,7 +250,13 @@
       "feature1": "ウサギ（ルーツ）",
       "feature2": "ネコ"
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 10,
@@ -291,7 +314,13 @@
       "feature1": "ヘビ",
       "feature2": "ウシ"
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 6,
@@ -336,12 +365,12 @@
       "en": "I found an interesting person ♥"
     },
     "desc": {
-      "ja": "街中のカフェで談笑する若者たちの中に「アウネ」はいました。周囲を囲むアマルたちの中で、一見すると動物の形質を持たないノーアマに見えた彼女でしたが、笑い声に混じって覗かせた長い長いヘビの舌が酷く背徳的な印象をあなたに植え付けました。それを除けば、活発でよく笑う「普通の可愛い女の子」で、整った魅力的な容姿もあって、あなたはカフェに訪れるたびにアウネたちの群れを探し、横目で観察してしまうのです。\n\n邪な気持ちなどないと言い訳しながらアウネを追いかけるあなたの視線は、ある日異変に気付きます。あなたがアウネに視線をやると、瞬間にバチリと目が合うのです。気まずくなって目をそらし、ほとぼりが冷めてもう一度見やると、やはりアウネのするどい視線はあなたを射抜いて脳髄の奥まで突き刺さります。アウネは、常に先んじてあなたを観察していました。割れた舌先を向け、チロチロと挑発するように揺らしては、あなたが視線を外すまで、その目から解放してくれることはありません。いつからか、あなたはすっかり獲物として観察される側だったのです。\n\nその奇妙な恐怖体験にあなたはふと、誰もが知るある話を思い出すでしょう。この世界の原初を紡いだ創作、「アダムとイブと知恵の木の神話」です。知恵の木に現れたヘビは、その瞳と舌でアダムを巧みにそそのかして、イブを楽園から追放させ、最後にはヘビはアダムとの子を宿したという失楽園の原罪。アウネの瞳に射すくめられた瞬間、あなたはその瞳と舌の抗いがたい引力に、愛する者と楽園をも捨て去るアダムを愚かしい者と評することは、もはやできないのでした。",
-      "en": "Among the young people chatting in a cafe in town was \"Aune.\" Surrounded by Amal, she appeared at first glance to be a Noama, lacking any animal characteristics. However, the long, snake-like tongue she revealed amidst her laughter left a deeply immoral impression on you. Aside from that, she was a lively, cheerful, and \"normally pretty girl,\" with attractive features, making you search for the Aune groups and observe them out of the corner of your eye whenever you visited the cafe.\n\nYour gaze, which you kept telling yourself was without ulterior motives, suddenly changed one day. The moment you looked at Aune, your eyes met instantly. You awkwardly looked away, but when you looked again after things had calmed down, Aune's sharp gaze pierced you, penetrating deep into your brain. Aune had always been one step ahead, observing you. With its forked tongue pointed at you, it provocatively flickers, refusing to let go of your gaze until you avert it. At some point, you were completely under its watchful eye, merely prey.\n\nThis strange, terrifying experience will suddenly remind you of a well-known story: the myth of Adam, Eve, and the Tree of Knowledge, a work of fiction that weaves the origins of this world. The serpent that appeared on the Tree of Knowledge, with its eyes and tongue, cleverly tempted Adam to expel Eve from paradise, and ultimately conceived a child with Adam—the original sin of the Lost Paradise. The moment you were captivated by Aune's eyes, you could no longer dismiss Adam, who abandoned his loved one and paradise, as foolish, due to the irresistible pull of those eyes and tongue."
+      "ja": "街中のカフェで談笑する若者たちの中に「アウネ」はいました。周囲のアマルの友人たちの中で、一見すると動物の形質を持たないノーアマに見えた彼女でしたが、笑い声に混じって覗かせた長い長いヘビの舌が酷く背徳的な印象をあなたに植え付けました。それを除けば、活発でよく笑う「普通の可愛い女の子」で、魅力的で整った容姿もあって、あなたはカフェに訪れるたびにアウネたちの群れを探し、横目で観察してしまうのです。\r\n\r\n邪な気持ちなどないと言い訳しながらアウネを追いかけるあなたの視線は、ある日異変に気付きます。あなたがアウネに視線をやると、瞬間にバチリと目が合うのです。気まずくなって目をそらし、ほとぼりが冷めてもう一度見やると、やはりアウネのするどい視線はあなたを射抜いて脳髄の奥まで突き刺さります。アウネは、常に先んじてあなたを観察していました。割れた舌先を向け、チロチロと挑発するように揺らしては、あなたが視線を外すまで、その目から解放してくれることはありません。いつからか、あなたはすっかり獲物として観察される側だったのです。\r\n\r\nその奇妙な恐怖体験に、あなたはふと誰もが知る御話を思い出すでしょう。この世界の原初を紡いだ創作、「アダムとイブと知恵の木の神話」です。知恵の木の枝に現れたヘビは、その瞳と舌でアダムを巧みにそそのかして、楽園からイブを追放させ、最後にはヘビ自身がアダムとの子を宿したという失楽園の原罪。アウネの瞳に射すくめられた瞬間、あなたはその瞳と舌の抗いがたい引力に絡み獲られ、愛する者と楽園をも捨て去るアダムを愚かしいと批判することは、もはや叶わないのでした。",
+      "en": "Among the young people chatting in a cafe in town was \"Aune.\" At first glance, she seemed like a Noama, lacking any animal characteristics, among Amal's friends. However, the long, snake-like tongue that peeked out from her laughter left a deeply immoral impression on you. Aside from that, she was a lively, cheerful, and \"normal, pretty girl,\" with attractive and refined looks. Every time you visited the cafe, you would find yourself searching for the Aunes and observing them out of the corner of your eye.\n\nYour gaze, which you kept telling yourself was without ulterior motives, began to flicker one day. The moment you looked at an Aune, your eyes met instantly. You awkwardly looked away, but when you looked again after things had calmed down, Aune's sharp gaze pierced you, penetrating deep into your brain. Aune had always been one step ahead, observing you. With its forked tongue pointed at you, it provocatively flickers, refusing to release you from its gaze until you avert your eyes. At some point, you find yourself completely under its watchful eye, merely prey.\n\nThis strange and terrifying experience will suddenly remind you of a well-known story: the myth of Adam, Eve, and the Tree of Knowledge, a creation that weaves the origins of this world. The serpent that appeared on the branch of the Tree of Knowledge, with its eyes and tongue, cleverly tempted Adam into expelling Eve from paradise, ultimately becoming pregnant with Adam's child—the original sin of Paradise Lost. The moment you are captivated by Aune's eyes, you are entangled in their irresistible pull, and you can no longer criticize Adam as foolish for abandoning his loved one and paradise."
     },
     "descSensitive": {
-      "ja": "この悪意あるマッチングアプリが彼女をあなたにレコメンドしたのは、決してあなたが神話の「アダム」になり得ると判断したからではありません。地を這うヘビは常に刺激を求めており、アウネはとにかく退屈を嫌います。流行のゲームやマンガを追うし、スポーツもすれば家族と旅行にも行く。友達も多く、動画配信のストリーマーを何人もフォローしている。彼女は現代の日常のあらゆる刺激をちゃんと楽しんでいます。\r\n\r\nしかし、そんな彼女の心を最も躍らせ、潤わせるのは「狩猟」なのです。あなたがアウネに向ける視線は、自分で思う以上に不審で卑猥なものでしたよ？　若者たちをいやらしい目で舐め回すその態度は、彼女の気まぐれな好奇心が許さなければ、即座に通報されるべき醜悪なものでした。\r\n\r\nもちろん、そんなあなただからこそ、アウネは排除すべき変質者ではなく、刈り取るべき被食者として泳がせているのです。狙い定め、追い詰めて、噛みついて、「アウネ」という背徳的な毒を注がれたとき、どんな風に狂い踊ってくれるのかを見たい一心です。もしあなたが、目の前の魅惑的な少女に囚われたいと浅ましく願うのであれば、なんの努力も必要ありません。その情けない態度でいままで通り過ごしていればよいでしょう。そう遠くない日、あなたの背後に立ったアウネが、首元に嚙みつくかのように、その耳元で囁き誘ってくれるでしょう。そして絡み獲られたあなたがどのように悶え踊るのか。無様に？　滑稽に？　それとも、アウネの知らない醜態を晒すのでしょうか？　アプリはただ、アウネが心から笑う「面白い反応」を見せてくれるモルモットとしての期待を、あなたに掛けたに過ぎないのです。",
-      "en": "This malicious dating app didn't recommend her to you because it judged you to be the mythical \"Adam.\" Like a serpent crawling on the ground, Aune hates boredom. She follows trendy games and manga, plays sports, and travels with her family. She has many friends and follows numerous video streamers. She thoroughly enjoys all the excitement of modern life.\n\nHowever, what excites and satisfies her most is \"hunting.\" Your gaze towards Aune was more suspicious and obscene than you realized, wasn't it? Your lecherous gaze, scrutinizing young people, was a hideous act that should have been reported immediately if her capricious curiosity hadn't allowed it.\n\nOf course, it's precisely because of this that Aune lets you swim, not as a pervert to be eliminated, but as prey to be shorn. She wants to see how you'll go mad and dance when she targets you, corners you, bites you, and injects you with the decadent poison of \"Aune.\" If you shamelessly desire to be captivated by the alluring girl before you, then no effort is required. Just continue with your pathetic attitude as before. Not long ago, Aune will be standing behind you, whispering in your ear as if biting your neck, enticing you. And how will you writhe and dance once you're entangled? Shamefully? Comically? Or will you expose a shameful side that Aune has never seen before? The app has simply placed its hopes on you as a guinea pig, expecting you to give Aune an \"interesting reaction\" that will make her laugh from the bottom of her heart."
+      "ja": "この悪意あるマッチングアプリが彼女をあなたにレコメンドしたのは、決してあなたが神話の「アダム」になり得ると判断したからではありません。地を這うヘビは常に刺激を求めており、アウネはとにかく退屈を嫌います。流行のゲームやマンガを追うし、スポーツもすれば家族と旅行にも行く。友達も多く、動画配信のストリーマーを何人もフォローしている。彼女は現代の日常のあらゆる刺激をちゃんと楽しんでいます。\n\nしかし、そんな彼女の心を最も躍らせ、潤わせるのは「狩猟」なのです。あなたがアウネに向ける視線は、自分で思う以上に不審で卑猥なものでしたよ？　若者たちをいやらしい目で舐め回すその態度は、彼女の気まぐれな好奇心が許さなければ、即座に通報されるべき醜悪なものでした。\n\nもちろん、そんなあなただからこそ、アウネは排除すべき変質者ではなく、刈り取るべき被食者として泳がせているのです。狙い定め、追い詰めて、噛みついて、「アウネ」という背徳的な毒を注がれたとき、どんな風に狂い踊ってくれるのかを見たい一心です。もしあなたが、目の前の魅惑的な少女に囚われたいと浅ましく願うのであれば、なんの努力も必要ありません。その情けない態度でいままで通り過ごしていればよいでしょう。そう遠くない日、あなたの背後に立ったアウネが、首元に嚙みつくかのように、その耳元で囁き誘ってくれるでしょう。そして絡み獲られたあなたがどのように悶え踊るのか。無様に？　滑稽に？　それとも、アウネの知らない醜態を晒すのでしょうか？　アプリはただ、アウネが心から笑う「面白い反応」を見せてくれるモルモットとしての期待を、あなたに掛けたに過ぎないのです。",
+      "en": "This malicious dating app didn't recommend her to you because it judged you to be the mythical \"Adam.\" Like a serpent crawling on the ground, Aune hates boredom. She follows trendy games and manga, plays sports, and travels with her family. She has many friends and follows numerous video streamers. She thoroughly enjoys all the excitement of modern life.\n\nHowever, what excites and satisfies her most is \"hunting.\" Your gaze towards Aune was more suspicious and obscene than you realized, wasn't it? Your lecherous gaze, scrutinizing young people, was a hideous act that should have been reported immediately if her capricious curiosity hadn't allowed it.\n\nOf course, it's precisely because of this that Aune lets you swim, not as a pervert to be eliminated, but as prey to be shorn. She wants to see how you'll dance in madness when she targets you, corners you, bites you, and injects you with the decadent poison of \"Aune.\" If you shamelessly desire to be captivated by the alluring girl before you, then no effort is required. Just continue with your pathetic attitude as before. Not long ago, Aune will be standing behind you, whispering in your ear as if biting your neck, enticing you. And how will you writhe and dance once you're entangled? Shamefully? Comically? Or will you expose a shameful side that Aune has never seen before? The app has simply placed its hopes on you as a guinea pig, expecting you to give Aune an \"interesting reaction\" that will make her laugh from the bottom of her heart."
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/06_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/06_sensitive.png",
@@ -356,7 +385,13 @@
       "feature1": "ヘビ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 5,
@@ -421,7 +456,13 @@
       "feature1": "ウマ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 25,
@@ -486,7 +527,13 @@
       "feature1": "ヒツジ（ルーツ）",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": []
   },
   {
@@ -541,6 +588,11 @@
         "type": "小説",
         "title": "愚者は己の鎖を編む",
         "url": "https://kakuyomu.jp/works/2912051596195396584/episodes/2912051596196005336"
+      },
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
       }
     ],
     "correlations": [
@@ -614,7 +666,13 @@
       "feature1": "トリ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 4,
@@ -743,7 +801,18 @@
       "feature1": "ブタ",
       "feature2": ""
     },
-    "links": [],
+    "links": [
+      {
+        "type": "小説",
+        "title": "愚者は己の鎖を編む",
+        "url": "https://kakuyomu.jp/works/2912051596195396584/episodes/2912051596196005336"
+      },
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 29,

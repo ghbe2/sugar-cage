@@ -156,7 +156,8 @@
         .sub-btn:hover { background: var(--accent-color); color: white; }
         .buttons-container { display: flex; justify-content: center; gap: 8px; margin-top: 28px; margin-bottom: 12px; flex-wrap: wrap; }
         .archive-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; margin-top: 20px; }
-        .archive-slot { background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; cursor: pointer; transition: 0.3s; aspect-ratio: 1 / 1; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .archive-slot { position: relative; background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); border-radius: 8px; padding: 0; cursor: pointer; transition: 0.3s; aspect-ratio: 1 / 1; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .match-badge { position: absolute; left: 4px; bottom: 4px; background: linear-gradient(135deg, #ff4081, #e91e63); color: #fff; font-family: var(--font-title); font-size: 0.62rem; font-weight: bold; padding: 2px 5px; border-radius: 6px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,0.3); pointer-events: none; }
         .archive-slot img { width: 100%; height: 100%; object-fit: cover; }
         .archive-slot.locked { background: #1a1a1a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); }
         .archive-slot.unimplemented { background: #2a2a2a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); font-size: 36px; }
@@ -660,8 +661,6 @@
         }).sort((a, b) => b.matchPct - a.matchPct);
         let top3 = ranked.slice(0, 3);
         if (top3.length > 0) top3[0].isBest = true;
-        // 3人候補全員のマッチ率を記録（最高値を更新）
-        top3.forEach(c => recordMatchRate(c.id, c.matchPct));
         top3Results = top3.sort(() => Math.random() - 0.5);
         renderBlindCards();
         const resultScreen = document.getElementById('screen-result');
@@ -744,6 +743,8 @@
     function revealResult(char) {
         viewedCharIds.add(char.id);
         saveViewedChars();
+        // 選んだ（実際に数値を見た）キャラのマッチ率だけ記録
+        recordMatchRate(char.id, calcMatchPercent(char));
         document.getElementById('result-selection').classList.add('hidden');
         document.getElementById('result-details').classList.remove('hidden');
         const nameEl = document.getElementById('detail-name');
@@ -875,6 +876,14 @@
                 const img = document.createElement('img');
                 img.src = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/' + String(char.id).padStart(2, '0') + '_icon.png';
                 slot.appendChild(img);
+                // 最高相性バッジ（記録がある場合のみ）
+                const rate = bestMatchRates[char.id];
+                if (rate !== undefined && rate !== null) {
+                    const badge = document.createElement('div');
+                    badge.className = 'match-badge';
+                    badge.textContent = rate + '%';
+                    slot.appendChild(badge);
+                }
                 slot.onclick = () => showArchiveDetail(char);
             } else {
                 slot.className = 'archive-slot locked';

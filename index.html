@@ -104,6 +104,26 @@
         .char-profile:empty { display: none; }
         .char-profile .prof-row { display: inline-flex; gap: 4px; margin: 0 8px; }
         .char-profile .prof-label { color: var(--accent-color); font-weight: bold; }
+        .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
+        .match-stats:empty { display: none; }
+        .ms-title { font-family: var(--font-title); font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 14px; text-align: center; }
+        .ms-row { margin-bottom: 12px; }
+        .ms-row:last-child { margin-bottom: 0; }
+        .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
+        .ms-name { color: var(--text-color); }
+        .ms-name .ms-key { font-family: var(--font-title); color: var(--accent-color); font-size: 0.85rem; margin-right: 2px; }
+        .ms-vals { font-family: var(--font-title); font-size: 0.72rem; }
+        .ms-vals .ms-you { color: #ff4081; }
+        .ms-vals .ms-sep { opacity: 0.4; margin: 0 4px; }
+        .ms-vals .ms-char { color: #9b6dff; }
+        .ms-track { position: relative; height: 14px; background: var(--stat-bg); border-radius: 7px; overflow: hidden; border: 1px solid var(--border-color); }
+        .ms-bar-you { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, #ff4081, #e91e63); border-radius: 7px; transition: width 0.6s ease; z-index: 1; opacity: 0.85; }
+        .ms-bar-char { position: absolute; top: 0; left: 0; height: 100%; background: repeating-linear-gradient(45deg, #9b6dff, #9b6dff 4px, #7d4fd6 4px, #7d4fd6 8px); border-radius: 7px; transition: width 0.6s ease; z-index: 2; opacity: 0.6; }
+        .ms-legend { display: flex; justify-content: center; gap: 18px; margin-top: 14px; font-size: 0.7rem; font-weight: bold; }
+        .ms-legend .lg { display: flex; align-items: center; gap: 5px; }
+        .ms-legend .lg-box { width: 14px; height: 14px; border-radius: 3px; }
+        .ms-legend .lg-you { background: linear-gradient(90deg, #ff4081, #e91e63); }
+        .ms-legend .lg-char { background: repeating-linear-gradient(45deg, #9b6dff, #9b6dff 3px, #7d4fd6 3px, #7d4fd6 6px); }
         .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
         .expand-sensitive { background: linear-gradient(135deg, var(--accent-color), #ff80ab); color: white; border: none; padding: 16px 28px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold; letter-spacing: 1px; margin: 28px 0; transition: 0.3s; box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); width: 100%; display: block; }
         .expand-sensitive:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233, 30, 99, 0.4); }
@@ -172,10 +192,10 @@
     <div id="screen-quiz" class="container-box hidden">
         <div class="status-container">
             <div class="status-title glitch-text">STATUS</div>
-            <div class="stat-row"><span class="stat-label">P</span><div class="stat-bar-bg"><div id="bar-P" class="stat-bar-fill"></div></div><span id="val-P" class="stat-val">5</span></div>
-            <div class="stat-row"><span class="stat-label">M</span><div class="stat-bar-bg"><div id="bar-M" class="stat-bar-fill"></div></div><span id="val-M" class="stat-val">5</span></div>
-            <div class="stat-row"><span class="stat-label">I</span><div class="stat-bar-bg"><div id="bar-I" class="stat-bar-fill"></div></div><span id="val-I" class="stat-val">5</span></div>
-            <div class="stat-row"><span class="stat-label">E</span><div class="stat-bar-bg"><div id="bar-E" class="stat-bar-fill"></div></div><span id="val-E" class="stat-val">5</span></div>
+            <div class="stat-row"><span class="stat-label">P</span><div class="stat-bar-bg"><div id="bar-P" class="stat-bar-fill"></div></div><span id="val-P" class="stat-val">4</span></div>
+            <div class="stat-row"><span class="stat-label">M</span><div class="stat-bar-bg"><div id="bar-M" class="stat-bar-fill"></div></div><span id="val-M" class="stat-val">4</span></div>
+            <div class="stat-row"><span class="stat-label">I</span><div class="stat-bar-bg"><div id="bar-I" class="stat-bar-fill"></div></div><span id="val-I" class="stat-val">4</span></div>
+            <div class="stat-row"><span class="stat-label">E</span><div class="stat-bar-bg"><div id="bar-E" class="stat-bar-fill"></div></div><span id="val-E" class="stat-val">4</span></div>
         </div>
         <h3 id="question-number" class="glitch-text" style="font-family: var(--font-title); margin: 0 0 20px 0; color: var(--accent-color); font-size: 1.2rem;">Q1 / 15</h3>
         <div id="question-text" class="question-text"></div>
@@ -194,6 +214,7 @@
                 <div class="char-image-section"><img id="result-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="detail-name"></div>
                 <div class="char-profile" id="detail-profile"></div>
+                <div class="match-stats" id="detail-match-stats"></div>
                 <div class="detail-desc" id="detail-desc"></div>
                 <button class="expand-sensitive" id="expand-btn" onclick="toggleSensitive(this, 'result')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="result-sensitive-content">
@@ -227,6 +248,7 @@
                 <div class="char-image-section"><img id="archive-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="arc-detail-name"></div>
                 <div class="char-profile" id="arc-detail-profile"></div>
+                <div class="match-stats" id="arc-detail-stats"></div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="archive-sensitive-content">
@@ -244,7 +266,7 @@
 </div>
 <script>
     let currentLang = 'ja';
-    let stats = { P: 5, M: 5, I: 5, E: 5 };
+    let stats = { P: 4, M: 4, I: 4, E: 4 };
     let currentQuestionIndex = 0;
     let quizQuestions = [];
     let allQuestions = [];
@@ -274,36 +296,36 @@
     };
 
     allQuestions = [
-        { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: 2, E: -1 } },
-        { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: 2, I: 0, E: 1 } },
-        { q: { ja: "秘密や嘘は、愛を深めるスパイスになる。", en: "Secrets and lies are spices that deepen love." }, effects: { P: 0, M: -1, I: -2, E: 2 } },
+        { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: -1, E: -1 } },
+        { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: 2, I: -1, E: 1 } },
+        { q: { ja: "秘密や嘘は、愛を深めるスパイスになる。", en: "Secrets and lies are spices that deepen love." }, effects: { P: 0, M: -1, I: 2, E: 2 } },
         { q: { ja: "相手を完全に支配し、コントロールしたい。", en: "I want to completely dominate and control my partner." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
-        { q: { ja: "愛情表現は言葉よりも、肉体的な痛みが伴う方が信じられる。", en: "Physical pain makes expressions of love more believable than mere words." }, effects: { P: 1, M: 2, I: 0, E: -1 } },
-        { q: { ja: "誰にも言えない性癖や願望がある。", en: "I have sexual desires and fetishes I can't tell anyone." }, effects: { P: 0, M: 1, I: -1, E: 2 } },
-        { q: { ja: "恋人が他の誰かに惹かれていくのを見ることに、興奮を覚えるかもしれない。", en: "I might feel aroused watching my lover be attracted to someone else." }, effects: { P: -1, M: 2, I: -2, E: 2 } },
-        { q: { ja: "相手の人生や価値観を、自分の手でめちゃくちゃに壊してみたい。", en: "I want to completely ruin my partner's life and values with my own hands." }, effects: { P: 2, M: 0, I: 1, E: 1 } },
-        { q: { ja: "自分の存在価値は、誰かに消費されることでしか見出せない。", en: "I can only find my worth by being consumed by someone else." }, effects: { P: -2, M: 2, I: 2, E: 0 } },
-        { q: { ja: "相手の絶望した顔こそが、最も美しいと思う。", en: "My partner's face in despair is the most beautiful thing." }, effects: { P: 2, M: -1, I: 0, E: 2 } },
-        { q: { ja: "愛する人のためなら、社会的な地位や名誉を失ってもいい。", en: "For the one I love, I don't mind losing my social status and honor." }, effects: { P: 0, M: 2, I: 2, E: -1 } },
-        { q: { ja: "美しいものより、汚れて堕ちていくものに惹かれる。", en: "I am more attracted to things that are dirty and falling than beautiful things." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
+        { q: { ja: "愛情表現は言葉よりも、肉体的な痛みが伴う方が信じられる。", en: "Physical pain makes expressions of love more believable than mere words." }, effects: { P: 1, M: 2, I: -1, E: -1 } },
+        { q: { ja: "誰にも言えない性癖や願望がある。", en: "I have sexual desires and fetishes I can't tell anyone." }, effects: { P: 0, M: 1, I: 1, E: 2 } },
+        { q: { ja: "恋人が他の誰かに惹かれていくのを見ることに、興奮を覚えるかもしれない。", en: "I might feel aroused watching my lover be attracted to someone else." }, effects: { P: -1, M: 2, I: 1, E: 2 } },
+        { q: { ja: "相手の人生や価値観を、自分の手でめちゃくちゃに壊してみたい。", en: "I want to completely ruin my partner's life and values with my own hands." }, effects: { P: 2, M: 0, I: -2, E: 1 } },
+        { q: { ja: "自分の存在価値は、誰かに消費されることでしか見出せない。", en: "I can only find my worth by being consumed by someone else." }, effects: { P: -2, M: 2, I: -1, E: 0 } },
+        { q: { ja: "相手の絶望した顔こそが、最も美しいと思う。", en: "My partner's face in despair is the most beautiful thing." }, effects: { P: 2, M: -1, I: 1, E: 2 } },
+        { q: { ja: "愛する人のためなら、社会的な地位や名誉を失ってもいい。", en: "For the one I love, I don't mind losing my social status and honor." }, effects: { P: 0, M: 2, I: -1, E: -1 } },
+        { q: { ja: "美しいものより、汚れて堕ちていくものに惹かれる。", en: "I am more attracted to things that are dirty and falling than beautiful things." }, effects: { P: 1, M: 1, I: 1, E: 2 } },
         { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 } },
-        { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -1, I: 2, E: 0 } },
-        { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: 0, E: 2 } },
+        { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -1, I: 1, E: 0 } },
+        { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
         { q: { ja: "相手が自分に依存して泣き叫ぶ姿を、ずっと眺めていたい。", en: "I want to watch my partner cry out in dependency on me forever." }, effects: { P: 2, M: -1, I: 1, E: 1 } },
-        { q: { ja: "自分を粗末に扱う相手ほど、愛おしく感じてしまう。", en: "The more someone treats me poorly, the more lovable they seem." }, effects: { P: -2, M: 2, I: 1, E: 1 } },
+        { q: { ja: "自分を粗末に扱う相手ほど、愛おしく感じてしまう。", en: "The more someone treats me poorly, the more lovable they seem." }, effects: { P: -2, M: 2, I: -1, E: 1 } },
         { q: { ja: "美しい装飾品よりも、汚れた肉体の方が興奮する。", en: "I get more excited by a soiled body than by beautiful ornaments." }, effects: { P: 1, M: 1, I: -2, E: 2 } },
-        { q: { ja: "社会的な道徳なんて、愛の前では無価値なゴミに過ぎない。", en: "Social morality is nothing but worthless trash in the face of love." }, effects: { P: 1, M: -2, I: 1, E: 1 } },
-        { q: { ja: "もし相手が犯罪を犯したら、迷わずその共犯者になりたい。", en: "If my partner committed a crime, I would want to be their accomplice without hesitation." }, effects: { P: 0, M: -1, I: 2, E: 2 } },
+        { q: { ja: "社会的な道徳なんて、愛の前では無価値なゴミに過ぎない。", en: "Social morality is nothing but worthless trash in the face of love." }, effects: { P: 1, M: -2, I: -1, E: 1 } },
+        { q: { ja: "もし相手が犯罪を犯したら、迷わずその共犯者になりたい。", en: "If my partner committed a crime, I would want to be their accomplice without hesitation." }, effects: { P: 0, M: -1, I: -2, E: 2 } },
         { q: { ja: "相手の過去や記憶を、すべて自分色に塗り替えたい。", en: "I want to repaint all of my partner's past and memories in my own colors." }, effects: { P: 2, M: -1, I: 1, E: 0 } },
         { q: { ja: "自分の体は、相手のための「消耗品」だと理解している。", en: "I understand that my body is merely a 'consumable' for my partner." }, effects: { P: -2, M: 1, I: 1, E: 0 } },
-        { q: { ja: "相手に自分の価値を完全に否定されたいという願望がある。", en: "I have a desire to have my worth completely denied by my partner." }, effects: { P: -1, M: 1, I: 0, E: 1 } },
-        { q: { ja: "どれだけ傷ついても、相手から離れるという選択肢は存在しない。", en: "No matter how much I am hurt, the option to leave my partner does not exist." }, effects: { P: -1, M: 1, I: 1, E: 0 } },
-        { q: { ja: "相手を絶望の淵に突き落とし、その唯一の救い主でありたい。", en: "I want to plunge my partner into despair and be their only savior." }, effects: { P: 2, M: -1, I: 1, E: 1 } },
-        { q: { ja: "他者から見て軽蔑されるような性的な振る舞いに、言いようのない喜びを感じる。", en: "I feel an unspeakable joy in sexual behavior that others would despise." }, effects: { P: -1, M: -1, I: -1, E: 2 } },
+        { q: { ja: "相手に自分の価値を完全に否定されたいという願望がある。", en: "I have a desire to have my worth completely denied by my partner." }, effects: { P: -1, M: 1, I: -1, E: 1 } },
+        { q: { ja: "どれだけ傷ついても、相手から離れるという選択肢は存在しない。", en: "No matter how much I am hurt, the option to leave my partner does not exist." }, effects: { P: -1, M: 1, I: -1, E: 0 } },
+        { q: { ja: "相手を絶望の淵に突き落とし、その唯一の救い主でありたい。", en: "I want to plunge my partner into despair and be their only savior." }, effects: { P: 2, M: -1, I: 2, E: 1 } },
+        { q: { ja: "他者から見て軽蔑されるような性的な振る舞いに、言いようのない喜びを感じる。", en: "I feel an unspeakable joy in sexual behavior that others would despise." }, effects: { P: -1, M: -1, I: -2, E: 2 } },
         { q: { ja: "相手を飼い殺しにして、自分なしでは生きていけない身体にしたい。", en: "I want to keep my partner caged, making them a body that cannot live without me." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
-        { q: { ja: "愛する人のために、自分の人生のすべてをドブに捨てても後悔はない。", en: "I would have no regrets throwing my entire life into the gutter for the one I love." }, effects: { P: 0, M: 2, I: 1, E: 0 } },
-        { q: { ja: "肉体的な快楽よりも、相手の精神を支配することに執着している。", en: "I am more obsessed with dominating my partner's mind than with physical pleasure." }, effects: { P: 2, M: -1, I: 0, E: 0 } },
-        { q: { ja: "互いのすべてを喰らい合い、形がなくなるまで混ざり合いたい。", en: "I want us to devour each other's everything and mix until we lose our forms." }, effects: { P: 1, M: 0, I: 1, E: 1 } }
+        { q: { ja: "愛する人のために、自分の人生のすべてをドブに捨てても後悔はない。", en: "I would have no regrets throwing my entire life into the gutter for the one I love." }, effects: { P: 0, M: 2, I: -1, E: 0 } },
+        { q: { ja: "肉体的な快楽よりも、相手の精神を支配することに執着している。", en: "I am more obsessed with dominating my partner's mind than with physical pleasure." }, effects: { P: 2, M: -1, I: 2, E: 0 } },
+        { q: { ja: "互いのすべてを喰らい合い、形がなくなるまで混ざり合いたい。", en: "I want us to devour each other's everything and mix until we lose our forms." }, effects: { P: 1, M: 0, I: -2, E: 2 } }
     ];
 
     const colorPhases = [
@@ -387,6 +409,7 @@
         document.getElementById('arc-detail-name').innerText = char.name[currentLang];
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
@@ -412,6 +435,7 @@
         document.getElementById('detail-name').innerText = char.name[currentLang];
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
@@ -460,9 +484,9 @@
 
     function updateStatusUI() {
         ['P', 'M', 'I', 'E'].forEach(key => {
-            stats[key] = Math.max(0, Math.min(10, stats[key]));
+            stats[key] = Math.max(0, Math.min(9, stats[key]));
             document.getElementById('val-' + key).innerText = stats[key];
-            document.getElementById('bar-' + key).style.width = (stats[key] / 10) * 100 + '%';
+            document.getElementById('bar-' + key).style.width = (stats[key] / 9) * 100 + '%';
         });
     }
 
@@ -473,7 +497,7 @@
 
     function resetQuiz() {
         resetColorPhase();
-        stats = { P: 5, M: 5, I: 5, E: 5 };
+        stats = { P: 4, M: 4, I: 4, E: 4 };
         currentQuestionIndex = 0;
         comingFromResult = false;
         quizQuestions = [];
@@ -493,7 +517,7 @@
 
     async function startQuiz() {
         if (characters.length === 0) await loadCharacters();
-        stats = { P: 5, M: 5, I: 5, E: 5 };
+        stats = { P: 4, M: 4, I: 4, E: 4 };
         currentQuestionIndex = 0;
         top3Results = [];
         comingFromResult = false;
@@ -688,6 +712,7 @@
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('result-image-safe').src = char.imageSafe;
         document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
         document.getElementById('result-sensitive-content').classList.remove('expanded');
         document.getElementById('expand-btn').classList.remove('expanded');
@@ -909,6 +934,42 @@
         }
     }
 
+    function buildMatchStatsHtml(char, showYou) {
+        const labels = {
+            P: { ja: '支配', en: 'Dominance' },
+            M: { ja: '倫理', en: 'Ethics' },
+            I: { ja: '知性', en: 'Intellect' },
+            E: { ja: '活動', en: 'Activity' }
+        };
+        const keys = ['P', 'M', 'I', 'E'];
+        let rows = '';
+        keys.forEach(key => {
+            const charVal = Math.max(0, Math.min(9, char[key] || 0));
+            const charPct = (charVal / 9) * 100;
+            const label = labels[key][currentLang];
+            let valsHtml, barsHtml;
+            if (showYou) {
+                const youVal = Math.max(0, Math.min(9, stats[key]));
+                const youPct = (youVal / 9) * 100;
+                valsHtml = '<span class="ms-vals"><span class="ms-you">' + youVal + '</span><span class="ms-sep">/</span><span class="ms-char">' + charVal + '</span></span>';
+                // あなた(下) → キャラ(上) の順に重ねる
+                barsHtml = '<div class="ms-bar-you" style="width:' + youPct + '%"></div><div class="ms-bar-char" style="width:' + charPct + '%"></div>';
+            } else {
+                valsHtml = '<span class="ms-vals"><span class="ms-char">' + charVal + '</span></span>';
+                barsHtml = '<div class="ms-bar-char" style="width:' + charPct + '%;opacity:0.85;"></div>';
+            }
+            rows += '<div class="ms-row"><div class="ms-head"><span class="ms-name"><span class="ms-key">' + key + '</span> ' + label + '</span>' + valsHtml + '</div><div class="ms-track">' + barsHtml + '</div></div>';
+        });
+        const title = currentLang === 'ja' ? '相性ステータス' : 'COMPATIBILITY';
+        let legend = '';
+        if (showYou) {
+            const youLabel = currentLang === 'ja' ? 'あなた' : 'YOU';
+            const charLabel = currentLang === 'ja' ? 'お相手' : 'PARTNER';
+            legend = '<div class="ms-legend"><span class="lg"><span class="lg-box lg-you"></span>' + youLabel + '</span><span class="lg"><span class="lg-box lg-char"></span>' + charLabel + '</span></div>';
+        }
+        return '<div class="ms-title">' + title + '</div>' + rows + legend;
+    }
+
     function buildProfileHtml(char) {
         const p = char.profile || {};
         const rows = [];
@@ -962,6 +1023,7 @@
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('archive-image-safe').src = char.imageSafe;
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
+        document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-content').classList.remove('expanded');
         document.getElementById('arc-expand-btn').classList.remove('expanded');

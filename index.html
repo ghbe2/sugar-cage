@@ -108,6 +108,10 @@
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
         .ms-title { font-family: var(--font-title); font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 14px; text-align: center; }
+        .ms-match { text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .ms-match-label { font-size: 0.7rem; letter-spacing: 3px; color: var(--text-color); opacity: 0.7; font-weight: bold; }
+        .ms-match-pct { font-family: var(--font-title); font-size: 2.6rem; font-weight: 900; line-height: 1.1; background: linear-gradient(135deg, #ff4081, #e91e63); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: matchPulse 2s ease-in-out infinite; }
+        @keyframes matchPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -624,9 +628,10 @@
     function processResult() {
         let availableChars = characters.filter(c => c.id <= 12);
         let ranked = availableChars.map(char => {
-            let dist = Math.abs(stats.P - char.P) + Math.abs(stats.M - char.M) + Math.abs(stats.I - char.I) + Math.abs(stats.E - char.E);
-            return { ...char, dist: dist };
-        }).sort((a, b) => a.dist - b.dist);
+            // 新マッチ度基準（P/M逆・I/E順）でスコア化。高いほど相性が良い
+            let matchPct = calcMatchPercent(char);
+            return { ...char, matchPct: matchPct };
+        }).sort((a, b) => b.matchPct - a.matchPct);
         let top3 = ranked.slice(0, 3);
         if (top3.length > 0) top3[0].isBest = true;
         top3Results = top3.sort(() => Math.random() - 0.5);
@@ -754,13 +759,18 @@
         }
     }
 
-    function shareCharById(id) {
+    function shareCharById(id, includeMatch) {
         const char = characters.find(c => c.id === id);
         if (!char) return;
         const name = char.name[currentLang];
+        let matchLine = '';
+        if (includeMatch) {
+            const pct = calcMatchPercent(char);
+            matchLine = (currentLang === 'ja') ? '運命の相性は' + pct + '%💖\n' : 'Destiny match: ' + pct + '%💖\n';
+        }
         const text = (currentLang === 'ja')
-            ? 'わたしは「' + name + '」とマッチングしたよ💍\nあなたは誰とマッチングする？\n#SugarCageMatch'
-            : 'I matched with "' + name + '" 💍\nWho will you match with?\n#SugarCageMatch';
+            ? 'わたしは「' + name + '」とマッチングしたよ💍\n' + matchLine + 'あなたは誰とマッチングする？\n#SugarCageMatch'
+            : 'I matched with "' + name + '" 💍\n' + matchLine + 'Who will you match with?\n#SugarCageMatch';
         const idStr = String(char.id).padStart(2, '0');
         const shareUrl = 'https://ghbe2.github.io/sugar-cage/c/' + idStr + '.html';
         const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
@@ -769,7 +779,7 @@
 
     function shareResultX() {
         const id = parseInt(document.getElementById('detail-name').getAttribute('data-char-id'));
-        shareCharById(id);
+        shareCharById(id, true);
     }
 
     function shareArchiveX() {
@@ -941,6 +951,30 @@
         }
     }
 
+    // 総合マッチ度を計算（P/M=逆ほど良い, I/E=近いほど良い）
+    function calcMatchPercent(char) {
+        const c = {
+            P: Math.max(0, Math.min(9, char.P || 0)),
+            M: Math.max(0, Math.min(9, char.M || 0)),
+            I: Math.max(0, Math.min(9, char.I || 0)),
+            E: Math.max(0, Math.min(9, char.E || 0))
+        };
+        const y = {
+            P: Math.max(0, Math.min(9, stats.P)),
+            M: Math.max(0, Math.min(9, stats.M)),
+            I: Math.max(0, Math.min(9, stats.I)),
+            E: Math.max(0, Math.min(9, stats.E))
+        };
+        // P/M: 逆ほど良い → 差そのものが点（差9で満点）
+        const scoreP = Math.abs(y.P - c.P);
+        const scoreM = Math.abs(y.M - c.M);
+        // I/E: 近いほど良い → 9-差（一致で満点）
+        const scoreI = 9 - Math.abs(y.I - c.I);
+        const scoreE = 9 - Math.abs(y.E - c.E);
+        const total = scoreP + scoreM + scoreI + scoreE; // 0〜36
+        return Math.round((total / 36) * 100);
+    }
+
     function buildMatchStatsHtml(char, showYou) {
         const labels = {
             P: { ja: '支配', en: 'Dominance' },
@@ -968,13 +1002,19 @@
             rows += '<div class="ms-row"><div class="ms-head"><span class="ms-name"><span class="ms-key">' + key + '</span> ' + label + '</span>' + valsHtml + '</div><div class="ms-track">' + barsHtml + '</div></div>';
         });
         const title = currentLang === 'ja' ? '相性ステータス' : 'COMPATIBILITY';
+        let matchHtml = '';
+        if (showYou) {
+            const pct = calcMatchPercent(char);
+            const matchLabel = currentLang === 'ja' ? '運命の相性' : 'DESTINY MATCH';
+            matchHtml = '<div class="ms-match"><span class="ms-match-label">' + matchLabel + '</span><span class="ms-match-pct">' + pct + '%</span></div>';
+        }
         let legend = '';
         if (showYou) {
             const youLabel = currentLang === 'ja' ? 'あなた' : 'YOU';
             const charLabel = currentLang === 'ja' ? 'お相手' : 'PARTNER';
             legend = '<div class="ms-legend"><span class="lg"><span class="lg-box lg-you"></span>' + youLabel + '</span><span class="lg"><span class="lg-box lg-char"></span>' + charLabel + '</span></div>';
         }
-        return '<div class="ms-title">' + title + '</div>' + rows + legend;
+        return '<div class="ms-title">' + title + '</div>' + matchHtml + rows + legend;
     }
 
     function buildProfileHtml(char) {

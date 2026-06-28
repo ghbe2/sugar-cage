@@ -116,6 +116,16 @@
         .best-match:empty { display: none; }
         .best-match .bm-label { font-size: 0.7rem; letter-spacing: 2px; color: var(--text-color); opacity: 0.7; font-weight: bold; display: block; margin-bottom: 2px; }
         .best-match .bm-pct { font-family: var(--font-title); font-size: 1.8rem; font-weight: 900; background: linear-gradient(135deg, #ff4081, #e91e63); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .ext-links { margin: 24px 0 0 0; }
+        .ext-links:empty { display: none; }
+        .ext-links-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; text-align: left; }
+        .ext-link { display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-bottom: 8px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: 0.3s; }
+        .ext-link:hover { background: var(--accent-color); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(233,30,99,0.25); }
+        .ext-link .ext-type { font-family: var(--font-title); font-size: 0.68rem; color: #fff; background: linear-gradient(135deg, #ff4081, #e91e63); padding: 3px 8px; border-radius: 5px; flex-shrink: 0; letter-spacing: 1px; }
+        .ext-link .ext-title { flex: 1; text-align: left; font-size: 0.9rem; font-weight: bold; color: var(--text-color); }
+        .ext-link:hover .ext-title { color: #fff; }
+        .ext-link .ext-arrow { color: var(--accent-color); font-weight: bold; flex-shrink: 0; }
+        .ext-link:hover .ext-arrow { color: #fff; }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -231,6 +241,7 @@
                     <div class="sensitive-image-section"><img id="result-image-sensitive" class="char-image" src="" alt="Sensitive"></div>
                     <div class="sensitive-text" id="result-sensitive-text"></div>
                 </div>
+                <div class="ext-links" id="result-links"></div>
                 <div class="correlations hidden" id="result-correlations">
                     <div class="corr-title" data-text="correlations">▸ 関係性</div>
                     <div class="corr-grid" id="result-corr-list"></div>
@@ -266,6 +277,7 @@
                     <div class="sensitive-image-section"><img id="archive-image-sensitive" class="char-image" src="" alt="Sensitive"></div>
                     <div class="sensitive-text" id="archive-sensitive-text"></div>
                 </div>
+                <div class="ext-links" id="archive-links"></div>
                 <div class="correlations hidden" id="archive-correlations">
                     <div class="corr-title" data-text="correlations">▸ 関係性</div>
                     <div class="corr-grid" id="archive-corr-list"></div>
@@ -446,6 +458,7 @@
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
         document.getElementById('arc-expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        document.getElementById('archive-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('archive-correlations');
         if (char.correlations && char.correlations.length > 0) {
             const corrList = document.getElementById('archive-corr-list');
@@ -472,6 +485,7 @@
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
         const expanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
         document.getElementById('expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        document.getElementById('result-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('result-correlations');
         if (char.correlations && char.correlations.length > 0) {
             const corrList = document.getElementById('result-corr-list');
@@ -760,6 +774,7 @@
         document.getElementById('expand-btn').innerText = ui.expand_btn[currentLang];
         document.getElementById('result-image-sensitive').src = char.imageSensitive;
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
+        document.getElementById('result-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('result-correlations');
         if (char.correlations && char.correlations.length > 0) {
             corrEl.classList.remove('hidden');
@@ -1054,6 +1069,43 @@
         return '<div class="ms-title">' + title + '</div>' + matchHtml + rows + legend;
     }
 
+    // 外部リンク種別の日英辞書
+    const linkTypeDict = {
+        "小説": "Novel",
+        "ゲーム": "Game",
+        "漫画": "Comic",
+        "マンガ": "Comic",
+        "イラスト": "Illustration",
+        "グッズ": "Goods",
+        "動画": "Video",
+        "音楽": "Music",
+        "ボイス": "Voice",
+        "公式": "Official",
+        "その他": "Other"
+    };
+
+    function linkTypeLabel(type) {
+        if (currentLang === 'ja') return type;
+        return linkTypeDict[type] || type;
+    }
+
+    function buildLinksHtml(char) {
+        const links = char.links || [];
+        if (links.length === 0) return '';
+        const heading = currentLang === 'ja' ? '▸ 関連リンク' : '▸ Links';
+        let items = '';
+        links.forEach(link => {
+            if (!link.url) return;
+            const typeLabel = linkTypeLabel(link.type);
+            const title = link.title || link.url;
+            items += '<a class="ext-link" href="' + link.url + '" target="_blank" rel="noopener noreferrer">'
+                + '<span class="ext-type">' + typeLabel + '</span>'
+                + '<span class="ext-title">' + title + '</span>'
+                + '<span class="ext-arrow">↗</span></a>';
+        });
+        return '<div class="ext-links-title">' + heading + '</div>' + items;
+    }
+
     function buildBestMatchHtml(char) {
         const rate = bestMatchRates[char.id];
         if (rate === undefined || rate === null) return '';
@@ -1122,6 +1174,7 @@
         document.getElementById('arc-expand-btn').innerText = ui.expand_btn[currentLang];
         document.getElementById('archive-image-sensitive').src = char.imageSensitive;
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
+        document.getElementById('archive-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('archive-correlations');
         if (char.correlations && char.correlations.length > 0) {
             corrEl.classList.remove('hidden');

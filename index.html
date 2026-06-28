@@ -803,14 +803,19 @@
         }
     }
 
-    function shareCharById(id, includeMatch) {
+    function shareCharById(id, mode) {
         const char = characters.find(c => c.id === id);
         if (!char) return;
         const name = char.name[currentLang];
         let matchLine = '';
-        if (includeMatch) {
+        if (mode === 'result') {
             const pct = calcMatchPercent(char);
             matchLine = (currentLang === 'ja') ? '運命の相性は' + pct + '%💖\n' : 'Destiny match: ' + pct + '%💖\n';
+        } else if (mode === 'archive') {
+            const pct = bestMatchRates[id];
+            if (pct !== undefined && pct !== null) {
+                matchLine = (currentLang === 'ja') ? '最高相性は' + pct + '%💖\n' : 'Best match: ' + pct + '%💖\n';
+            }
         }
         const text = (currentLang === 'ja')
             ? '「' + name + '」とマッチングしたよ💍\n' + matchLine + 'あなたは誰とマッチングする？\n#SugarCageMatch'
@@ -823,12 +828,12 @@
 
     function shareResultX() {
         const id = parseInt(document.getElementById('detail-name').getAttribute('data-char-id'));
-        shareCharById(id, true);
+        shareCharById(id, 'result');
     }
 
     function shareArchiveX() {
         const id = parseInt(document.getElementById('arc-detail-name').getAttribute('data-char-id'));
-        shareCharById(id);
+        shareCharById(id, 'archive');
     }
 
     function followX() {

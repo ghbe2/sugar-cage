@@ -803,11 +803,6 @@
     },
     "links": [
       {
-        "type": "小説",
-        "title": "愚者は己の鎖を編む",
-        "url": "https://kakuyomu.jp/works/2912051596195396584/episodes/2912051596196005336"
-      },
-      {
         "type": "LINE",
         "title": "『好き』スタンプ",
         "url": "https://store.line.me/stickershop/product/33279550/ja"
@@ -1854,7 +1849,7 @@
     },
     "desc": {
       "ja": "人間としての構造すら捨て去る自己改造を支援し、バケモノへ変わる様を観察したい層向け。",
-      "en": "This is for those who want to support self-modification that involves abandoning even the very structure of a human being, and who want to observe the transformation into a monster."
+      "en": "This is for those who want to support self-modification that involves abandoning even the very structure of being human, and who want to observe the transformation into a monster."
     },
     "descSensitive": {
       "ja": "",

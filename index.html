@@ -129,6 +129,8 @@
         .ext-link:hover .ext-title { color: #fff; }
         .ext-link .ext-arrow { color: var(--accent-color); font-weight: bold; flex-shrink: 0; }
         .ext-link:hover .ext-arrow { color: #fff; }
+        .vote-btn { border: 2px solid var(--accent-color) !important; }
+        .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63) !important; color: #fff !important; border-color: transparent !important; animation: heartBeat 1.5s ease-in-out infinite; }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -319,6 +321,42 @@
             saveBestMatchRates();
         }
     }
+
+    // ===== 最推し投票機能 =====
+    // ↓ Apps Script をWebアプリとしてデプロイしたURLに差し替える
+    const VOTE_API_URL = 'YOUR_APPS_SCRIPT_WEBAPP_URL_HERE';
+
+    function getMyVote() {
+        return localStorage.getItem('sugar_cage_my_vote'); // 投票中のキャラID（文字列）or null
+    }
+
+    function setMyVote(charId) {
+        localStorage.setItem('sugar_cage_my_vote', String(charId));
+    }
+
+    // 投票送信（差し替え方式：旧票を取り消し、新票を入れる）
+    function voteForChar(charId) {
+        const oldId = getMyVote();
+        if (String(oldId) === String(charId)) {
+            // 同じキャラに再投票 → 何もしない（既に推し済み）
+            return;
+        }
+        // 楽観的にローカルを更新
+        setMyVote(charId);
+
+        // Apps Script へ送信（no-corsモード：レスポンスは読めないが送信はされる）
+        if (VOTE_API_URL && VOTE_API_URL.indexOf('http') === 0) {
+            const body = new URLSearchParams();
+            body.append('newId', String(charId));
+            if (oldId) body.append('oldId', String(oldId));
+            fetch(VOTE_API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).catch(err => console.log('vote send error', err));
+        }
+    }
     let comingFromResult = false;
 
     const ui = {
@@ -470,7 +508,8 @@
         }
         // ボタンラベルも更新
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        let btnHtml = buildVoteButtonHtml(char.id);
+        btnHtml += '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
         btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
@@ -1121,6 +1160,26 @@
         return '<span class="bm-label">' + label + '</span><span class="bm-pct">' + rate + '%</span>';
     }
 
+    function buildVoteButtonHtml(charId) {
+        const isMyVote = String(getMyVote()) === String(charId);
+        if (isMyVote) {
+            const label = currentLang === 'ja' ? '♥ 最推し中' : '♥ My Favorite';
+            return '<button class="main-btn vote-btn voted" onclick="handleVote(' + charId + ')">' + label + '</button>';
+        } else {
+            const label = currentLang === 'ja' ? '♡ 最推しにする' : '♡ Set as Favorite';
+            return '<button class="main-btn vote-btn" onclick="handleVote(' + charId + ')">' + label + '</button>';
+        }
+    }
+
+    function handleVote(charId) {
+        voteForChar(charId);
+        // ボタン表示を更新（図鑑詳細を再描画）
+        const arcName = document.getElementById('arc-detail-name');
+        if (arcName) refreshArchiveDetail();
+    }
+
+    function buildVoteButtonHtml_placeholder() {}
+
     function buildProfileHtml(char) {
         const p = char.profile || {};
         const rows = [];
@@ -1196,7 +1255,8 @@
             corrEl.classList.add('hidden');
         }
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        let btnHtml = buildVoteButtonHtml(char.id);
+        btnHtml += '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
         btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';

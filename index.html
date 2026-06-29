@@ -129,10 +129,13 @@
         .ext-link:hover .ext-title { color: #fff; }
         .ext-link .ext-arrow { color: var(--accent-color); font-weight: bold; flex-shrink: 0; }
         .ext-link:hover .ext-arrow { color: #fff; }
-        .vote-btn { border: 2px solid var(--accent-color) !important; }
-        .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63) !important; color: #fff !important; border-color: transparent !important; animation: heartBeat 1.5s ease-in-out infinite; }
-        .vote-count { text-align: center; margin-bottom: 20px; font-family: var(--font-title); font-size: 1.1rem; font-weight: bold; color: #ff4081; letter-spacing: 1px; }
+        .vote-btn { display: inline-block; padding: 8px 18px; border-radius: 20px; font-family: var(--font-title); font-size: 0.8rem; font-weight: bold; cursor: pointer; background: rgba(128,128,128,0.05); color: var(--text-color); border: 2px solid var(--accent-color); transition: 0.3s; }
+        .vote-btn:hover { background: var(--accent-color); color: #fff; }
+        .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63); color: #fff; border-color: transparent; animation: heartBeat 1.5s ease-in-out infinite; }
+        .vote-count { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
         .vote-count:empty { display: none; }
+        .vote-num { font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; color: #ff4081; letter-spacing: 1px; }
+        .vote-num-val { font-size: 1.3rem; }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -517,7 +520,7 @@
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
-        document.getElementById('arc-vote-count').innerHTML = buildVoteCountHtml(char);
+        document.getElementById('arc-vote-count').innerHTML = buildVoteAreaHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
@@ -532,8 +535,7 @@
         }
         // ボタンラベルも更新
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = buildVoteButtonHtml(char.id);
-        btnHtml += '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
         btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
@@ -1184,20 +1186,15 @@
         return '<span class="bm-label">' + label + '</span><span class="bm-pct">' + rate + '%</span>';
     }
 
-    function buildVoteCountHtml(char) {
+    function buildVoteAreaHtml(char) {
         const count = getVoteCount(char.id);
-        return '♥ ' + count;
-    }
-
-    function buildVoteButtonHtml(charId) {
-        const isMyVote = String(getMyVote()) === String(charId);
-        if (isMyVote) {
-            const label = currentLang === 'ja' ? '♥ 最推し中' : '♥ My Favorite';
-            return '<button class="main-btn vote-btn voted" onclick="handleVote(' + charId + ')">' + label + '</button>';
-        } else {
-            const label = currentLang === 'ja' ? '♡ 最推しにする' : '♡ Set as Favorite';
-            return '<button class="main-btn vote-btn" onclick="handleVote(' + charId + ')">' + label + '</button>';
-        }
+        const isMyVote = String(getMyVote()) === String(char.id);
+        const btnLabel = isMyVote
+            ? (currentLang === 'ja' ? '♥ 最推し中' : '♥ My Favorite')
+            : (currentLang === 'ja' ? '♡ 最推しにする' : '♡ Set as Favorite');
+        const btnClass = isMyVote ? 'vote-btn voted' : 'vote-btn';
+        return '<span class="vote-num">♥ <span class="vote-num-val">' + count + '</span></span>'
+            + '<button class="' + btnClass + '" onclick="handleVote(' + char.id + ')">' + btnLabel + '</button>';
     }
 
     function handleVote(charId) {
@@ -1208,12 +1205,11 @@
         if (oldId) voteCounts[oldId] = Math.max(0, (voteCounts[oldId] || 0) - 1);
         voteCounts[charId] = (voteCounts[charId] || 0) + 1;
         voteForChar(charId);
-        // ボタン表示を更新（図鑑詳細を再描画）
-        const arcName = document.getElementById('arc-detail-name');
-        if (arcName) refreshArchiveDetail();
+        // 推しエリアだけをその場で再描画（ページ移動なし）
+        const char = characters.find(c => c.id === charId);
+        const area = document.getElementById('arc-vote-count');
+        if (char && area) area.innerHTML = buildVoteAreaHtml(char);
     }
-
-    function buildVoteButtonHtml_placeholder() {}
 
     function buildProfileHtml(char) {
         const p = char.profile || {};
@@ -1269,7 +1265,7 @@
         document.getElementById('archive-image-safe').src = char.imageSafe;
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
-        document.getElementById('arc-vote-count').innerHTML = buildVoteCountHtml(char);
+        document.getElementById('arc-vote-count').innerHTML = buildVoteAreaHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-content').classList.remove('expanded');
@@ -1291,8 +1287,7 @@
             corrEl.classList.add('hidden');
         }
         const buttonsContainer = document.getElementById('archive-detail-buttons');
-        let btnHtml = buildVoteButtonHtml(char.id);
-        btnHtml += '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
+        let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
         btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
         if (comingFromResult) {
             btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';

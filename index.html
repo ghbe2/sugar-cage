@@ -131,6 +131,8 @@
         .ext-link:hover .ext-arrow { color: #fff; }
         .vote-btn { border: 2px solid var(--accent-color) !important; }
         .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63) !important; color: #fff !important; border-color: transparent !important; animation: heartBeat 1.5s ease-in-out infinite; }
+        .vote-count { text-align: center; margin-bottom: 20px; font-family: var(--font-title); font-size: 1.1rem; font-weight: bold; color: #ff4081; letter-spacing: 1px; }
+        .vote-count:empty { display: none; }
         .ms-row { margin-bottom: 12px; }
         .ms-row:last-child { margin-bottom: 0; }
         .ms-head { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: bold; margin-bottom: 4px; }
@@ -275,6 +277,7 @@
                 <div class="detail-name" id="arc-detail-name"></div>
                 <div class="char-profile" id="arc-detail-profile"></div>
                 <div class="best-match" id="arc-best-match"></div>
+                <div class="vote-count" id="arc-vote-count"></div>
                 <div class="match-stats" id="arc-detail-stats"></div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
@@ -324,7 +327,27 @@
 
     // ===== 最推し投票機能 =====
     // ↓ Apps Script をWebアプリとしてデプロイしたURLに差し替える
-    const VOTE_API_URL = 'https://script.google.com/macros/s/AKfycbzTZb3_Y0nvgyQl11qIbc2B4XY1Y7XptM2Kyn8wTXNumo2OU8wD0xmFf-GslOr-t_2Rfg/exec';
+    const VOTE_API_URL = 'YOUR_APPS_SCRIPT_WEBAPP_URL_HERE';
+
+    let voteCounts = {}; // { charId: 票数 }
+
+    async function loadVoteCounts() {
+        try {
+            const response = await fetch('https://raw.githubusercontent.com/ghbe2/sugar-cage/main/votes.json?t=' + Date.now());
+            if (!response.ok) return;
+            const data = await response.json();
+            voteCounts = {};
+            if (data && Array.isArray(data.ranking)) {
+                data.ranking.forEach(v => { voteCounts[v.id] = v.count; });
+            }
+        } catch (e) {
+            // votes.json がまだ無い場合は無視
+        }
+    }
+
+    function getVoteCount(charId) {
+        return voteCounts[charId] || 0;
+    }
 
     function getMyVote() {
         return localStorage.getItem('sugar_cage_my_vote'); // 投票中のキャラID（文字列）or null
@@ -494,6 +517,7 @@
         document.getElementById('archive-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
+        document.getElementById('arc-vote-count').innerHTML = buildVoteCountHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
@@ -1160,6 +1184,11 @@
         return '<span class="bm-label">' + label + '</span><span class="bm-pct">' + rate + '%</span>';
     }
 
+    function buildVoteCountHtml(char) {
+        const count = getVoteCount(char.id);
+        return '♥ ' + count;
+    }
+
     function buildVoteButtonHtml(charId) {
         const isMyVote = String(getMyVote()) === String(charId);
         if (isMyVote) {
@@ -1172,6 +1201,12 @@
     }
 
     function handleVote(charId) {
+        const oldId = getMyVote();
+        // 既に同じキャラに投票済みなら何もしない
+        if (String(oldId) === String(charId)) return;
+        // 楽観的に推し数を即時反映（旧票-1・新票+1）
+        if (oldId) voteCounts[oldId] = Math.max(0, (voteCounts[oldId] || 0) - 1);
+        voteCounts[charId] = (voteCounts[charId] || 0) + 1;
         voteForChar(charId);
         // ボタン表示を更新（図鑑詳細を再描画）
         const arcName = document.getElementById('arc-detail-name');
@@ -1234,6 +1269,7 @@
         document.getElementById('archive-image-safe').src = char.imageSafe;
         document.getElementById('arc-detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('arc-best-match').innerHTML = buildBestMatchHtml(char);
+        document.getElementById('arc-vote-count').innerHTML = buildVoteCountHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-content').classList.remove('expanded');
@@ -1321,6 +1357,7 @@
 
     loadViewedChars();
     loadBestMatchRates();
+    loadVoteCounts();
     loadCharacters();
     document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
 </script>

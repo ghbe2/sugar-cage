@@ -129,9 +129,9 @@
         .ext-link:hover .ext-title { color: #fff; }
         .ext-link .ext-arrow { color: var(--accent-color); font-weight: bold; flex-shrink: 0; }
         .ext-link:hover .ext-arrow { color: #fff; }
-        .vote-btn { display: inline-block; padding: 8px 18px; border-radius: 20px; font-family: var(--font-title); font-size: 0.8rem; font-weight: bold; cursor: pointer; background: rgba(128,128,128,0.05); color: var(--text-color); border: 2px solid var(--accent-color); transition: 0.3s; }
+        .vote-btn { display: inline-flex; align-items: center; justify-content: center; width: 130px; height: 38px; box-sizing: border-box; padding: 0; border-radius: 20px; font-family: var(--font-title); font-size: 0.8rem; font-weight: bold; cursor: pointer; background: rgba(128,128,128,0.05); color: var(--text-color); border: 2px solid var(--accent-color); transition: background 0.3s, color 0.3s, border-color 0.3s; }
         .vote-btn:hover { background: var(--accent-color); color: #fff; }
-        .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63); color: #fff; border-color: transparent; animation: heartBeat 1.5s ease-in-out infinite; }
+        .vote-btn.voted { background: linear-gradient(135deg, #ff4081, #e91e63); color: #fff; border-color: transparent; }
         .vote-count { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
         .vote-count:empty { display: none; }
         .vote-num { font-family: var(--font-title); font-size: 1.2rem; font-weight: bold; color: #ff4081; letter-spacing: 1px; }
@@ -388,19 +388,19 @@
     const ui = {
         subtitle: { ja: "パートナーマッチング", en: "Partner Matching" },
         start_desc: { ja: "このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡", en: "This matching app reveals your true romantic outlook and finds the perfect partner for you. ♡" },
-        start_btn: { ja: "START", en: "START" },
-        archive_btn: { ja: "ARCHIVE", en: "ARCHIVE" },
+        start_btn: { ja: "出会いをさがす", en: "START" },
+        archive_btn: { ja: "いままでの出会い", en: "ARCHIVE" },
         agree: { ja: "わかる", en: "Agree" },
         neutral: { ja: "まよう", en: "Unsure" },
         disagree: { ja: "ちがう", en: "Disagree" },
         result_desc: { ja: "あなたにいいね♡が届いています。一人を選んでマッチングしましょう", en: "You have 3 ♡ likes. Choose one to confirm your match." },
         expand_btn: { ja: "▼ もっと深く知る覚悟はある？", en: "▼ Ready to know more?" },
         share_btn: { ja: "𝕏 SHARE", en: "𝕏 SHARE" },
-        archive_link: { ja: "ARCHIVE", en: "ARCHIVE" },
+        archive_link: { ja: "いままでの出会い", en: "ARCHIVE" },
         follow_btn: { ja: "🔗 Follow @ai_be2", en: "🔗 Follow @ai_be2" },
-        restart_btn: { ja: "RESTART", en: "RESTART" },
+        restart_btn: { ja: "もう一度", en: "RESTART" },
         back_result: { ja: "BACK TO RESULT", en: "Back to Result" },
-        back_btn: { ja: "BACK", en: "BACK" },
+        back_btn: { ja: "もどる", en: "BACK" },
         archive_title: { ja: "マッチング中♥", en: "Matching ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" }
     };
@@ -536,9 +536,9 @@
         // ボタンラベルも更新
         const buttonsContainer = document.getElementById('archive-detail-buttons');
         let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
-        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
+        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + ui.back_btn[currentLang] + '</button>';
         if (comingFromResult) {
-            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
+            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + ui.restart_btn[currentLang] + '</button>';
         }
         buttonsContainer.innerHTML = btnHtml;
     }
@@ -1190,8 +1190,8 @@
         const count = getVoteCount(char.id);
         const isMyVote = String(getMyVote()) === String(char.id);
         const btnLabel = isMyVote
-            ? (currentLang === 'ja' ? '♥ 最推し中' : '♥ My Favorite')
-            : (currentLang === 'ja' ? '♡ 最推しにする' : '♡ Set as Favorite');
+            ? (currentLang === 'ja' ? '♥ 推してる' : '♥ My Favorite')
+            : (currentLang === 'ja' ? '♡ 推す' : '♡ Set as Favorite');
         const btnClass = isMyVote ? 'vote-btn voted' : 'vote-btn';
         return '<span class="vote-num">♥ <span class="vote-num-val">' + count + '</span></span>'
             + '<button class="' + btnClass + '" onclick="handleVote(' + char.id + ')">' + btnLabel + '</button>';
@@ -1288,9 +1288,9 @@
         }
         const buttonsContainer = document.getElementById('archive-detail-buttons');
         let btnHtml = '<button class="main-btn" onclick="shareArchiveX()">𝕏 SHARE</button>';
-        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + 'BACK' + '</button>';
+        btnHtml += '<button class="main-btn sub-btn" onclick="backToArchiveGrid()">' + ui.back_btn[currentLang] + '</button>';
         if (comingFromResult) {
-            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + 'RESTART' + '</button>';
+            btnHtml += '<button class="main-btn sub-btn" onclick="resetQuiz()" style="min-width: 160px;">' + ui.restart_btn[currentLang] + '</button>';
         }
         buttonsContainer.innerHTML = btnHtml;
         scrollScreensTop();

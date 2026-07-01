@@ -104,9 +104,10 @@
         .char-image-section { margin: 20px 0; text-align: center; }
         .char-image { max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 12px; }
         .detail-name { font-family: var(--font-main); font-size: 1.3rem; font-weight: 900; color: var(--accent-color); margin-bottom: 12px; padding-bottom: 12px; letter-spacing: 1px; transition: color 2s ease; }
-        .char-profile { font-size: 0.85rem; line-height: 1.8; margin-bottom: 24px; color: var(--text-color); opacity: 0.85; font-weight: 600; letter-spacing: 0.5px; }
+        .char-profile { font-size: 0.85rem; line-height: 1.8; margin-bottom: 24px; color: var(--text-color); opacity: 0.85; font-weight: 600; letter-spacing: 0.5px; display: grid; grid-template-columns: auto auto; justify-content: center; gap: 6px 28px; }
         .char-profile:empty { display: none; }
-        .char-profile .prof-row { display: inline-flex; gap: 4px; margin: 0 8px; }
+        .char-profile .prof-row { display: inline-flex; gap: 6px; }
+        .char-profile .prof-amal { grid-column: 1 / -1; justify-content: center; }
         .char-profile .prof-label { color: var(--accent-color); font-weight: bold; }
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
@@ -245,6 +246,7 @@
                 <div id="result-quote" class="char-quote"></div>
                 <div class="char-image-section"><img id="result-image-safe" class="char-image" src="" alt="Safe"></div>
                 <div class="detail-name" id="detail-name"></div>
+                <div class="vote-count" id="result-vote-count"></div>
                 <div class="char-profile" id="detail-profile"></div>
                 <div class="match-stats" id="detail-match-stats"></div>
                 <div class="detail-desc" id="detail-desc"></div>
@@ -550,6 +552,7 @@
     function revealResultRefresh(char) {
         document.getElementById('detail-name').innerText = char.name[currentLang];
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
+        document.getElementById('result-vote-count').innerHTML = buildVoteAreaHtml(char);
         document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
@@ -738,7 +741,7 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => c.id <= 12);
+        let availableChars = characters.filter(c => c.id <= 14);
         let ranked = availableChars.map(char => {
             // 新マッチ度基準（P/M逆・I/E順）でスコア化。高いほど相性が良い
             let matchPct = calcMatchPercent(char);
@@ -837,6 +840,7 @@
         nameEl.setAttribute('data-char-id', char.id);
         document.getElementById('result-quote').innerText = char.quote[currentLang] || '';
         document.getElementById('result-image-safe').src = char.imageSafe;
+        document.getElementById('result-vote-count').innerHTML = buildVoteAreaHtml(char);
         document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
@@ -958,7 +962,7 @@
         characters.forEach(char => {
             const slot = document.createElement('div');
             const isViewed = viewedCharIds.has(char.id);
-            const isUnimplemented = char.id > 12;
+            const isUnimplemented = char.id > 14;
             if (isUnimplemented) {
                 slot.className = 'archive-slot unimplemented';
                 slot.innerHTML = '？';
@@ -1208,38 +1212,63 @@
         if (oldId) voteCounts[oldId] = Math.max(0, (voteCounts[oldId] || 0) - 1);
         voteCounts[charId] = (voteCounts[charId] || 0) + 1;
         voteForChar(charId);
-        // 推しエリアだけをその場で再描画（ページ移動なし）
+        // 表示中の推しエリアをその場で再描画（結果画面・図鑑どちらでも）
         const char = characters.find(c => c.id === charId);
-        const area = document.getElementById('arc-vote-count');
-        if (char && area) area.innerHTML = buildVoteAreaHtml(char);
+        if (char) {
+            const arcArea = document.getElementById('arc-vote-count');
+            if (arcArea) arcArea.innerHTML = buildVoteAreaHtml(char);
+            const resArea = document.getElementById('result-vote-count');
+            if (resArea) resArea.innerHTML = buildVoteAreaHtml(char);
+        }
     }
 
     function buildProfileHtml(char) {
         const p = char.profile || {};
         const rows = [];
+        const prof = (label, value) => rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + value + '</span></span>');
         // 年齢（数字のみ）
         if (p.age && String(p.age).trim() !== '') {
-            const label = currentLang === 'ja' ? '年齢' : 'Age';
-            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.age + '</span></span>');
+            prof(currentLang === 'ja' ? '年齢' : 'Age', p.age);
+        }
+        // 誕生日（「○月○日」→「○/○」に整形）
+        if (p.birthday && String(p.birthday).trim() !== '') {
+            prof(currentLang === 'ja' ? '誕生日' : 'Birthday', formatBirthday(p.birthday));
         }
         // 身長（cm）
         if (p.height && String(p.height).trim() !== '') {
-            const label = currentLang === 'ja' ? '身長' : 'Height';
-            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.height + 'cm</span></span>');
+            prof(currentLang === 'ja' ? '身長' : 'Height', p.height + 'cm');
         }
         // バスト（カップ記号）
         if (p.bust && String(p.bust).trim() !== '') {
-            const label = currentLang === 'ja' ? 'バスト' : 'Bust';
-            rows.push('<span class="prof-row"><span class="prof-label">' + label + '</span><span>' + p.bust + '</span></span>');
+            prof(currentLang === 'ja' ? 'バスト' : 'Bust', p.bust);
+        }
+        // アマル特徴（feature1 / feature2、日英出し分け・全幅）
+        const amal = char.amal || {};
+        const f1 = amal.feature1 ? String(amal.feature1[currentLang] || '').trim() : '';
+        const f2 = amal.feature2 ? String(amal.feature2[currentLang] || '').trim() : '';
+        const amalParts = [f1, f2].filter(v => v !== '');
+        if (amalParts.length > 0) {
+            const label = currentLang === 'ja' ? 'アマル特徴' : 'Amal';
+            rows.push('<span class="prof-row prof-amal"><span class="prof-label">' + label + '</span><span>' + amalParts.join(' / ') + '</span></span>');
         }
         return rows.join('');
+    }
+
+    // 誕生日を表示用に整形（「3月15日」→「3/15」）
+    function formatBirthday(raw) {
+        const str = String(raw).trim();
+        const md = str.match(/(\d{1,2})月(\d{1,2})日/);
+        if (md) return Number(md[1]) + '/' + Number(md[2]);
+        const iso = str.match(/^\d{4}-(\d{1,2})-(\d{1,2})/);
+        if (iso) return Number(iso[1]) + '/' + Number(iso[2]);
+        return str;
     }
 
     function buildCorrelationCard(corr) {
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
         const isLocked = !viewedCharIds.has(corr.id);
-        const isUnimplemented = corr.id > 12;
+        const isUnimplemented = corr.id > 14;
         const corrCard = document.createElement('div');
         corrCard.className = 'corr-card ' + ((isLocked || isUnimplemented) ? 'locked' : '');
         let iconHtml;

@@ -110,6 +110,16 @@
         .char-profile .prof-amal { grid-column: 1 / -1; justify-content: center; }
         .char-profile .prof-label { color: var(--accent-color); font-weight: bold; white-space: nowrap; }
         .desc-subtitle { font-family: var(--font-title); font-size: 0.9rem; letter-spacing: 2px; color: var(--accent-color); text-align: center; font-weight: bold; margin-bottom: 12px; }
+        /* ランキングTOP（フルブリード3分割＋オーバーレイ） */
+        #screen-start { position: relative; overflow: hidden; padding: 0; min-height: 80vh; background: #f2d6e2; text-align: center; }
+        #screen-start .rank-bg { position: absolute; inset: 0; display: flex; z-index: 0; }
+        #screen-start .rk-col { flex: 1; position: relative; overflow: hidden; background: #f2d6e2; }
+        #screen-start .rk-col img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 12%; display: block; }
+        #screen-start .rk-col img.sil { opacity: .4; }
+        #screen-start .rk-col.center { z-index: 2; animation: softGlow 5s ease-in-out infinite alternate; }
+        @keyframes softGlow { from { box-shadow: inset 0 0 30px 6px rgba(255,255,255,.13); } to { box-shadow: inset 0 0 52px 14px rgba(255,255,255,.30); } }
+        #screen-start .start-overlay { position: absolute; left: 0; right: 0; bottom: 10%; z-index: 5; display: flex; justify-content: center; padding: 0 16px; }
+        #screen-start .start-panel { background: rgba(252,228,236,.96); border-radius: 20px; padding: 34px 28px 40px; width: 84%; max-width: 900px; box-shadow: 0 6px 24px rgba(43,31,36,.22); }
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
         .ms-title { font-family: var(--font-title); font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 14px; text-align: center; }
@@ -216,12 +226,17 @@
         <button onclick="toggleLang()" class="small-btn" id="lang-btn">EN</button>
     </div>
     <div id="screen-start" class="container-box">
-        <h1 class="glitch-text">Sugar Cage</h1>
-        <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 20px;" data-text="subtitle">パートナーマッチング</h2>
-        <p style="font-size: 0.95rem; line-height: 1.7; margin: 30px 0 40px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
-        <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; border: 2px solid var(--accent-color); white-space: nowrap;">START</button>
-        <br>
-        <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; white-space: nowrap;">ARCHIVE</button>
+        <div id="rank-bg" class="rank-bg" aria-hidden="true"></div>
+        <div class="start-overlay">
+            <div class="start-panel">
+                <h1 class="glitch-text">Sugar Cage</h1>
+                <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 14px;" data-text="subtitle">パートナーマッチング</h2>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0 0 22px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
+                <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; border: 2px solid var(--accent-color); white-space: nowrap;">START</button>
+                <br>
+                <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; white-space: nowrap; margin-top: 12px;">ARCHIVE</button>
+            </div>
+        </div>
     </div>
     <div id="screen-quiz" class="container-box hidden">
         <div class="status-container">
@@ -250,11 +265,12 @@
                 <div class="vote-count" id="result-vote-count"></div>
                 <div class="char-profile" id="detail-profile"></div>
                 <div class="match-stats" id="detail-match-stats"></div>
-                <div class="desc-subtitle" data-text="desc_subtitle_result">あなたを知る</div>
+                <div class="desc-subtitle" data-text="subtitle_know">あなたを知る</div>
                 <div class="detail-desc" id="detail-desc"></div>
                 <button class="expand-sensitive" id="expand-btn" onclick="toggleSensitive(this, 'result')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="result-sensitive-content">
                     <div class="sensitive-image-section"><img id="result-image-sensitive" class="char-image" src="" alt="Sensitive"></div>
+                    <div class="desc-subtitle" data-text="subtitle_secret">あなただけが知る</div>
                     <div class="sensitive-text" id="result-sensitive-text"></div>
                 </div>
                 <div class="ext-links" id="result-links"></div>
@@ -288,11 +304,12 @@
                 <div class="char-profile" id="arc-detail-profile"></div>
                 <div class="best-match" id="arc-best-match"></div>
                 <div class="match-stats" id="arc-detail-stats"></div>
-                <div class="desc-subtitle" data-text="desc_subtitle_archive">あなただけが知る</div>
+                <div class="desc-subtitle" data-text="subtitle_know">あなたを知る</div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="archive-sensitive-content">
                     <div class="sensitive-image-section"><img id="archive-image-sensitive" class="char-image" src="" alt="Sensitive"></div>
+                    <div class="desc-subtitle" data-text="subtitle_secret">あなただけが知る</div>
                     <div class="sensitive-text" id="archive-sensitive-text"></div>
                 </div>
                 <div class="ext-links" id="archive-links"></div>
@@ -410,8 +427,8 @@
         back_btn: { ja: "もどる", en: "BACK" },
         archive_title: { ja: "マッチング中♥", en: "Matching ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" },
-        desc_subtitle_result: { ja: "あなたを知る", en: "Knowing You" },
-        desc_subtitle_archive: { ja: "あなただけが知る", en: "Only You Know" }
+        subtitle_know: { ja: "あなたを知る", en: "Knowing You" },
+        subtitle_secret: { ja: "あなただけが知る", en: "Only You Know" }
     };
 
     allQuestions = [
@@ -637,6 +654,7 @@
         document.getElementById('archive-grid-view').classList.remove('hidden');
         document.getElementById('archive-detail-view').classList.add('hidden');
         document.getElementById('screen-start').classList.remove('hidden');
+        renderStartRanking();
         updateStatusUI();
     }
 
@@ -961,6 +979,7 @@
         } else {
             resetColorPhase();
             document.getElementById('screen-start').classList.remove('hidden');
+            renderStartRanking();
         }
     }
 
@@ -1397,11 +1416,39 @@
     // ピンチズーム抑制
     document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
 
+    // TOPランキング描画（得票降順→ID昇順、左=2位/中央=1位/右=3位、解放=rank・未解放=silhouette）
+    function renderStartRanking() {
+        const host = document.getElementById('rank-bg');
+        if (!host || !characters || characters.length === 0) return;
+        const ranked = characters.filter(c => c.id <= 14).slice()
+            .sort((a, b) => (getVoteCount(b.id) - getVoteCount(a.id)) || (a.id - b.id));
+        const top3 = ranked.slice(0, 3);
+        if (top3.length < 3) { host.innerHTML = ''; return; }
+        const order = [top3[1], top3[0], top3[2]]; // 左=2位 / 中央=1位 / 右=3位
+        const RAW = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/';
+        host.innerHTML = '';
+        order.forEach((char, i) => {
+            const col = document.createElement('div');
+            col.className = 'rk-col' + (i === 1 ? ' center' : '');
+            const revealed = viewedCharIds.has(char.id);
+            const id2 = String(char.id).padStart(2, '0');
+            const img = document.createElement('img');
+            img.src = RAW + id2 + (revealed ? '_rank.png' : '_silhouette.png');
+            if (!revealed) img.className = 'sil';
+            img.alt = '';
+            img.onerror = function () { this.style.display = 'none'; };
+            col.appendChild(img);
+            host.appendChild(col);
+        });
+    }
+
     loadViewedChars();
     loadBestMatchRates();
-    loadVoteCounts();
-    loadCharacters();
     document.querySelectorAll('[data-text]').forEach(el => { const key = el.getAttribute('data-text'); if (ui[key]) el.innerHTML = ui[key][currentLang]; });
+    (async () => {
+        await Promise.all([loadVoteCounts(), loadCharacters()]);
+        renderStartRanking();
+    })();
 </script>
 </body>
 </html>

@@ -70,8 +70,8 @@
         .glitch-text { font-family: var(--font-title); text-shadow: calc(var(--glitch-intensity) * 1) 0 0 rgba(255,0,100,0.5), calc(var(--glitch-intensity) * -1) 0 0 rgba(0,255,255,0.5); transition: text-shadow 0.5s; }
         h1 { font-family: var(--font-title); font-size: 1.8rem; border-bottom: 2px dashed var(--accent-color); padding-bottom: 15px; margin-bottom: 30px; color: var(--accent-color); letter-spacing: 2px; transition: color 2s ease, border-color 2s ease; }
         .top-nav { position: fixed; top: calc(10px + env(safe-area-inset-top)); right: calc(12px + env(safe-area-inset-right)); display: flex; gap: 10px; z-index: 200; }
-        .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
-        .small-btn:hover { background: var(--accent-color); color: white; transform: scale(1.05); }
+        .small-btn { font-family: var(--font-main); background: var(--box-bg); color: var(--accent-color); border: 2px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: background 0.3s, border-color 2s ease, color 2s ease, transform 0.3s; }
+        .small-btn:hover { background: var(--accent-color); color: white; transform: scale(1.05); transition: background 0.2s, border-color 0.2s, transform 0.3s, color 0.15s; }
         .status-container { background: rgba(128,128,128,0.1); padding: 16px; border-radius: 8px; margin-bottom: 30px; text-align: left; border: 1px solid var(--border-color); transition: border-color 2s ease; }
         .status-title { font-family: var(--font-title); font-size: 0.85rem; color: var(--accent-color); margin-bottom: 12px; text-align: center; letter-spacing: 2px; transition: color 2s ease; }
         .stat-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.85rem; font-family: var(--font-title); }
@@ -80,7 +80,7 @@
         .stat-bar-fill { height: 100%; background: var(--accent-color); width: 50%; transition: width 0.4s ease, background 2s ease; }
         .stat-val { width: 25px; text-align: right; font-weight: bold; }
         .question-text { font-size: 1.05rem; line-height: 1.5; min-height: 100px; display: flex; flex-wrap: wrap; align-items: center; align-content: center; justify-content: center; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 30px; padding: 0 10px; box-sizing: border-box; }
-        .q-char { display: inline-block; white-space: pre; line-height: 1.5; }
+        .q-char { display: inline-block; white-space: pre; line-height: 1.5; transition: color 2s ease; }
         .scale-labels { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 12px; padding: 0 20px; opacity: 0.8; font-weight: bold; color: var(--text-color); transition: color 2s ease; }
         .scale-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; }
         .scale-btn { flex: 1; height: 50px; border-radius: 6px; background: rgba(128,128,128,0.05); border: 2px solid var(--border-color); cursor: pointer; transition: background 0.3s, border-color 2s ease, transform 0.3s, color 2s ease; position: relative; font-family: var(--font-title); font-size: 1rem; font-weight: bold; color: var(--btn-text-color); }
@@ -108,7 +108,8 @@
         .char-profile:empty { display: none; }
         .char-profile .prof-row { display: inline-flex; gap: 6px; }
         .char-profile .prof-amal { grid-column: 1 / -1; justify-content: center; }
-        .char-profile .prof-label { color: var(--accent-color); font-weight: bold; }
+        .char-profile .prof-label { color: var(--accent-color); font-weight: bold; white-space: nowrap; }
+        .desc-subtitle { font-family: var(--font-title); font-size: 0.9rem; letter-spacing: 2px; color: var(--accent-color); text-align: center; font-weight: bold; margin-bottom: 12px; }
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
         .ms-title { font-family: var(--font-title); font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 14px; text-align: center; }
@@ -249,6 +250,7 @@
                 <div class="vote-count" id="result-vote-count"></div>
                 <div class="char-profile" id="detail-profile"></div>
                 <div class="match-stats" id="detail-match-stats"></div>
+                <div class="desc-subtitle" data-text="desc_subtitle_result">あなたを知る</div>
                 <div class="detail-desc" id="detail-desc"></div>
                 <button class="expand-sensitive" id="expand-btn" onclick="toggleSensitive(this, 'result')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="result-sensitive-content">
@@ -286,6 +288,7 @@
                 <div class="char-profile" id="arc-detail-profile"></div>
                 <div class="best-match" id="arc-best-match"></div>
                 <div class="match-stats" id="arc-detail-stats"></div>
+                <div class="desc-subtitle" data-text="desc_subtitle_archive">あなただけが知る</div>
                 <div class="detail-desc" id="arc-detail-desc"></div>
                 <button class="expand-sensitive" id="arc-expand-btn" onclick="toggleSensitive(this, 'archive')" data-text="expand_btn">▼ もっと深く知る覚悟はある？</button>
                 <div class="sensitive-content" id="archive-sensitive-content">
@@ -406,7 +409,9 @@
         back_result: { ja: "BACK TO RESULT", en: "Back to Result" },
         back_btn: { ja: "もどる", en: "BACK" },
         archive_title: { ja: "マッチング中♥", en: "Matching ♥" },
-        correlations: { ja: "▸ 関係性", en: "▸ Relations" }
+        correlations: { ja: "▸ 関係性", en: "▸ Relations" },
+        desc_subtitle_result: { ja: "あなたを知る", en: "Knowing You" },
+        desc_subtitle_archive: { ja: "あなただけが知る", en: "Only You Know" }
     };
 
     allQuestions = [
@@ -658,7 +663,6 @@
     let wobbleTimer = null;
 
     function showQuestion() {
-        applySmoothColorPhase();
         const q = quizQuestions[currentQuestionIndex];
         document.getElementById('question-number').innerText = 'Q' + (currentQuestionIndex + 1) + ' / 15';
         const qText = q.q[currentLang];
@@ -670,6 +674,10 @@
             span.textContent = ch;
             qEl.appendChild(span);
         }
+        // 新しい文字を「前フェーズの色」で確定させてから配色を進める。
+        // → 質問文もボタン・回答ラベルと同じ2秒フェードで色が変化して揃う。
+        void qEl.offsetWidth; // reflowで開始色を確定させてからトランジション発火
+        applySmoothColorPhase();
         startWobble();
         const container = document.getElementById('options-container');
         const btns = [{ label: '<<', mult: 2 }, { label: '<', mult: 1 }, { label: '・', mult: 'random' }, { label: '>', mult: -1 }, { label: '>>', mult: -2 }];
@@ -1097,9 +1105,9 @@
             I: Math.max(0, Math.min(9, stats.I)),
             E: Math.max(0, Math.min(9, stats.E))
         };
-        // P/M: 逆ほど良い → 差そのものが点（差9で満点）
-        const scoreP = Math.abs(y.P - c.P);
-        const scoreM = Math.abs(y.M - c.M);
+        // P/M: 逆ほど良い（相補）→ 9-char への一致で満点（和が9のペアがMAX）
+        const scoreP = 9 - Math.abs(y.P - (9 - c.P));
+        const scoreM = 9 - Math.abs(y.M - (9 - c.M));
         // I/E: 近いほど良い → 9-差（一致で満点）
         const scoreI = 9 - Math.abs(y.I - c.I);
         const scoreE = 9 - Math.abs(y.E - c.E);
@@ -1261,6 +1269,12 @@
         if (md) return Number(md[1]) + '/' + Number(md[2]);
         const iso = str.match(/^\d{4}-(\d{1,2})-(\d{1,2})/);
         if (iso) return Number(iso[1]) + '/' + Number(iso[2]);
+        // JSの Date 文字列（"Thu Nov 26 2026 ... GMT+0900"）救済：英語月名を文字列から直接読む（TZ非依存）
+        const en = str.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2})\b/);
+        if (en) {
+            const months = { Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12 };
+            return months[en[1]] + '/' + Number(en[2]);
+        }
         return str;
     }
 

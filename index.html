@@ -119,7 +119,7 @@
         #screen-start .rk-col.center { z-index: 2; animation: softGlow 5s ease-in-out infinite alternate; }
         @keyframes softGlow { from { box-shadow: inset 0 0 30px 6px rgba(255,255,255,.13); } to { box-shadow: inset 0 0 52px 14px rgba(255,255,255,.30); } }
         #screen-start .start-overlay { position: absolute; left: 0; right: 0; bottom: 10%; z-index: 5; display: flex; justify-content: center; padding: 0 16px; }
-        #screen-start .start-panel { background: rgba(252,228,236,.96); border-radius: 20px; padding: 34px 28px 40px; width: 84%; max-width: 900px; box-shadow: 0 6px 24px rgba(43,31,36,.22); }
+        #screen-start .start-panel { background: rgba(255,255,255,0.82); border-radius: 20px; padding: 34px 28px 40px; width: 84%; max-width: 900px; box-shadow: 0 6px 24px rgba(43,31,36,.22); }
         #screen-start .start-panel h1 { border-bottom: none; padding-bottom: 0; margin-bottom: 8px; }
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
@@ -167,7 +167,7 @@
         .ms-legend .lg-you { background: linear-gradient(90deg, #ff4081, #e91e63); }
         .ms-legend .lg-char { background: repeating-linear-gradient(45deg, #9b6dff, #9b6dff 3px, #7d4fd6 3px, #7d4fd6 6px); }
         .detail-desc { font-size: 0.95rem; line-height: 1.9; white-space: pre-wrap; font-weight: 500; margin-bottom: 24px; text-align: left; }
-        .expand-sensitive { background: linear-gradient(135deg, var(--accent-color), #ff80ab); color: white; border: none; padding: 16px 28px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold; letter-spacing: 1px; margin: 28px 0; transition: 0.3s; box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); width: 100%; display: block; }
+        .expand-sensitive { background: linear-gradient(90deg, #ff4081, #ff80ab, #e91e63, #ff4081); background-size: 300% 100%; animation: gradShift 4s linear infinite; color: white; border: none; padding: 16px 28px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: bold; letter-spacing: 1px; margin: 28px 0; transition: filter .3s, transform .3s, box-shadow .3s; box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3); width: 100%; display: block; }
         .expand-sensitive:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233, 30, 99, 0.4); }
         .sensitive-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
         .sensitive-content.expanded { max-height: 3000px; }
@@ -197,6 +197,12 @@
         .archive-slot.locked { background: #1a1a1a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); }
         .archive-slot.unimplemented { background: #2a2a2a; cursor: not-allowed; border: 2px dashed rgba(128,128,128,0.3); font-size: 36px; }
         .archive-slot.unlocked { border: 2px solid var(--accent-color); box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
+        .archive-slot.viewed-plain { border: 2px solid #f4b3cc; }
+        .expand-sensitive.shake { animation: gradShift 4s linear infinite, btnShake 0.4s; }
+        @keyframes gradShift { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+        @keyframes btnShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+        .secret-locked-msg { opacity: 0; transition: opacity .3s ease; color: var(--accent-color); font-size: .85rem; font-weight: bold; text-align: center; margin-top: 10px; min-height: 1.2em; }
+        .secret-locked-msg.show { opacity: 1; }
         .archive-slot:hover:not(.locked):not(.unimplemented) { filter: brightness(1.15); transform: scale(1.02); }
         @keyframes gridFlow { 0% { background-position: 0 0, 0 0; } 100% { background-position: 20px 20px, 20px 20px; } }
         @keyframes textShake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1px, 1px); } 40% { transform: translate(1px, -1px); } 60% { transform: translate(-1px, -1px); } 80% { transform: translate(1px, 1px); } }
@@ -550,8 +556,9 @@
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
-        const expanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
-        document.getElementById('arc-expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        const arcBtn = document.getElementById('arc-expand-btn');
+        const arcExpanded = document.getElementById('archive-sensitive-content').classList.contains('expanded');
+        arcBtn.innerText = expandBtnLabel(arcBtn.dataset.unlocked === '1', arcExpanded);
         document.getElementById('archive-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('archive-correlations');
         if (char.correlations && char.correlations.length > 0) {
@@ -579,8 +586,9 @@
         document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
-        const expanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
-        document.getElementById('expand-btn').innerText = expanded ? (currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret') : ui.expand_btn[currentLang];
+        const resBtn = document.getElementById('expand-btn');
+        const resExpanded = document.getElementById('result-sensitive-content').classList.contains('expanded');
+        resBtn.innerText = expandBtnLabel(resBtn.dataset.unlocked === '1', resExpanded);
         document.getElementById('result-links').innerHTML = buildLinksHtml(char);
         const corrEl = document.getElementById('result-correlations');
         if (char.correlations && char.correlations.length > 0) {
@@ -870,9 +878,7 @@
         document.getElementById('detail-profile').innerHTML = buildProfileHtml(char);
         document.getElementById('detail-match-stats').innerHTML = buildMatchStatsHtml(char, true);
         document.getElementById('detail-desc').innerText = char.desc[currentLang];
-        document.getElementById('result-sensitive-content').classList.remove('expanded');
-        document.getElementById('expand-btn').classList.remove('expanded');
-        document.getElementById('expand-btn').innerText = ui.expand_btn[currentLang];
+        updateExpandBtn('result', char);
         document.getElementById('result-image-sensitive').src = char.imageSensitive;
         document.getElementById('result-sensitive-text').innerText = char.descSensitive[currentLang];
         document.getElementById('result-links').innerHTML = buildLinksHtml(char);
@@ -890,18 +896,60 @@
         }
     }
 
+    // ===== 隠しテキストの親密度ゲート（相性90%以上・過去達成でも可） =====
+    const SECRET_UNLOCK_PCT = 90;
+    function isSecretUnlocked(char) { return !!char && (bestMatchRates[char.id] || 0) >= SECRET_UNLOCK_PCT; }
+    function expandBtnLabel(unlocked, expanded) {
+        // ロックでも見た目・文言は通常と同じ（押せると思わせて、タップで弾く）
+        if (expanded) return currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret';
+        return ui.expand_btn[currentLang];
+    }
+    function ensureLockMsg(btnEl, locked) {
+        let msg = btnEl.nextElementSibling;
+        const has = msg && msg.classList && msg.classList.contains('secret-locked-msg');
+        if (locked) {
+            if (!has) {
+                msg = document.createElement('div');
+                msg.className = 'secret-locked-msg';
+                btnEl.parentNode.insertBefore(msg, btnEl.nextSibling);
+            }
+            msg.textContent = currentLang === 'ja' ? 'まだ心を開いていない……' : 'Not close enough yet…';
+            msg.classList.remove('show');
+        } else if (has) {
+            msg.remove();
+        }
+    }
+    function updateExpandBtn(type, char) {
+        const btnEl = document.getElementById(type === 'result' ? 'expand-btn' : 'arc-expand-btn');
+        const content = document.getElementById(type === 'result' ? 'result-sensitive-content' : 'archive-sensitive-content');
+        if (!btnEl) return;
+        const unlocked = isSecretUnlocked(char);
+        btnEl.dataset.unlocked = unlocked ? '1' : '0';
+        btnEl.classList.remove('expanded');
+        if (content) content.classList.remove('expanded');
+        btnEl.innerText = expandBtnLabel(unlocked, false);
+        ensureLockMsg(btnEl, !unlocked); // 未解放は先にメッセージ枠を確保（表示時にレイアウトを動かさない）
+    }
+    function showSecretLocked(btnEl) {
+        btnEl.classList.remove('shake'); void btnEl.offsetWidth; btnEl.classList.add('shake');
+        const msg = btnEl.nextElementSibling;
+        if (msg && msg.classList.contains('secret-locked-msg')) {
+            msg.classList.add('show');
+            clearTimeout(btnEl._msgTimer);
+            btnEl._msgTimer = setTimeout(() => { msg.classList.remove('show'); }, 2500);
+        }
+    }
+
     function toggleSensitive(btn, type) {
         const contentId = type === 'result' ? 'result-sensitive-content' : 'archive-sensitive-content';
         const content = document.getElementById(contentId);
         const btnId = type === 'result' ? 'expand-btn' : 'arc-expand-btn';
         const btnEl = document.getElementById(btnId);
+        // 親密度ゲート：相性90%未満（未達成）は開かない
+        if (btnEl.dataset.unlocked !== '1') { showSecretLocked(btnEl); return; }
         content.classList.toggle('expanded');
         btnEl.classList.toggle('expanded');
-        if (content.classList.contains('expanded')) {
-            btnEl.innerText = currentLang === 'ja' ? '▲ ふたりだけの秘密にする' : '▲ Keep it secret';
-        } else {
-            btnEl.innerText = ui.expand_btn[currentLang];
-        }
+        btnEl.innerText = expandBtnLabel(true, content.classList.contains('expanded'));
     }
 
     function shareCharById(id, mode) {
@@ -994,7 +1042,8 @@
                 slot.className = 'archive-slot unimplemented';
                 slot.innerHTML = '？';
             } else if (isViewed) {
-                slot.className = 'archive-slot unlocked';
+                const secretOpen = (bestMatchRates[char.id] || 0) >= 90;
+                slot.className = 'archive-slot ' + (secretOpen ? 'unlocked' : 'viewed-plain');
                 const img = document.createElement('img');
                 img.src = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/' + String(char.id).padStart(2, '0') + '_icon.png';
                 slot.appendChild(img);
@@ -1333,9 +1382,7 @@
         document.getElementById('arc-vote-count').innerHTML = buildVoteAreaHtml(char);
         document.getElementById('arc-detail-stats').innerHTML = buildMatchStatsHtml(char, false);
         document.getElementById('arc-detail-desc').innerText = char.desc[currentLang];
-        document.getElementById('archive-sensitive-content').classList.remove('expanded');
-        document.getElementById('arc-expand-btn').classList.remove('expanded');
-        document.getElementById('arc-expand-btn').innerText = ui.expand_btn[currentLang];
+        updateExpandBtn('archive', char);
         document.getElementById('archive-image-sensitive').src = char.imageSensitive;
         document.getElementById('archive-sensitive-text').innerText = char.descSensitive[currentLang];
         document.getElementById('archive-links').innerHTML = buildLinksHtml(char);

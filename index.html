@@ -111,15 +111,16 @@
         .char-profile .prof-label { color: var(--accent-color); font-weight: bold; white-space: nowrap; }
         .desc-subtitle { font-family: var(--font-title); font-size: 0.9rem; letter-spacing: 2px; color: var(--accent-color); text-align: center; font-weight: bold; margin-bottom: 12px; }
         /* ランキングTOP（フルブリード3分割＋オーバーレイ） */
-        #screen-start { position: relative; overflow: hidden; padding: 0; min-height: 80vh; background: #f2d6e2; text-align: center; }
+        #screen-start { position: fixed; inset: 0; z-index: 5; overflow: hidden; padding: 0; margin: 0; border: none; border-radius: 0; box-shadow: none; max-height: none; text-align: center; background-color: #f2d6e2; background-image: linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 20px 20px; animation: gridFlow 8s linear infinite; }
         #screen-start .rank-bg { position: absolute; inset: 0; display: flex; z-index: 0; }
-        #screen-start .rk-col { flex: 1; position: relative; overflow: hidden; background: #f2d6e2; }
+        #screen-start .rk-col { flex: 1; position: relative; overflow: hidden; background: transparent; }
         #screen-start .rk-col img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 12%; display: block; }
         #screen-start .rk-col img.sil { opacity: .4; }
         #screen-start .rk-col.center { z-index: 2; animation: softGlow 5s ease-in-out infinite alternate; }
         @keyframes softGlow { from { box-shadow: inset 0 0 30px 6px rgba(255,255,255,.13); } to { box-shadow: inset 0 0 52px 14px rgba(255,255,255,.30); } }
         #screen-start .start-overlay { position: absolute; left: 0; right: 0; bottom: 10%; z-index: 5; display: flex; justify-content: center; padding: 0 16px; }
         #screen-start .start-panel { background: rgba(252,228,236,.96); border-radius: 20px; padding: 34px 28px 40px; width: 84%; max-width: 900px; box-shadow: 0 6px 24px rgba(43,31,36,.22); }
+        #screen-start .start-panel h1 { border-bottom: none; padding-bottom: 0; margin-bottom: 8px; }
         .match-stats { margin: 0 0 28px 0; padding: 18px; background: rgba(128,128,128,0.06); border: 1px solid var(--border-color); border-radius: 8px; text-align: left; }
         .match-stats:empty { display: none; }
         .ms-title { font-family: var(--font-title); font-size: 0.75rem; letter-spacing: 2px; color: var(--accent-color); margin-bottom: 14px; text-align: center; }
@@ -230,8 +231,7 @@
         <div class="start-overlay">
             <div class="start-panel">
                 <h1 class="glitch-text">Sugar Cage</h1>
-                <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 14px;" data-text="subtitle">パートナーマッチング</h2>
-                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0 0 22px; font-weight: 500;" data-text="start_desc">このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡</p>
+                <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 22px;" data-text="subtitle">パートナーマッチング</h2>
                 <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; border: 2px solid var(--accent-color); white-space: nowrap;">START</button>
                 <br>
                 <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; white-space: nowrap; margin-top: 12px;">ARCHIVE</button>

@@ -969,6 +969,13 @@
           "ja": "なにかした？",
           "en": "Did you do something?"
         }
+      },
+      {
+        "id": 6,
+        "type": {
+          "ja": "リスナー",
+          "en": "listener"
+        }
       }
     ]
   },
@@ -1039,6 +1046,13 @@
           "ja": "友達",
           "en": "friend"
         }
+      },
+      {
+        "id": 6,
+        "type": {
+          "ja": "リスナー",
+          "en": "listener"
+        }
       }
     ]
   },
@@ -1056,12 +1070,12 @@
       "ja": [
         "ストリーマー",
         "バーチャル",
-        "ピーターパンシンドローム"
+        "エコーチェンバー"
       ],
       "en": [
         "Streamer",
-        "Virtual",
-        "Peter Pan Syndrome"
+        "virtual",
+        "echo chamber"
       ]
     },
     "quote": {
@@ -1113,8 +1127,8 @@
       {
         "id": 6,
         "type": {
-          "ja": "近衛兵（リスナー）",
-          "en": "Royal Guard (listener)"
+          "ja": "リスナー",
+          "en": "listener"
         }
       }
     ]
@@ -1185,6 +1199,13 @@
         "type": {
           "ja": "気になる～",
           "en": "I'm curious~"
+        }
+      },
+      {
+        "id": 9,
+        "type": {
+          "ja": "フォロー",
+          "en": "Follow"
         }
       }
     ]
@@ -1257,6 +1278,13 @@
           "ja": "憧れ",
           "en": "longing"
         }
+      },
+      {
+        "id": 6,
+        "type": {
+          "ja": "リスナー",
+          "en": "listener"
+        }
       }
     ]
   },
@@ -1320,6 +1348,13 @@
         "type": {
           "ja": "夢",
           "en": "dream"
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "ja": "リスナー",
+          "en": "listener"
         }
       }
     ]

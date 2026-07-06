@@ -1160,6 +1160,9 @@
     }
 
     // 総合マッチ度を計算（P/M=逆ほど良い, I/E=近いほど良い）
+    // 相性%の正規化用：各軸 target(0..9) の期待得点 9-mean|X-target|（X一様0..9）
+    const AXIS_EXP = [4.5, 5.3, 5.9, 6.3, 6.5, 6.5, 6.3, 5.9, 5.3, 4.5];
+    const MATCH_ANCHOR = 65; // 正規化後の基準（各キャラの平均相性がこの付近に揃う）
     function calcMatchPercent(char) {
         const c = {
             P: Math.max(0, Math.min(9, char.P || 0)),
@@ -1180,7 +1183,10 @@
         const scoreI = 9 - Math.abs(y.I - c.I);
         const scoreE = 9 - Math.abs(y.E - c.E);
         const total = scoreP + scoreM + scoreI + scoreE; // 0〜36
-        return Math.round((total / 36) * 100);
+        // キャラ別ベースライン正規化：中央値キャラの「下駄」を打ち消す（PMIEの狙いやすさだけ残す）
+        const baseline = AXIS_EXP[9 - c.P] + AXIS_EXP[9 - c.M] + AXIS_EXP[c.I] + AXIS_EXP[c.E]; // 0〜36
+        const norm = (total - baseline) / 36 * 100 + MATCH_ANCHOR;
+        return Math.round(Math.max(0, Math.min(100, norm)));
     }
 
     function buildMatchStatsHtml(char, showYou) {

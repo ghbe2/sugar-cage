@@ -775,7 +775,7 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => c.id <= 14);
+        let availableChars = characters.filter(c => c.id <= 16);
         let ranked = availableChars.map(char => {
             // 新マッチ度基準（P/M逆・I/E順）でスコア化。高いほど相性が良い
             let matchPct = calcMatchPercent(char);
@@ -1037,7 +1037,7 @@
         characters.forEach(char => {
             const slot = document.createElement('div');
             const isViewed = viewedCharIds.has(char.id);
-            const isUnimplemented = char.id > 14;
+            const isUnimplemented = char.id > 16;
             if (isUnimplemented) {
                 slot.className = 'archive-slot unimplemented';
                 slot.innerHTML = '？';
@@ -1350,7 +1350,7 @@
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
         const isLocked = !viewedCharIds.has(corr.id);
-        const isUnimplemented = corr.id > 14;
+        const isUnimplemented = corr.id > 16;
         const corrCard = document.createElement('div');
         corrCard.className = 'corr-card ' + ((isLocked || isUnimplemented) ? 'locked' : '');
         let iconHtml;
@@ -1467,7 +1467,7 @@
     function renderStartRanking() {
         const host = document.getElementById('rank-bg');
         if (!host || !characters || characters.length === 0) return;
-        const ranked = characters.filter(c => c.id <= 14).slice()
+        const ranked = characters.filter(c => c.id <= 16).slice()
             .sort((a, b) => (getVoteCount(b.id) - getVoteCount(a.id)) || (a.id - b.id));
         const top3 = ranked.slice(0, 3);
         if (top3.length < 3) { host.innerHTML = ''; return; }

@@ -1,6 +1,67 @@
 {
   "scenes": [],
-  "groups": [],
+  "groups": [
+    {
+      "id": "1",
+      "ja": "タテガミ大学",
+      "en": "Tategami University",
+      "parent": ""
+    },
+    {
+      "id": "2",
+      "ja": "テイル学園",
+      "en": "Tail Academy",
+      "parent": ""
+    },
+    {
+      "id": "3",
+      "ja": "3",
+      "en": "3",
+      "parent": ""
+    },
+    {
+      "id": "4",
+      "ja": "4",
+      "en": "4",
+      "parent": ""
+    },
+    {
+      "id": "5",
+      "ja": "5",
+      "en": "5",
+      "parent": ""
+    },
+    {
+      "id": "6",
+      "ja": "6",
+      "en": "6",
+      "parent": ""
+    },
+    {
+      "id": "7",
+      "ja": "7",
+      "en": "7",
+      "parent": ""
+    },
+    {
+      "id": "8",
+      "ja": "8",
+      "en": "8",
+      "parent": ""
+    },
+    {
+      "id": "9",
+      "ja": "9",
+      "en": "9",
+      "parent": ""
+    },
+    {
+      "id": "10",
+      "ja": "10",
+      "en": "10",
+      "parent": ""
+    }
+  ],
   "nodes": [
     {
       "id": 1,
@@ -22,7 +83,11 @@
       "id": 3,
       "ja": "ラコ",
       "en": "Rako",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "2"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -38,7 +103,11 @@
       "id": 5,
       "ja": "リウ",
       "en": "Riu",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -46,7 +115,11 @@
       "id": 6,
       "ja": "アウネ",
       "en": "Aune",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -86,7 +159,11 @@
       "id": 11,
       "ja": "モコクン",
       "en": "Mokokun",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "2"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -102,7 +179,11 @@
       "id": 13,
       "ja": "月謝",
       "en": "Gessha",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -110,7 +191,11 @@
       "id": 14,
       "ja": "こな",
       "en": "Kona",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -118,7 +203,11 @@
       "id": 15,
       "ja": "依鳥オウ",
       "en": "Ou Yoridori",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -126,7 +215,11 @@
       "id": 16,
       "ja": "とろとろ",
       "en": "Torotoro",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -134,7 +227,11 @@
       "id": 17,
       "ja": "アミメ",
       "en": "Amime",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -142,7 +239,11 @@
       "id": 18,
       "ja": "mAAn",
       "en": "mAAn",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "1"
+        }
+      ],
       "relations": [],
       "aliases": []
     },

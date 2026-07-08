@@ -49,7 +49,7 @@
       "ja": "クロワゼ",
       "en": "Croisée",
       "parent": "",
-      "relCell": "",
+      "relCell": "瑞珠|顧客|customer|",
       "_row": 6
     },
     {
@@ -502,6 +502,12 @@
     }
   ],
   "groupRelations": [
+    {
+      "from": "5",
+      "to": 12,
+      "ja": "顧客",
+      "en": "customer"
+    },
     {
       "from": "6",
       "to": "7",

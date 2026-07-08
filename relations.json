@@ -9,16 +9,6 @@
       "id": "2",
       "ja": "夜",
       "en": "night"
-    },
-    {
-      "id": "マユゥ",
-      "ja": "マユゥ",
-      "en": "マユゥ"
-    },
-    {
-      "id": "ミナリ",
-      "ja": "ミナリ",
-      "en": "ミナリ"
     }
   ],
   "groups": [
@@ -36,38 +26,38 @@
     },
     {
       "id": "3",
-      "ja": "3",
-      "en": "3",
+      "ja": "デロルスプロ",
+      "en": "Delorus Pro",
       "parent": ""
     },
     {
       "id": "4",
-      "ja": "4",
-      "en": "4",
+      "ja": "咆哮会",
+      "en": "The Roar Family",
       "parent": ""
     },
     {
       "id": "5",
-      "ja": "5",
-      "en": "5",
+      "ja": "クロワゼ",
+      "en": "Croisée",
       "parent": ""
     },
     {
       "id": "6",
-      "ja": "6",
-      "en": "6",
+      "ja": "みど川市役所",
+      "en": "Midogawa City Hall",
       "parent": ""
     },
     {
       "id": "7",
-      "ja": "7",
-      "en": "7",
+      "ja": "パブ フェニキス",
+      "en": "Pub Phoenix",
       "parent": ""
     },
     {
       "id": "8",
-      "ja": "8",
-      "en": "8",
+      "ja": "うぶげ保育園",
+      "en": "Little Fluff Nursery",
       "parent": ""
     },
     {
@@ -89,14 +79,15 @@
       "ja": "ミナリ",
       "en": "Minari",
       "memberships": [],
-      "relations": [],
-      "aliases": [
+      "relations": [
         {
-          "scene": "マユゥ",
+          "to": 9,
           "ja": "ごはんくれる",
-          "en": "ごはんくれる"
+          "en": "Give me food",
+          "scene": "1"
         }
-      ]
+      ],
+      "aliases": []
     },
     {
       "id": 2,
@@ -122,7 +113,11 @@
       "id": 4,
       "ja": "バーニ",
       "en": "Bani",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "7"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -135,7 +130,19 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 6,
+          "ja": "妹",
+          "en": "younger sister"
+        },
+        {
+          "to": 17,
+          "ja": "知り合い",
+          "en": "acquaintance",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -154,7 +161,11 @@
       "id": 7,
       "ja": "ヒロイベオ",
       "en": "Heroibeo",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "3"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -162,7 +173,11 @@
       "id": 8,
       "ja": "ぱふ先生",
       "en": "Pafu-sensei",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "8"
+        }
+      ],
       "relations": [],
       "aliases": []
     },
@@ -170,15 +185,32 @@
       "id": 9,
       "ja": "マユゥ",
       "en": "Mayuu",
-      "memberships": [],
-      "relations": [],
-      "aliases": [
+      "memberships": [
         {
-          "scene": "ミナリ",
-          "ja": "ほっとけない！",
-          "en": "ほっとけない！"
+          "g": "6"
         }
-      ]
+      ],
+      "relations": [
+        {
+          "to": 1,
+          "ja": "ほっとけない！",
+          "en": "I can't just leave it!",
+          "scene": "1"
+        },
+        {
+          "to": 3,
+          "ja": "リベンジポルノから助けた",
+          "en": "I saved him from revenge porn.",
+          "scene": "1"
+        },
+        {
+          "to": 11,
+          "ja": "ロマンス詐欺から助けた",
+          "en": "I saved her from a romance scam.",
+          "scene": "1"
+        }
+      ],
+      "aliases": []
     },
     {
       "id": 10,
@@ -332,7 +364,11 @@
       "id": 25,
       "ja": "デロルス",
       "en": "Dellorath",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "3"
+        }
+      ],
       "relations": [],
       "aliases": []
     },

@@ -18,21 +18,18 @@
   #stage{ position:fixed; inset:0; width:100%; height:100%; touch-action:none; cursor:grab; }
   #stage.dragging{ cursor:grabbing; }
 
-  /* HUD */
-  #hud{ position:fixed; top:0; left:0; right:0; z-index:10; display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;
-    padding:10px 12px calc(10px); background:rgba(255,255,255,0.82); border-bottom:1px solid rgba(233,30,99,0.25);
-    padding-top:calc(10px + env(safe-area-inset-top)); }
-  #hud .title{ font-weight:700; color:var(--pink2); font-size:15px; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
-  #hud .tag{ font-size:10px; background:var(--pink); color:#fff; border-radius:8px; padding:2px 7px; letter-spacing:1px; }
-  #scene-tabs{ display:flex; gap:6px; }
-  .scene-tab{ font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:16px; border:1.5px solid var(--pink); background:#fff; color:var(--pink2); cursor:pointer; }
-  .scene-tab.active{ background:var(--pink); color:#fff; }
-  #hud .right{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:12px; }
-  #hud label{ display:flex; align-items:center; gap:4px; cursor:pointer; color:#8a5c6d; font-weight:600; }
-  .hud-btn{ font-size:12px; font-weight:700; padding:6px 12px; border-radius:14px; border:1.5px solid var(--pink); background:#fff; color:var(--pink2); cursor:pointer; }
-
-  #hint{ position:fixed; left:0; right:0; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:10; text-align:center; pointer-events:none;
-    font-size:11px; color:#a3798c; }
+  /* controls（四隅） */
+  .corner-btn{ position:fixed; z-index:12; font-family:inherit; font-size:13px; font-weight:700; padding:9px 15px; border-radius:22px; border:1.5px solid var(--pink); background:rgba(255,255,255,0.92); color:var(--pink2); cursor:pointer; box-shadow:0 2px 8px rgba(43,31,36,0.12); }
+  #lang{ top:calc(10px + env(safe-area-inset-top)); right:calc(12px + env(safe-area-inset-right)); }
+  #back{ bottom:calc(12px + env(safe-area-inset-bottom)); right:calc(12px + env(safe-area-inset-right)); }
+  #fit{ bottom:calc(58px + env(safe-area-inset-bottom)); right:calc(12px + env(safe-area-inset-right)); padding:9px 12px; }
+  /* シーン切替ダイヤル（左下・上下スクロール/矢印で決定） */
+  #scene-dial{ position:fixed; z-index:12; left:calc(12px + env(safe-area-inset-left)); bottom:calc(12px + env(safe-area-inset-bottom));
+    min-width:104px; max-width:150px; background:rgba(255,255,255,0.92); border:1.5px solid var(--pink); border-radius:16px;
+    box-shadow:0 2px 8px rgba(43,31,36,0.12); padding:5px 6px; text-align:center; user-select:none; touch-action:none; overflow:hidden; }
+  #scene-dial .darrow{ font-size:11px; color:var(--pink2); cursor:pointer; line-height:1.3; }
+  #scene-dial .ditem{ font-size:12px; font-weight:700; color:#cca7b4; padding:1px 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+  #scene-dial .ditem.cur{ font-size:14px; color:#fff; background:var(--pink); border-radius:10px; margin:2px 0; padding:5px 6px; }
 
   /* SVG parts */
   .grp-path{ pointer-events:none; }
@@ -56,16 +53,16 @@
 </style>
 </head>
 <body>
-<div id="hud">
-  <div class="title">相関図 <span class="tag">β</span></div>
-  <div id="scene-tabs"></div>
-  <div class="right">
-    <label><input type="checkbox" id="mask" checked> <span id="mask-label">未解放を？？？</span></label>
-    <button class="hud-btn" id="lang">EN</button>
-    <button class="hud-btn" id="reset">⌂ 全体</button>
-  </div>
+<button id="lang" class="corner-btn">EN</button>
+<div id="scene-dial">
+  <div class="darrow" data-d="-1">▲</div>
+  <div class="ditem prev" data-off="-1"></div>
+  <div class="ditem cur"></div>
+  <div class="ditem next" data-off="1"></div>
+  <div class="darrow" data-d="1">▼</div>
 </div>
-<div id="hint">ドラッグで移動 / ピンチ・ホイールで拡縮 / キャラをタップでフォーカス</div>
+<button id="fit" class="corner-btn" title="全体表示">⌂</button>
+<button id="back" class="corner-btn">← もどる</button>
 
 <svg id="stage">
   <defs>
@@ -165,7 +162,7 @@ let activeEdges = [];      // merged {a,b,abLabel,baLabel,bi}
 let activeGroups = [];     // {…group, members:[node], depth, palette, cx,cy,r}
 let xEdges = [];           // グループが端点の矢印 {from,to:{node|group}, label}
 let focusId = null;
-let alpha = 1, tickCount = 0, userTouched = false;
+let alpha = 1, tickCount = 0, userTouched = false, warmupTicks = 0;
 
 // ---- view (pan/zoom) ----
 const view = { tx: 0, ty: 0, k: 1 };
@@ -198,7 +195,7 @@ function rebuildActive() {
   nodes.forEach(n => {
     (n.relations || []).forEach(r => {
       if (!sceneMatch(r.scene)) return;
-      if (!nodeById[r.to]) return;
+      if (typeof r.to !== 'number' || !nodeById[r.to]) return; // グループ相手(文字列ID)をキャラと誤認しない
       const key = Math.min(n.id, r.to) + '-' + Math.max(n.id, r.to);
       if (!map[key]) map[key] = { a: Math.min(n.id, r.to), b: Math.max(n.id, r.to), abLabel: null, baLabel: null };
       const e = map[key];
@@ -246,7 +243,7 @@ function rebuildActive() {
     if (to) addX({ group: gr.from }, to, { ja: gr.ja, en: gr.en });
   });
   xEdges = Object.values(xmap).map(e => ({
-    ...e, bi: !!(e.abLabel && e.baLabel), rest: 175,
+    ...e, bi: !!(e.abLabel && e.baLabel), rest: 330,
     type: (e.endA.group !== undefined && e.endB.group !== undefined) ? 'gg' : 'cg'
   }));
 }
@@ -272,13 +269,13 @@ function updateEdgeRests() {
   activeEdges.forEach(e => {
     const w1 = e.abLabel ? textW(e.abLabel[lang], 10.5) : 0;
     const w2 = e.baLabel ? textW(e.baLabel[lang], 10.5) : 0;
-    e.rest = Math.max(180, Math.max(w1, w2) + 110);
+    e.rest = Math.max(340, Math.max(w1, w2) + 210);
   });
 }
 
 // ---- force simulation ----
 function tick() {
-  const f = alpha * Math.min(1, 0.1 + tickCount * 0.016); // 序盤は弱く→徐々に本気（読み込み時の暴れ防止）
+  const f = alpha * Math.min(1, 0.08 + warmupTicks * 0.01); // 序盤は弱く→ゆっくり本気に（読み込み・シーン切替の暴れ防止）
   // 反発
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -286,7 +283,7 @@ function tick() {
       let dx = b.x - a.x, dy = b.y - a.y;
       let d2 = dx * dx + dy * dy; if (d2 < 1) { d2 = 1; dx = 1; }
       const d = Math.sqrt(d2);
-      const rep = 3800 / d2 * f;
+      const rep = 8000 / d2 * f;
       const ux = dx / d, uy = dy / d;
       a.vx -= ux * rep; a.vy -= uy * rep;
       b.vx += ux * rep; b.vy += uy * rep;
@@ -307,7 +304,7 @@ function tick() {
     if (g.members.length === 0) return;
     let cx = 0, cy = 0; g.members.forEach(m => { cx += m.x; cy += m.y; }); cx /= g.members.length; cy /= g.members.length;
     let r = 0; g.members.forEach(m => { r = Math.max(r, Math.hypot(m.x - cx, m.y - cy)); });
-    g._cx = cx; g._cy = cy; g._r = r + 60;
+    g._cx = cx; g._cy = cy; g._r = r + 95;
   });
   // グループ引力（深いほど強く＝チームは固く。人数が多いほど緩めて広がりを許す）
   activeGroups.forEach(g => {
@@ -323,7 +320,7 @@ function tick() {
     if (a.members.length < 1 || b.members.length < 1) continue;
     if (isAncestor(a, b) || isAncestor(b, a)) continue;
     let dx = b._cx - a._cx, dy = b._cy - a._cy; const d = Math.hypot(dx, dy) || 1;
-    const min = a._r + b._r + 55;
+    const min = a._r + b._r + 95;
     if (d < min) {
       const push = (min - d) / d * 0.5 * f, ox = dx * push, oy = dy * push;
       a.members.forEach(m => { m.vx -= ox; m.vy -= oy; });
@@ -342,7 +339,7 @@ function tick() {
   });
   // ノード↔線の反発（線に当たると跳ね返る＝ノードが線をまたがない）
   const allEdgesP = activeEdges.concat(xEdges);
-  const eTh = NODE_R + 13;
+  const eTh = NODE_R + 22;
   allEdgesP.forEach(e => {
     const seg = edgeSegPhys(e); if (!seg) return;
     const A = seg.A, B = seg.B, ex = B.x - A.x, ey = B.y - A.y, el2 = ex * ex + ey * ey || 1;
@@ -364,19 +361,19 @@ function tick() {
   });
   // 中心へ（画面アスペクトに合わせて配置＝縦画面なら縦長になるよう異方性）
   const ar = W() / H();
-  const kx = 0.0016 * Math.max(1, 1 / ar), ky = 0.0016 * Math.max(1, ar);
+  const kx = 0.0011 * Math.max(1, 1 / ar), ky = 0.0011 * Math.max(1, ar);
   nodes.forEach(n => { n.vx += (0 - n.x) * kx * f; n.vy += (0 - n.y) * ky * f; });
   // 積分
   nodes.forEach(n => {
     if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
-    n.vx *= 0.83; n.vy *= 0.83;
+    n.vx *= 0.9; n.vy *= 0.9;               // 粘り（摩擦）強め
     const sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
-    if (sp > 10) { n.vx = n.vx / sp * 10; n.vy = n.vy / sp * 10; }
+    if (sp > 3) { n.vx = n.vx / sp * 3; n.vy = n.vy / sp * 3; }  // 最高速を半分に（スローモー）
     n.x += n.vx; n.y += n.vy;
   });
   alpha = Math.max(0.02, alpha * 0.996);
-  tickCount++;
-  if (tickCount === 80 && !userTouched) fitAll();
+  tickCount++; warmupTicks++;
+  if ((tickCount === 120 || tickCount === 260) && !userTouched) fitAll();
 }
 
 // ---- hull（凸包＋パディング＋平滑化） ----
@@ -582,8 +579,8 @@ function drawEdge(e, edgeLabels, lineSamples) {
   // 制御点の慣性（引っ張られて遅れて追従＝揺れ）
   if (!e.cp) e.cp = { x: mid.x, y: mid.y, vx: 0, vy: 0 };
   const tx = mid.x + offx, ty = mid.y + offy;
-  e.cp.vx = (e.cp.vx + (tx - e.cp.x) * 0.045) * 0.90;
-  e.cp.vy = (e.cp.vy + (ty - e.cp.y) * 0.045) * 0.90;
+  e.cp.vx = (e.cp.vx + (tx - e.cp.x) * 0.04) * 0.93;
+  e.cp.vy = (e.cp.vy + (ty - e.cp.y) * 0.04) * 0.93;
   e.cp.x += e.cp.vx; e.cp.y += e.cp.vy;
   const C = { x: 2 * e.cp.x - mid.x, y: 2 * e.cp.y - mid.y };
   const grpEdge = e.type !== 'cc'; // node↔group / group↔group はより大きく曲げる
@@ -645,6 +642,7 @@ function applyFocusClasses() {
   if (focusId === null) {
     nodes.forEach(n => { n.el.classList.remove('dim', 'focused'); });
     activeEdges.forEach(e => e.el.classList.remove('dim'));
+    xEdges.forEach(e => e.el.classList.remove('dim'));
     activeGroups.forEach(g => g.el.classList.remove('dim'));
     return;
   }
@@ -655,6 +653,8 @@ function applyFocusClasses() {
     n.el.classList.toggle('focused', n.id === focusId);
   });
   activeEdges.forEach(e => e.el.classList.toggle('dim', !(e.a === focusId || e.b === focusId)));
+  // グループ絡みの矢印は、focus対象キャラが直接の端点でなければ減光（所属グループから他へ出る矢印を消す）
+  xEdges.forEach(e => e.el.classList.toggle('dim', !(e.endA.node === focusId || e.endB.node === focusId)));
   activeGroups.forEach(g => g.el.classList.toggle('dim', !g.members.some(m => adj.has(m.id))));
 }
 function focusNode(id) {
@@ -757,6 +757,7 @@ function endPointer(ev) {
   svg.classList.remove('dragging');
   if (dragNode) {
     const id = dragNode.id;
+    dragNode.vx = 0; dragNode.vy = 0; // 離した瞬間に飛ばない
     delete dragNode.fx; delete dragNode.fy;
     dragNode = null;
     if (!moved) { focusNode(id); }
@@ -786,37 +787,46 @@ svg.addEventListener('wheel', (ev) => {
 }, { passive: false });
 
 // ---- HUD ----
-function buildSceneTabs() {
-  const wrap = document.getElementById('scene-tabs');
-  wrap.innerHTML = '';
-  if (!data.scenes || data.scenes.length === 0) return;
-  data.scenes.forEach(s => {
-    const b = document.createElement('button');
-    b.className = 'scene-tab' + (s.id === currentScene ? ' active' : '');
-    b.textContent = s[lang];
-    b.onclick = () => { setScene(s.id); };
-    wrap.appendChild(b);
-  });
+function sceneIdx() { const sc = data.scenes || []; const i = sc.findIndex(s => s.id === currentScene); return i < 0 ? 0 : i; }
+function updateSceneDial() {
+  const dial = document.getElementById('scene-dial');
+  const sc = data.scenes || [];
+  if (sc.length < 2) { dial.style.display = 'none'; return; }
+  dial.style.display = 'block';
+  const n = sc.length, i = sceneIdx();
+  const nm = k => sc[((k % n) + n) % n][lang];
+  dial.querySelector('.prev').textContent = nm(i - 1);
+  dial.querySelector('.cur').textContent = nm(i);
+  dial.querySelector('.next').textContent = nm(i + 1);
+}
+function cycleScene(delta) {
+  const sc = data.scenes || []; if (sc.length < 2) return;
+  const n = sc.length, i = (((sceneIdx() + delta) % n) + n) % n;
+  setScene(sc[i].id);
 }
 function setScene(id) {
   currentScene = id;
-  rebuildActive(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); updateNodeContents(); buildSceneTabs();
+  rebuildActive(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); updateNodeContents(); updateSceneDial();
   if (focusId !== null && !nodeById[focusId]) unfocus();
-  alpha = 1;
+  alpha = 0.6; warmupTicks = 0; // シーン切替も弱い力からゆっくり再配置（爆発防止）
 }
-document.getElementById('mask').addEventListener('change', (e) => { maskOn = e.target.checked; updateNodeContents(); });
+// シーンダイヤル（左下）：矢印/項目クリック・ホイールで切替
+(function () {
+  const dial = document.getElementById('scene-dial');
+  dial.querySelectorAll('.darrow').forEach(a => a.addEventListener('click', () => cycleScene(parseInt(a.dataset.d))));
+  dial.querySelector('.prev').addEventListener('click', () => cycleScene(-1));
+  dial.querySelector('.next').addEventListener('click', () => cycleScene(1));
+  dial.addEventListener('wheel', (e) => { e.preventDefault(); cycleScene(e.deltaY > 0 ? 1 : -1); }, { passive: false });
+})();
 document.getElementById('lang').addEventListener('click', () => {
   lang = lang === 'ja' ? 'en' : 'ja';
   document.getElementById('lang').textContent = lang === 'ja' ? 'EN' : 'JA';
-  document.getElementById('mask-label').textContent = lang === 'ja' ? '未解放を？？？' : 'Mask locked';
-  document.getElementById('reset').textContent = lang === 'ja' ? '⌂ 全体' : '⌂ Fit';
-  document.getElementById('hint').textContent = lang === 'ja'
-    ? 'ドラッグで移動 / ピンチ・ホイールで拡縮 / キャラをタップでフォーカス'
-    : 'Drag to pan / Pinch or wheel to zoom / Tap a character to focus';
-  updateNodeContents(); buildSceneTabs();
+  document.getElementById('back').textContent = lang === 'ja' ? '← もどる' : '← Back';
+  updateNodeContents(); updateSceneDial();
   updateEdgeRests(); alpha = Math.max(alpha, 0.5); // EN/JAでラベル幅が変わるため矢印長を再計算
 });
-document.getElementById('reset').addEventListener('click', () => { unfocus(); fitAll(); });
+document.getElementById('fit').addEventListener('click', () => { unfocus(); fitAll(); });
+document.getElementById('back').addEventListener('click', () => { location.href = 'index.html'; });
 
 // ---- メインループ ----
 function loop() {
@@ -834,14 +844,16 @@ function loop() {
 (async () => {
   data = await loadData();
   currentScene = (data.scenes && data.scenes[0]) ? data.scenes[0].id : null;
-  nodes = data.nodes.map((n, i) => {
-    const ang = (i / data.nodes.length) * Math.PI * 2;
-    const rad = 220 + data.nodes.length * 12 + (Math.random() - 0.5) * 80; // 広め＋乱れで初期の重なりを減らす
-    return { ...n, x: Math.cos(ang) * rad + (Math.random() - 0.5) * 60, y: Math.sin(ang) * rad + (Math.random() - 0.5) * 60, vx: 0, vy: 0 };
+  // 解放済み(viewed)本編キャラ＋脇役(ID100番台)のみ登場。未解放は相関図に出さない（少しずつ増える）
+  const shown = (data.nodes || []).filter(n => n.id >= 100 || viewedSet.has(n.id));
+  nodes = shown.map((n, i) => {
+    const ang = (i / shown.length) * Math.PI * 2;
+    const rad = 380 + shown.length * 22 + (Math.random() - 0.5) * 140; // 広め＋乱れで初期の重なりを減らす
+    return { ...n, x: Math.cos(ang) * rad + (Math.random() - 0.5) * 100, y: Math.sin(ang) * rad + (Math.random() - 0.5) * 100, vx: 0, vy: 0 };
   });
   nodeById = {}; nodes.forEach(n => nodeById[n.id] = n);
   rebuildActive();
-  buildNodesDOM(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); buildSceneTabs();
+  buildNodesDOM(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); updateSceneDial();
   view.tx = W() / 2; view.ty = H() / 2 + 30;
   loop();
 })();

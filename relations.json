@@ -85,6 +85,11 @@
           "ja": "ごはんくれる",
           "en": "Give me food",
           "scene": "1"
+        },
+        {
+          "to": 22,
+          "ja": "こわい",
+          "en": "scary"
         }
       ],
       "aliases": []
@@ -94,7 +99,14 @@
       "ja": "ベルペット",
       "en": "Bell Pet",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 23,
+          "ja": "ご主人様の知り合い？",
+          "en": "Is she an acquaintance of your husband?",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -106,7 +118,20 @@
           "g": "2"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 9,
+          "ja": "先生♡",
+          "en": "Teacher♡",
+          "scene": "1"
+        },
+        {
+          "to": 11,
+          "ja": "幼馴染",
+          "en": "Childhood friend",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -118,7 +143,14 @@
           "g": "7"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 10,
+          "ja": "知り合い",
+          "en": "acquaintance",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -154,7 +186,14 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 5,
+          "ja": "お姉ちゃん",
+          "en": "Big sister",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -166,7 +205,20 @@
           "g": "3"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 25,
+          "ja": "しゃちょう",
+          "en": "President",
+          "scene": "1"
+        },
+        {
+          "to": 21,
+          "ja": "おしごとのひと",
+          "en": "People at work",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {

@@ -78,8 +78,8 @@
     },
     {
       "id": "9",
-      "ja": "9",
-      "en": "9",
+      "ja": "第一鶴声学林",
+      "en": "First Kakusei Academy",
       "parent": "",
       "relCell": "",
       "_row": 10
@@ -609,7 +609,14 @@
       "ja": "アルバ",
       "en": "Alba",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 2,
+          "ja": "見た顔だね",
+          "en": "I recognize that face.",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -617,7 +624,14 @@
       "ja": "ジーナ / マミ",
       "en": "Jina / Mami",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 14,
+          "ja": "利用者リスト",
+          "en": "User list",
+          "scene": "2"
+        }
+      ],
       "aliases": []
     },
     {
@@ -629,7 +643,26 @@
           "g": "3"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 22,
+          "ja": "対等な相手",
+          "en": "Equal opponent",
+          "scene": "1"
+        },
+        {
+          "to": 7,
+          "ja": "プロデュース",
+          "en": "Produced by",
+          "scene": "1"
+        },
+        {
+          "to": 7,
+          "ja": "食い散らかす",
+          "en": "Make a mess while eating",
+          "scene": "2"
+        }
+      ],
       "aliases": []
     },
     {
@@ -645,7 +678,19 @@
       "ja": "ウェンカ",
       "en": "Wenka",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 30,
+          "ja": "愛人の娘",
+          "en": "The mistress's daughter",
+          "scene": "2"
+        },
+        {
+          "to": 22,
+          "ja": "クライアント",
+          "en": "client"
+        }
+      ],
       "aliases": []
     },
     {
@@ -653,7 +698,20 @@
       "ja": "マルガリティフェラ",
       "en": "Margaritifera",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 26,
+          "ja": "実験に関与",
+          "en": "Involved in the experiment",
+          "scene": "1"
+        },
+        {
+          "to": 17,
+          "ja": "搾取対象",
+          "en": "Exploitation",
+          "scene": "2"
+        }
+      ],
       "aliases": []
     },
     {
@@ -672,24 +730,75 @@
       "id": 30,
       "ja": "ナナメ",
       "en": "Naname",
-      "memberships": [],
-      "relations": [],
+      "memberships": [
+        {
+          "g": "9"
+        }
+      ],
+      "relations": [
+        {
+          "to": 31,
+          "ja": "親友",
+          "en": "best friend",
+          "scene": "1"
+        },
+        {
+          "to": 32,
+          "ja": "親友",
+          "en": "best friend",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
       "id": 31,
       "ja": "ジロリ",
       "en": "Ziloli",
-      "memberships": [],
-      "relations": [],
+      "memberships": [
+        {
+          "g": "9"
+        }
+      ],
+      "relations": [
+        {
+          "to": 30,
+          "ja": "親友",
+          "en": "best friend",
+          "scene": "1"
+        },
+        {
+          "to": 32,
+          "ja": "親友",
+          "en": "best friend",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
       "id": 32,
       "ja": "エラ",
       "en": "Ella",
-      "memberships": [],
-      "relations": [],
+      "memberships": [
+        {
+          "g": "9"
+        }
+      ],
+      "relations": [
+        {
+          "to": 30,
+          "ja": "親友",
+          "en": "best friend",
+          "scene": "1"
+        },
+        {
+          "to": 31,
+          "ja": "親友……",
+          "en": "Best friend...",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     }
   ],

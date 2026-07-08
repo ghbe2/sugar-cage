@@ -1,5 +1,16 @@
 {
-  "scenes": [],
+  "scenes": [
+    {
+      "id": "マユゥ",
+      "ja": "マユゥ",
+      "en": "マユゥ"
+    },
+    {
+      "id": "ミナリ",
+      "ja": "ミナリ",
+      "en": "ミナリ"
+    }
+  ],
   "groups": [
     {
       "id": "1",
@@ -69,7 +80,13 @@
       "en": "Minari",
       "memberships": [],
       "relations": [],
-      "aliases": []
+      "aliases": [
+        {
+          "scene": "マユゥ",
+          "ja": "ごはんくれる",
+          "en": "ごはんくれる"
+        }
+      ]
     },
     {
       "id": 2,
@@ -145,7 +162,13 @@
       "en": "Mayuu",
       "memberships": [],
       "relations": [],
-      "aliases": []
+      "aliases": [
+        {
+          "scene": "ミナリ",
+          "ja": "ほっとけない！",
+          "en": "ほっとけない！"
+        }
+      ]
     },
     {
       "id": 10,

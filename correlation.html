@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Sugar Cage 相関図</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍬</text></svg>">
+<style>
+  :root{ --pink:#e91e63; --pink2:#c2185b; --ink:#2b1f24; --bg:#fce4ec; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; overflow:hidden; }
+  body{
+    font-family:"Hiragino Sans","Yu Gothic UI",sans-serif; color:var(--ink);
+    background-color:var(--bg);
+    background-image:linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px);
+    background-size:20px 20px;
+  }
+  #stage{ position:fixed; inset:0; width:100%; height:100%; touch-action:none; cursor:grab; }
+  #stage.dragging{ cursor:grabbing; }
+
+  /* HUD */
+  #hud{ position:fixed; top:0; left:0; right:0; z-index:10; display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;
+    padding:10px 12px calc(10px); background:rgba(255,255,255,0.82); border-bottom:1px solid rgba(233,30,99,0.25);
+    padding-top:calc(10px + env(safe-area-inset-top)); }
+  #hud .title{ font-weight:700; color:var(--pink2); font-size:15px; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
+  #hud .tag{ font-size:10px; background:var(--pink); color:#fff; border-radius:8px; padding:2px 7px; letter-spacing:1px; }
+  #scene-tabs{ display:flex; gap:6px; }
+  .scene-tab{ font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:16px; border:1.5px solid var(--pink); background:#fff; color:var(--pink2); cursor:pointer; }
+  .scene-tab.active{ background:var(--pink); color:#fff; }
+  #hud .right{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:12px; }
+  #hud label{ display:flex; align-items:center; gap:4px; cursor:pointer; color:#8a5c6d; font-weight:600; }
+  .hud-btn{ font-size:12px; font-weight:700; padding:6px 12px; border-radius:14px; border:1.5px solid var(--pink); background:#fff; color:var(--pink2); cursor:pointer; }
+
+  #hint{ position:fixed; left:0; right:0; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:10; text-align:center; pointer-events:none;
+    font-size:11px; color:#a3798c; }
+
+  /* SVG parts */
+  .grp-path{ pointer-events:none; }
+  .grp-label{ font-size:12px; font-weight:700; pointer-events:auto; cursor:grab; paint-order:stroke; stroke:rgba(255,255,255,0.9); stroke-width:3px; }
+  .edge-line{ fill:none; stroke:#b0688a; stroke-width:1.6; stroke-linecap:round; }
+  .ah{ stroke:none; }
+  .edge-label{ font-size:10.5px; font-weight:700; fill:#8a4a63; text-anchor:middle; pointer-events:none; paint-order:stroke; stroke:rgba(255,255,255,0.92); stroke-width:3px; }
+  .node{ cursor:pointer; }
+  .node-bg{ fill:#fff; stroke:none; }
+  .node-ring{ fill:none; stroke:var(--pink); stroke-width:2; }
+  .node-name{ font-size:11.5px; font-weight:700; fill:var(--ink); text-anchor:middle; pointer-events:none; paint-order:stroke; stroke:rgba(255,255,255,0.92); stroke-width:3px; }
+  .node-initial{ font-size:18px; font-weight:700; fill:#c2185b; text-anchor:middle; pointer-events:none; }
+  .node.masked .node-bg{ fill:#241a1f; }
+  .node.masked .node-ring{ stroke:#4a3540; }
+  .node-mask-q{ font-size:11px; font-weight:700; fill:#f4b3cc; text-anchor:middle; pointer-events:none; }
+  .node.masked .node-name{ fill:#6b4a58; }
+
+  .dim{ opacity:0.12; transition:opacity .25s; }
+  .node, .edge-g, .grp-g{ transition:opacity .25s; }
+  .node.focused .node-ring{ stroke-width:3.5; filter:drop-shadow(0 0 6px rgba(233,30,99,0.8)); }
+</style>
+</head>
+<body>
+<div id="hud">
+  <div class="title">相関図 <span class="tag">β</span></div>
+  <div id="scene-tabs"></div>
+  <div class="right">
+    <label><input type="checkbox" id="mask" checked> <span id="mask-label">未解放を？？？</span></label>
+    <button class="hud-btn" id="lang">EN</button>
+    <button class="hud-btn" id="reset">⌂ 全体</button>
+  </div>
+</div>
+<div id="hint">ドラッグで移動 / ピンチ・ホイールで拡縮 / キャラをタップでフォーカス</div>
+
+<svg id="stage">
+  <defs>
+    <marker id="arr-cc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#b0688a"></path></marker>
+    <marker id="arr-cg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#2f9e8f"></path></marker>
+    <marker id="arr-gg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8a5cc7"></path></marker>
+    <clipPath id="nodeclip"><circle cx="0" cy="0" r="27"></circle></clipPath>
+  </defs>
+  <g id="world">
+    <g id="g-groups"></g>
+    <g id="g-edges"></g>
+    <g id="g-xedges"></g>
+    <g id="g-nodes"></g>
+  </g>
+</svg>
+
+<script>
+// =========================================================================
+// 【未使用・参考】形式サンプル（開発時のダミー）。本番データは下の loadData() が
+// relations.json を fetch する。データ構造の参考として残置（後日削除可）
+// =========================================================================
+const RELATIONS_DATA = {
+  scenes: [
+    { id: 'day',   ja: '昼', en: 'Day' },
+    { id: 'night', ja: '夜', en: 'Night' }
+  ],
+  groups: [
+    { id: 'univ',   ja: '聖華大学',     en: 'Seika Univ.',      parent: '' },
+    { id: 'team',   ja: 'チーム甘牢',   en: 'Team Cage',        parent: 'univ' },
+    { id: 'hs',     ja: '向日葵高校',   en: 'Himawari High',    parent: '' },
+    { id: 'agency', ja: '麻薬捜査局',   en: 'Narcotics Agency', parent: '' },
+    { id: 'cartel', ja: 'カルテル',     en: 'Cartel',           parent: '' }
+  ],
+  nodes: [
+    { id: 1,  ja: 'ミナリ',   en: 'Minari',  memberships: [], relations: [ { to: 9, ja: '依存', en: 'Depends on' } ] },
+    { id: 9,  ja: 'マユゥ',   en: 'Mayuu',   memberships: [], relations: [ { to: 1, ja: '保護', en: 'Protects' } ] },
+    { id: 3,  ja: 'ラコ',     en: 'Rako',    memberships: [ { g: 'hs' } ], relations: [ { to: 11, ja: '同級生', en: 'Classmates' } ] },
+    { id: 11, ja: 'モコクン', en: 'Mokokun', memberships: [ { g: 'hs' } ], relations: [ { to: 3, ja: '同級生', en: 'Classmates' } ] },
+    { id: 5,  ja: 'リウ',     en: 'Riu',     memberships: [ { g: 'univ' } ], relations: [ { to: 6, ja: '相棒', en: 'Partner' } ] },
+    { id: 6,  ja: 'アウネ',   en: 'Aune',    memberships: [ { g: 'univ' } ], relations: [] },
+    { id: 13, ja: '月謝',     en: 'Gessha',  memberships: [ { g: 'team' } ], relations: [ { to: 14, ja: '共犯', en: 'Accomplice' } ] },
+    { id: 14, ja: 'こな',     en: 'Kona',    memberships: [ { g: 'team' } ], relations: [] },
+    { id: 12, ja: '瑞珠',     en: 'Mizutama', memberships: [], relations: [ { to: 9, ja: '師事', en: 'Studies under', scene: 'day' } ] },
+    { id: 101, ja: 'ジーナ',  en: 'Gina',
+      memberships: [ { g: 'agency', scene: 'day' }, { g: 'cartel', scene: 'night' } ],
+      aliases: [ { scene: 'day', ja: 'マミ', en: 'Mami' } ],
+      relations: [
+        { to: 9,   ja: '監視', en: 'Watches',  scene: 'day' },
+        { to: 102, ja: '忠誠', en: 'Loyal to', scene: 'night' }
+      ] },
+    { id: 102, ja: 'ボス',   en: 'Boss',
+      memberships: [ { g: 'cartel', scene: 'night' } ],
+      relations: [ { to: 101, ja: '指令', en: 'Commands', scene: 'night' } ] }
+  ]
+};
+
+// 本番読み込み：スプレッド「相関図を同期」で生成される relations.json
+const RELATIONS_URL = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/relations.json';
+async function loadData() {
+  try {
+    const res = await fetch(RELATIONS_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch (e) {
+    alert('相関図データの読み込みに失敗しました。');
+    return { scenes: [], groups: [], nodes: [] };
+  }
+}
+
+// 解放状態：本体と共有（同一オリジンの localStorage 'sugar_cage_viewed'）
+let viewedSet = new Set();
+try {
+  const savedViewed = localStorage.getItem('sugar_cage_viewed');
+  if (savedViewed) viewedSet = new Set(JSON.parse(savedViewed));
+} catch (e) {}
+
+const RAW_ICON = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/';
+const NODE_R = 27;
+// エッジ種別ごとの色（cc=キャラ↔キャラ / cg=キャラ↔グループ / gg=グループ↔グループ）と太さ（双方向=太/一方向=細）
+const EDGE_COLOR = { cc: '#b0688a', cg: '#2f9e8f', gg: '#8a5cc7' };
+function edgeWidth(bi) { return bi ? 3 : 1.4; }
+const GROUP_PALETTE = [
+  ['rgba(233,30,99,0.08)',  'rgba(233,30,99,0.45)',  '#c2185b'],
+  ['rgba(156,39,176,0.08)', 'rgba(156,39,176,0.4)',  '#7b1fa2'],
+  ['rgba(255,111,145,0.1)', 'rgba(255,111,145,0.5)', '#c94f6d'],
+  ['rgba(103,58,183,0.08)', 'rgba(103,58,183,0.4)',  '#512da8'],
+  ['rgba(216,27,96,0.07)',  'rgba(216,27,96,0.35)',  '#ad1457']
+];
+
+let data = null;
+let lang = 'ja';
+let currentScene = null;
+let maskOn = true;
+let nodes = [];            // {…data, x,y,vx,vy, el}
+let nodeById = {};
+let activeEdges = [];      // merged {a,b,abLabel,baLabel,bi}
+let activeGroups = [];     // {…group, members:[node], depth, palette, cx,cy,r}
+let xEdges = [];           // グループが端点の矢印 {from,to:{node|group}, label}
+let focusId = null;
+let alpha = 1, tickCount = 0, userTouched = false;
+
+// ---- view (pan/zoom) ----
+const view = { tx: 0, ty: 0, k: 1 };
+let viewAnim = null; // {tx,ty} target
+const svg = document.getElementById('stage');
+const world = document.getElementById('world');
+const gGroups = document.getElementById('g-groups');
+const gEdges = document.getElementById('g-edges');
+const gXEdges = document.getElementById('g-xedges');
+const gNodes = document.getElementById('g-nodes');
+
+function W() { return svg.clientWidth; }
+function H() { return svg.clientHeight; }
+function applyView() { world.setAttribute('transform', 'translate(' + view.tx + ',' + view.ty + ') scale(' + view.k + ')'); }
+
+// ---- helpers ----
+function sceneMatch(entryScene) { return !entryScene || entryScene === currentScene; }
+function nodeName(n) {
+  if (isMasked(n)) return '？？？';
+  const alias = (n.aliases || []).find(a => a.scene === currentScene);
+  return alias ? alias[lang] : n[lang];
+}
+// 未解放・未実装は？？？（本編キャラのみ）。脇役(ID100番台)は常時表示 ※要検討ポイント
+function isMasked(n) { return maskOn && n.id < 100 && !viewedSet.has(n.id); }
+
+// ---- graph build ----
+function rebuildActive() {
+  // edges: 有向を集めて無向キーでマージ（両方向あれば双方向）
+  const map = {};
+  nodes.forEach(n => {
+    (n.relations || []).forEach(r => {
+      if (!sceneMatch(r.scene)) return;
+      if (!nodeById[r.to]) return;
+      const key = Math.min(n.id, r.to) + '-' + Math.max(n.id, r.to);
+      if (!map[key]) map[key] = { a: Math.min(n.id, r.to), b: Math.max(n.id, r.to), abLabel: null, baLabel: null };
+      const e = map[key];
+      if (n.id === e.a) e.abLabel = { ja: r.ja, en: r.en }; else e.baLabel = { ja: r.ja, en: r.en };
+    });
+  });
+  activeEdges = Object.values(map).map(e => ({ ...e, bi: !!(e.abLabel && e.baLabel) }));
+  updateEdgeRests();
+
+  // groups: 実効メンバー（直属＋子孫）
+  const groups = data.groups.map((g, i) => ({ ...g, palette: GROUP_PALETTE[i % GROUP_PALETTE.length] }));
+  const byId = {}; groups.forEach(g => byId[g.id] = g);
+  groups.forEach(g => { let d = 0, p = g.parent; while (p && byId[p]) { d++; p = byId[p].parent; } g.depth = d; });
+  function directMembers(gid) {
+    return nodes.filter(n => (n.memberships || []).some(m => m.g === gid && sceneMatch(m.scene)));
+  }
+  function effMembers(gid) {
+    let mem = directMembers(gid);
+    groups.filter(c => c.parent === gid).forEach(c => { mem = mem.concat(effMembers(c.id)); });
+    return [...new Set(mem)];
+  }
+  activeGroups = groups.map(g => ({ ...g, members: effMembers(g.id) })).filter(g => g.members.length > 0);
+  activeGroups.sort((a, b) => a.depth - b.depth); // 親を下層に描画
+
+  // グループが端点になる矢印（ノード↔グループ / グループ↔グループ）。無向マージで双方向判定
+  const gActive = new Set(activeGroups.map(g => g.id));
+  const epKey = ep => ep.node !== undefined ? 'n' + ep.node : 'g' + ep.group;
+  const xmap = {};
+  const addX = (from, to, label) => {
+    const ka = epKey(from), kb = epKey(to);
+    const key = ka < kb ? ka + '|' + kb : kb + '|' + ka;
+    if (!xmap[key]) xmap[key] = { endA: ka < kb ? from : to, endB: ka < kb ? to : from, abLabel: null, baLabel: null };
+    const e = xmap[key];
+    if (epKey(from) === epKey(e.endA)) e.abLabel = label; else e.baLabel = label;
+  };
+  nodes.forEach(n => (n.relations || []).forEach(r => {
+    if (!sceneMatch(r.scene)) return;
+    if (typeof r.to === 'string' && gActive.has(r.to)) addX({ node: n.id }, { group: r.to }, { ja: r.ja, en: r.en });
+  }));
+  (data.groupRelations || []).forEach(gr => {
+    if (!sceneMatch(gr.scene) || !gActive.has(gr.from)) return;
+    let to = null;
+    if (typeof gr.to === 'string') { if (gActive.has(gr.to)) to = { group: gr.to }; }
+    else if (nodeById[gr.to]) to = { node: gr.to };
+    if (to) addX({ group: gr.from }, to, { ja: gr.ja, en: gr.en });
+  });
+  xEdges = Object.values(xmap).map(e => ({
+    ...e, bi: !!(e.abLabel && e.baLabel), rest: 175,
+    type: (e.endA.group !== undefined && e.endB.group !== undefined) ? 'gg' : 'cg'
+  }));
+}
+
+function endpointPos(ep) {
+  if (ep.node !== undefined) { const n = nodeById[ep.node]; return n ? { x: n.x, y: n.y, r: NODE_R } : null; }
+  const g = activeGroups.find(g => g.id === ep.group);
+  return (g && g.cx !== undefined) ? { x: g.cx, y: g.cy, r: g.r } : null;
+}
+// 物理用：エッジの端点座標（ノード or グループ中心）。tickで使用
+function segEndPhys(ep) {
+  if (ep.node !== undefined) { const n = nodeById[ep.node]; return n ? { x: n.x, y: n.y, id: ep.node } : null; }
+  const g = activeGroups.find(g => g.id === ep.group);
+  return (g && g._cx !== undefined) ? { x: g._cx, y: g._cy, id: null, grp: ep.group } : null;
+}
+function edgeSegPhys(e) {
+  if (e.a !== undefined) { const a = nodeById[e.a], b = nodeById[e.b]; return (a && b) ? { A: { x: a.x, y: a.y, id: e.a }, B: { x: b.x, y: b.y, id: e.b } } : null; }
+  const A = segEndPhys(e.endA), B = segEndPhys(e.endB); return (A && B) ? { A, B } : null;
+}
+
+// エッジの自然長：ラベルが長いほど矢印も伸びる（文字が線に収まる長さを確保）
+function updateEdgeRests() {
+  activeEdges.forEach(e => {
+    const w1 = e.abLabel ? textW(e.abLabel[lang], 10.5) : 0;
+    const w2 = e.baLabel ? textW(e.baLabel[lang], 10.5) : 0;
+    e.rest = Math.max(180, Math.max(w1, w2) + 110);
+  });
+}
+
+// ---- force simulation ----
+function tick() {
+  const f = alpha * Math.min(1, 0.1 + tickCount * 0.016); // 序盤は弱く→徐々に本気（読み込み時の暴れ防止）
+  // 反発
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j];
+      let dx = b.x - a.x, dy = b.y - a.y;
+      let d2 = dx * dx + dy * dy; if (d2 < 1) { d2 = 1; dx = 1; }
+      const d = Math.sqrt(d2);
+      const rep = 3800 / d2 * f;
+      const ux = dx / d, uy = dy / d;
+      a.vx -= ux * rep; a.vy -= uy * rep;
+      b.vx += ux * rep; b.vy += uy * rep;
+    }
+  }
+  // ばね（関係）
+  activeEdges.forEach(e => {
+    const a = nodeById[e.a], b = nodeById[e.b];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const d = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+    const s = (d - (e.rest || 140)) * 0.033 * f; // 関係で繋がる同士は強めに引き寄せる
+    const ux = dx / d, uy = dy / d;
+    a.vx += ux * s; a.vy += uy * s;
+    b.vx -= ux * s; b.vy -= uy * s;
+  });
+  // グループ中心・半径を先に算出（引力・反発で共用）
+  activeGroups.forEach(g => {
+    if (g.members.length === 0) return;
+    let cx = 0, cy = 0; g.members.forEach(m => { cx += m.x; cy += m.y; }); cx /= g.members.length; cy /= g.members.length;
+    let r = 0; g.members.forEach(m => { r = Math.max(r, Math.hypot(m.x - cx, m.y - cy)); });
+    g._cx = cx; g._cy = cy; g._r = r + 60;
+  });
+  // グループ引力（深いほど強く＝チームは固く。人数が多いほど緩めて広がりを許す）
+  activeGroups.forEach(g => {
+    if (g.members.length < 2) return;
+    const s = (0.012 + g.depth * 0.01) / (1 + g.members.length * 0.05) * f;
+    g.members.forEach(m => { m.vx += (g._cx - m.x) * s; m.vy += (g._cy - m.y) * s; });
+  });
+  // バブル同士の反発（入れ子＝親子/祖先は除外）
+  const gById = {}; activeGroups.forEach(g => gById[g.id] = g);
+  const isAncestor = (a, b) => { let p = b.parent; while (p) { if (p === a.id) return true; p = gById[p] ? gById[p].parent : null; } return false; };
+  for (let i = 0; i < activeGroups.length; i++) for (let j = i + 1; j < activeGroups.length; j++) {
+    const a = activeGroups[i], b = activeGroups[j];
+    if (a.members.length < 1 || b.members.length < 1) continue;
+    if (isAncestor(a, b) || isAncestor(b, a)) continue;
+    let dx = b._cx - a._cx, dy = b._cy - a._cy; const d = Math.hypot(dx, dy) || 1;
+    const min = a._r + b._r + 55;
+    if (d < min) {
+      const push = (min - d) / d * 0.5 * f, ox = dx * push, oy = dy * push;
+      a.members.forEach(m => { m.vx -= ox; m.vy -= oy; });
+      b.members.forEach(m => { m.vx += ox; m.vy += oy; });
+    }
+  }
+  // 無関係ノードはバブルの外へ（矢印がバブルを横断しにくくなる）
+  activeGroups.forEach(g => {
+    if (g.members.length < 2) return;
+    const mem = new Set(g.members.map(m => m.id));
+    nodes.forEach(n => {
+      if (mem.has(n.id)) return;
+      const dx = n.x - g._cx, dy = n.y - g._cy, d = Math.hypot(dx, dy) || 1;
+      if (d < g._r + NODE_R) { const push = (g._r + NODE_R - d) / d * 0.4 * f; n.vx += dx * push; n.vy += dy * push; }
+    });
+  });
+  // ノード↔線の反発（線に当たると跳ね返る＝ノードが線をまたがない）
+  const allEdgesP = activeEdges.concat(xEdges);
+  const eTh = NODE_R + 13;
+  allEdgesP.forEach(e => {
+    const seg = edgeSegPhys(e); if (!seg) return;
+    const A = seg.A, B = seg.B, ex = B.x - A.x, ey = B.y - A.y, el2 = ex * ex + ey * ey || 1;
+    const skip = new Set(); if (A.id != null) skip.add(A.id); if (B.id != null) skip.add(B.id);
+    [A, B].forEach(p => { if (p.grp) { const g = activeGroups.find(g => g.id === p.grp); if (g) g.members.forEach(m => skip.add(m.id)); } });
+    nodes.forEach(n => {
+      if (skip.has(n.id)) return;
+      const t = ((n.x - A.x) * ex + (n.y - A.y) * ey) / el2;
+      if (t < 0.04 || t > 0.96) return;
+      const cx = A.x + t * ex, cy = A.y + t * ey;
+      let dx = n.x - cx, dy = n.y - cy, d = Math.hypot(dx, dy) || 0.001;
+      if (d < eTh) {
+        const push = (eTh - d) / d * 1.1 * f;
+        n.vx += dx * push; n.vy += dy * push;
+        if (A.id != null) { const na = nodeById[A.id]; na.vx -= dx * push * 0.25; na.vy -= dy * push * 0.25; }
+        if (B.id != null) { const nb = nodeById[B.id]; nb.vx -= dx * push * 0.25; nb.vy -= dy * push * 0.25; }
+      }
+    });
+  });
+  // 中心へ（画面アスペクトに合わせて配置＝縦画面なら縦長になるよう異方性）
+  const ar = W() / H();
+  const kx = 0.0016 * Math.max(1, 1 / ar), ky = 0.0016 * Math.max(1, ar);
+  nodes.forEach(n => { n.vx += (0 - n.x) * kx * f; n.vy += (0 - n.y) * ky * f; });
+  // 積分
+  nodes.forEach(n => {
+    if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
+    n.vx *= 0.83; n.vy *= 0.83;
+    const sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+    if (sp > 10) { n.vx = n.vx / sp * 10; n.vy = n.vy / sp * 10; }
+    n.x += n.vx; n.y += n.vy;
+  });
+  alpha = Math.max(0.02, alpha * 0.996);
+  tickCount++;
+  if (tickCount === 80 && !userTouched) fitAll();
+}
+
+// ---- hull（凸包＋パディング＋平滑化） ----
+function convexHull(pts) {
+  const p = pts.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  const lower = [], upper = [];
+  p.forEach(pt => { while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], pt) <= 0) lower.pop(); lower.push(pt); });
+  for (let i = p.length - 1; i >= 0; i--) { const pt = p[i]; while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], pt) <= 0) upper.pop(); upper.push(pt); }
+  return lower.slice(0, -1).concat(upper.slice(0, -1));
+}
+function hullPath(members, pad) {
+  const ex = [];
+  members.forEach(m => { for (let a = 0; a < 8; a++) ex.push({ x: m.x + pad * Math.cos(a * Math.PI / 4), y: m.y + pad * Math.sin(a * Math.PI / 4) }); });
+  const h = convexHull(ex);
+  if (h.length < 3) return { d: '', top: null };
+  let d = '', n = h.length;
+  let topPt = h[0];
+  h.forEach(pt => { if (pt.y < topPt.y) topPt = pt; });
+  for (let i = 0; i <= n; i++) {
+    const p1 = h[i % n], p2 = h[(i + 1) % n];
+    const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+    if (i === 0) d = 'M ' + mx + ' ' + my;
+    else d += ' Q ' + p1.x + ' ' + p1.y + ' ' + mx + ' ' + my;
+  }
+  let cx = 0; h.forEach(pt => cx += pt.x); cx /= n;
+  return { d: d + ' Z', top: { x: cx, y: topPt.y } };
+}
+
+// ---- DOM構築 ----
+function buildNodesDOM() {
+  gNodes.innerHTML = '';
+  nodes.forEach(n => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'node');
+    g.dataset.id = n.id;
+    g.innerHTML =
+      '<circle class="node-bg" r="' + NODE_R + '"></circle>' +
+      '<text class="node-initial" y="6"></text>' +
+      '<image width="' + (NODE_R * 2) + '" height="' + (NODE_R * 2) + '" x="-' + NODE_R + '" y="-' + NODE_R + '" clip-path="url(#nodeclip)"></image>' +
+      '<text class="node-mask-q" y="4"></text>' +
+      '<circle class="node-ring" r="' + NODE_R + '"></circle>' +
+      '<text class="node-name" y="' + (NODE_R + 15) + '"></text>';
+    gNodes.appendChild(g);
+    n.el = g;
+  });
+  updateNodeContents();
+}
+function updateNodeContents() {
+  nodes.forEach(n => {
+    const masked = isMasked(n);
+    n.el.classList.toggle('masked', masked);
+    const img = n.el.querySelector('image');
+    const ini = n.el.querySelector('.node-initial');
+    const q = n.el.querySelector('.node-mask-q');
+    if (masked) {
+      img.setAttribute('href', ''); img.style.display = 'none';
+      ini.textContent = ''; q.textContent = '？？？';
+    } else {
+      q.textContent = '';
+      if (n.id < 100) { // 本編キャラはicon.png参照（未アップ時は404→イニシャル表示に自動フォールバック）
+        img.style.display = '';
+        img.setAttribute('href', RAW_ICON + String(n.id).padStart(2, '0') + '_icon.png');
+        ini.textContent = n[lang].charAt(0);
+      } else if (n.icon) {
+        img.style.display = ''; img.setAttribute('href', n.icon); ini.textContent = n[lang].charAt(0);
+      } else {
+        img.style.display = 'none'; ini.textContent = n[lang].charAt(0);
+      }
+    }
+    n.el.querySelector('.node-name').textContent = nodeName(n);
+  });
+}
+function buildEdgesDOM() {
+  gEdges.innerHTML = '';
+  activeEdges.forEach(e => {
+    e.type = 'cc';
+    const col = EDGE_COLOR.cc;
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'edge-g');
+    g.innerHTML = '<path class="edge-line line-ab" style="stroke:' + col + '"></path><path class="ah ah-ab" style="fill:' + col + '"></path>'
+      + '<path class="edge-line line-ba" style="stroke:' + col + '"></path><path class="ah ah-ba" style="fill:' + col + '"></path>'
+      + '<text class="edge-label lab-ab"></text><text class="edge-label lab-ba"></text>';
+    gEdges.appendChild(g);
+    e.el = g;
+  });
+}
+function buildXEdgesDOM() {
+  gXEdges.innerHTML = '';
+  xEdges.forEach(xe => {
+    const col = EDGE_COLOR[xe.type];
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'edge-g');
+    g.innerHTML = '<path class="edge-line line-ab" style="stroke:' + col + '" stroke-dasharray="7 4"></path><path class="ah ah-ab" style="fill:' + col + '"></path>'
+      + '<path class="edge-line line-ba" style="stroke:' + col + '" stroke-dasharray="7 4"></path><path class="ah ah-ba" style="fill:' + col + '"></path>'
+      + '<text class="edge-label lab-ab"></text><text class="edge-label lab-ba"></text>';
+    gXEdges.appendChild(g);
+    xe.el = g;
+  });
+}
+function buildGroupsDOM() {
+  gGroups.innerHTML = '';
+  activeGroups.forEach(gr => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'grp-g');
+    g.dataset.gid = gr.id;
+    g.innerHTML = '<path class="grp-path" fill="' + gr.palette[0] + '" stroke="' + gr.palette[1] + '" stroke-width="1.5" stroke-dasharray="6 4"></path>' +
+      '<text class="grp-label" fill="' + gr.palette[2] + '" text-anchor="middle">⠿ </text>';
+    gGroups.appendChild(g);
+    gr.el = g;
+  });
+}
+
+// ---- ラベル衝突回避 ----
+function textW(str, size) {
+  let u = 0;
+  for (const ch of str) u += ch.charCodeAt(0) < 256 ? 0.56 : 1;
+  return Math.max(u * size, size);
+}
+function resolveLabelCollisions(labels, lineSamples) {
+  if (labels.length === 0) return;
+  // 障害物＝ノード円＋名前テキスト＋他エッジの線上サンプル点（固定）。ラベル同士は半分ずつ押し合う
+  const obstacles = [];
+  nodes.forEach(n => {
+    obstacles.push({ x: n.x, y: n.y, w: NODE_R * 2 + 8, h: NODE_R * 2 + 8 });
+    obstacles.push({ x: n.x, y: n.y + NODE_R + 11, w: textW(nodeName(n), 11.5), h: 15 });
+  });
+  (lineSamples || []).forEach(s => obstacles.push(s));
+  const pad = 3;
+  for (let it = 0; it < 4; it++) {
+    for (let i = 0; i < labels.length; i++) {
+      for (let j = i + 1; j < labels.length; j++) {
+        const a = labels[i], b = labels[j];
+        const ox = (a.w + b.w) / 2 + pad - Math.abs(a.x - b.x);
+        const oy = (a.h + b.h) / 2 + pad - Math.abs(a.y - b.y);
+        if (ox > 0 && oy > 0) {
+          if (oy < ox) { const s = (a.y < b.y ? -1 : 1) * oy / 2; a.y += s; b.y -= s; }
+          else { const s = (a.x < b.x ? -1 : 1) * ox / 2; a.x += s; b.x -= s; }
+        }
+      }
+      const a = labels[i];
+      obstacles.forEach(o => {
+        if (o.edge && o.edge === a.edge) return; // 自分の線は避けない（法線オフセットで担保）
+        const ox = (a.w + o.w) / 2 + pad - Math.abs(a.x - o.x);
+        const oy = (a.h + o.h) / 2 + pad - Math.abs(a.y - o.y);
+        if (ox > 0 && oy > 0) {
+          if (oy < ox) a.y += (a.y < o.y ? -oy : oy);
+          else a.x += (a.x < o.x ? -ox : ox);
+        }
+      });
+    }
+  }
+  labels.forEach(l => { l.el.setAttribute('x', l.x); l.el.setAttribute('y', l.y + 3.5); });
+}
+
+// ---- エッジ描画（曲線＋弾性で障害物を避ける＋手描き矢印） ----
+function norm(x, y) { const d = Math.hypot(x, y) || 1; return { x: x / d, y: y / d }; }
+function edgeEndsFor(e) {
+  if (e.a !== undefined) {
+    const a = nodeById[e.a], b = nodeById[e.b];
+    if (!a || !b) return null;
+    return { A: { x: a.x, y: a.y, r: NODE_R, kind: 'n', id: e.a }, B: { x: b.x, y: b.y, r: NODE_R, kind: 'n', id: e.b } };
+  }
+  const A = endpointPos(e.endA), B = endpointPos(e.endB);
+  if (!A || !B) return null;
+  const ka = e.endA.node !== undefined, kb = e.endB.node !== undefined;
+  return { A: { ...A, kind: ka ? 'n' : 'g', id: ka ? e.endA.node : e.endA.group }, B: { ...B, kind: kb ? 'n' : 'g', id: kb ? e.endB.node : e.endB.group } };
+}
+function drawAH(el, show, tip, inDir, len, w) {
+  if (!el) return;
+  if (!show) { el.setAttribute('d', ''); return; }
+  const bx = tip.x + inDir.x * len, by = tip.y + inDir.y * len;
+  const px = -inDir.y, py = inDir.x;
+  el.setAttribute('d', 'M ' + tip.x + ' ' + tip.y + ' L ' + (bx + px * w) + ' ' + (by + py * w) + ' L ' + (bx - px * w) + ' ' + (by - py * w) + ' Z');
+}
+function drawEdge(e, edgeLabels, lineSamples) {
+  const ends = edgeEndsFor(e);
+  if (!ends) { e.el.style.display = 'none'; return; }
+  e.el.style.display = '';
+  const A = ends.A, B = ends.B;
+  const dx = B.x - A.x, dy = B.y - A.y, dist = Math.max(1, Math.hypot(dx, dy));
+  const ux = dx / dist, uy = dy / dist;
+  const gap = 5;
+  const P1 = { x: A.x + ux * (A.r + gap), y: A.y + uy * (A.r + gap) };
+  const P2 = { x: B.x - ux * (B.r + gap), y: B.y - uy * (B.r + gap) };
+  const mid = { x: (P1.x + P2.x) / 2, y: (P1.y + P2.y) / 2 };
+  // 障害物回避オフセット（端点の当事者ノード/グループは除外）
+  const skipN = new Set(), skipG = new Set();
+  if (A.kind === 'n') skipN.add(A.id); if (B.kind === 'n') skipN.add(B.id);
+  if (A.kind === 'g') skipG.add(A.id); if (B.kind === 'g') skipG.add(B.id);
+  activeGroups.forEach(g => { if (g.members.some(m => skipN.has(m.id))) skipG.add(g.id); });
+  let offx = 0, offy = 0;
+  const consider = (ox, oy, R) => {
+    const t = Math.max(0, Math.min(1, ((ox - P1.x) * (P2.x - P1.x) + (oy - P1.y) * (P2.y - P1.y)) / (dist * dist)));
+    const clx = P1.x + t * (P2.x - P1.x), cly = P1.y + t * (P2.y - P1.y);
+    const vx = clx - ox, vy = cly - oy, vd = Math.hypot(vx, vy) || 0.001, pad = 30;
+    if (vd < R + pad) { const st = (R + pad - vd) * 1.5 * Math.sin(t * Math.PI); offx += (vx / vd) * st; offy += (vy / vd) * st; }
+  };
+  nodes.forEach(n => { if (!skipN.has(n.id)) consider(n.x, n.y, NODE_R); });
+  activeGroups.forEach(g => { if (!skipG.has(g.id) && g.cx !== undefined) consider(g.cx, g.cy, g.r); });
+  const om = Math.hypot(offx, offy), maxOff = 190;
+  if (om > maxOff) { offx = offx / om * maxOff; offy = offy / om * maxOff; }
+  // 制御点の慣性（引っ張られて遅れて追従＝揺れ）
+  if (!e.cp) e.cp = { x: mid.x, y: mid.y, vx: 0, vy: 0 };
+  const tx = mid.x + offx, ty = mid.y + offy;
+  e.cp.vx = (e.cp.vx + (tx - e.cp.x) * 0.045) * 0.90;
+  e.cp.vy = (e.cp.vy + (ty - e.cp.y) * 0.045) * 0.90;
+  e.cp.x += e.cp.vx; e.cp.y += e.cp.vy;
+  const C = { x: 2 * e.cp.x - mid.x, y: 2 * e.cp.y - mid.y };
+  const grpEdge = e.type !== 'cc'; // node↔group / group↔group はより大きく曲げる
+  const ahLen = 11, ahW = 5.5;
+  const rest = e.rest || 170, wf = Math.max(0.65, Math.min(1.5, rest / dist)); // 伸びると細く/縮むと太く
+  const width = (1.6 * wf).toFixed(2);
+  // 進行方向の「右」に膨らませる＝双方向は必ず反対側へ開く。一方向でもグループ絡みは少しカーブ
+  const bow = e.bi ? (grpEdge ? 34 : 18) : (grpEdge ? 20 : 0);
+  const so = grpEdge ? 11 : (e.bi ? 4 : 0); // 出発/到着点を横にずらす（12時でなく1時/11時から）
+  const drawStrand = (lineSel, ahSel, labSel, src, tgt, labObj) => {
+    const lineEl = e.el.querySelector(lineSel), ahEl = e.el.querySelector(ahSel), labEl = e.el.querySelector(labSel);
+    if (!labObj || !labObj[lang]) { lineEl.style.display = 'none'; ahEl.setAttribute('d', ''); labEl.textContent = ''; return; }
+    const tdx = tgt.x - src.x, tdy = tgt.y - src.y, tl = Math.hypot(tdx, tdy) || 1;
+    const rx = tdy / tl, ry = -tdx / tl; // 進行方向の右向き単位ベクトル
+    const s2 = { x: src.x + rx * so, y: src.y + ry * so };
+    const t2 = { x: tgt.x + rx * so, y: tgt.y + ry * so };
+    const ctl = { x: e.cp.x + rx * bow, y: e.cp.y + ry * bow };
+    const inT = norm(ctl.x - t2.x, ctl.y - t2.y);
+    const end = { x: t2.x + inT.x * ahLen, y: t2.y + inT.y * ahLen };
+    lineEl.style.display = '';
+    lineEl.setAttribute('d', 'M ' + s2.x + ' ' + s2.y + ' Q ' + ctl.x + ' ' + ctl.y + ' ' + end.x + ' ' + end.y);
+    lineEl.style.strokeWidth = width;
+    drawAH(ahEl, true, t2, inT, ahLen, ahW);
+    labEl.textContent = labObj[lang];
+    edgeLabels.push({ el: labEl, edge: e, x: ctl.x + rx * 9, y: ctl.y + ry * 9, w: textW(labObj[lang], 10.5), h: 13 });
+  };
+  drawStrand('.line-ab', '.ah-ab', '.lab-ab', P1, P2, e.abLabel); // ab は P1→P2
+  drawStrand('.line-ba', '.ah-ba', '.lab-ba', P2, P1, e.baLabel); // ba は P2→P1（右＝反対の物理側）
+  const steps = Math.max(3, Math.floor(dist / 34));
+  for (let s = 0; s <= steps; s++) { const tt = s / steps, it = 1 - tt; lineSamples.push({ x: it * it * P1.x + 2 * it * tt * C.x + tt * tt * P2.x, y: it * it * P1.y + 2 * it * tt * C.y + tt * tt * P2.y, w: 12, h: 12, edge: e }); }
+}
+
+// ---- 毎フレーム描画 ----
+function render() {
+  const maxDepth = activeGroups.reduce((m, g) => Math.max(m, g.depth), 0);
+  activeGroups.forEach(gr => {
+    const pad = 44 + (maxDepth - gr.depth) * 18 + Math.sqrt(gr.members.length) * 11; // 人数が多いほど余白を広げる
+    const { d, top } = hullPath(gr.members, pad);
+    gr.el.querySelector('.grp-path').setAttribute('d', d);
+    const lb = gr.el.querySelector('.grp-label');
+    if (top) { lb.setAttribute('x', top.x); lb.setAttribute('y', top.y + 18); lb.textContent = '⠿ ' + gr[lang]; }
+    // 中心と半径（矢印の縁止め用の円近似）
+    let cx = 0, cy = 0; gr.members.forEach(m => { cx += m.x; cy += m.y; }); cx /= gr.members.length; cy /= gr.members.length;
+    let r = 0; gr.members.forEach(m => { r = Math.max(r, Math.hypot(m.x - cx, m.y - cy)); });
+    gr.cx = cx; gr.cy = cy; gr.r = r + pad * 0.72;
+  });
+  const edgeLabels = [];
+  const lineSamples = [];
+  activeEdges.forEach(e => drawEdge(e, edgeLabels, lineSamples));
+  xEdges.forEach(e => drawEdge(e, edgeLabels, lineSamples));
+  resolveLabelCollisions(edgeLabels, lineSamples);
+  nodes.forEach(n => { n.el.setAttribute('transform', 'translate(' + n.x + ',' + n.y + ')'); });
+  applyFocusClasses();
+  applyView();
+}
+
+// ---- フォーカス ----
+function applyFocusClasses() {
+  if (focusId === null) {
+    nodes.forEach(n => { n.el.classList.remove('dim', 'focused'); });
+    activeEdges.forEach(e => e.el.classList.remove('dim'));
+    activeGroups.forEach(g => g.el.classList.remove('dim'));
+    return;
+  }
+  const adj = new Set([focusId]);
+  activeEdges.forEach(e => { if (e.a === focusId) adj.add(e.b); if (e.b === focusId) adj.add(e.a); });
+  nodes.forEach(n => {
+    n.el.classList.toggle('dim', !adj.has(n.id));
+    n.el.classList.toggle('focused', n.id === focusId);
+  });
+  activeEdges.forEach(e => e.el.classList.toggle('dim', !(e.a === focusId || e.b === focusId)));
+  activeGroups.forEach(g => g.el.classList.toggle('dim', !g.members.some(m => adj.has(m.id))));
+}
+function focusNode(id) {
+  focusId = id;
+  const n = nodeById[id];
+  viewAnim = { tx: W() / 2 - n.x * view.k, ty: H() / 2 - n.y * view.k };
+}
+function unfocus() { focusId = null; viewAnim = null; }
+
+// ---- 全体フィット ----
+function fitAll() {
+  if (nodes.length === 0) return;
+  let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+  nodes.forEach(n => { minX = Math.min(minX, n.x); minY = Math.min(minY, n.y); maxX = Math.max(maxX, n.x); maxY = Math.max(maxY, n.y); });
+  const pad = 90;
+  minX -= pad; minY -= pad + 40; maxX += pad; maxY += pad;
+  const k = Math.min(W() / (maxX - minX), (H() - 70) / (maxY - minY), 1.6);
+  view.k = Math.max(0.3, Math.min(3, k));
+  view.tx = W() / 2 - (minX + maxX) / 2 * view.k;
+  view.ty = (H() + 60) / 2 - (minY + maxY) / 2 * view.k;
+  viewAnim = null;
+}
+
+// ---- 入力（パン/ピンチ/ドラッグ/タップ） ----
+const pointers = new Map();
+let panStart = null, pinchStart = null, dragNode = null, downPos = null, moved = false, dragGroup = null;
+
+svg.addEventListener('pointerdown', (ev) => {
+  svg.setPointerCapture(ev.pointerId);
+  pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+  userTouched = true; moved = false;
+  downPos = { x: ev.clientX, y: ev.clientY };
+  if (pointers.size === 2) {
+    const pts = [...pointers.values()];
+    pinchStart = {
+      d: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+      mid: { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 },
+      k: view.k, tx: view.tx, ty: view.ty
+    };
+    dragNode = null; panStart = null; viewAnim = null;
+    return;
+  }
+  const nodeG = ev.target.closest && ev.target.closest('.node');
+  const grpLbl = ev.target.classList && ev.target.classList.contains('grp-label') ? ev.target.closest('.grp-g') : null;
+  if (nodeG) {
+    dragNode = nodeById[parseInt(nodeG.dataset.id)];
+    dragNode.fx = dragNode.x; dragNode.fy = dragNode.y;
+    alpha = Math.max(alpha, 0.6);
+  } else if (grpLbl) {
+    const g = activeGroups.find(x => x.id === grpLbl.dataset.gid);
+    if (g) {
+      dragGroup = { g: g, px: ev.clientX, py: ev.clientY, mem: g.members.map(m => ({ m: m, x: m.x, y: m.y })) };
+      g.members.forEach(m => { m.fx = m.x; m.fy = m.y; });
+      alpha = Math.max(alpha, 0.5);
+    }
+  } else {
+    panStart = { x: ev.clientX, y: ev.clientY, tx: view.tx, ty: view.ty };
+    viewAnim = null;
+    svg.classList.add('dragging');
+  }
+});
+svg.addEventListener('pointermove', (ev) => {
+  if (!pointers.has(ev.pointerId)) return;
+  pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+  if (downPos && Math.hypot(ev.clientX - downPos.x, ev.clientY - downPos.y) > 6) moved = true;
+  if (pinchStart && pointers.size === 2) {
+    const pts = [...pointers.values()];
+    const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    const mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+    let k = pinchStart.k * (d / Math.max(1, pinchStart.d));
+    k = Math.max(0.3, Math.min(3, k));
+    // pinch中心のワールド座標を維持
+    const wx = (pinchStart.mid.x - pinchStart.tx) / pinchStart.k;
+    const wy = (pinchStart.mid.y - pinchStart.ty) / pinchStart.k;
+    view.k = k;
+    view.tx = mid.x - wx * k;
+    view.ty = mid.y - wy * k;
+    return;
+  }
+  if (dragNode) {
+    dragNode.fx = (ev.clientX - view.tx) / view.k;
+    dragNode.fy = (ev.clientY - view.ty) / view.k;
+    alpha = Math.max(alpha, 0.5);
+    return;
+  }
+  if (dragGroup) {
+    const dxw = (ev.clientX - dragGroup.px) / view.k, dyw = (ev.clientY - dragGroup.py) / view.k;
+    dragGroup.mem.forEach(o => { o.m.fx = o.x + dxw; o.m.fy = o.y + dyw; });
+    alpha = Math.max(alpha, 0.45);
+    return;
+  }
+  if (panStart) {
+    view.tx = panStart.tx + (ev.clientX - panStart.x);
+    view.ty = panStart.ty + (ev.clientY - panStart.y);
+  }
+});
+function endPointer(ev) {
+  pointers.delete(ev.pointerId);
+  if (pointers.size < 2) pinchStart = null;
+  svg.classList.remove('dragging');
+  if (dragNode) {
+    const id = dragNode.id;
+    delete dragNode.fx; delete dragNode.fy;
+    dragNode = null;
+    if (!moved) { focusNode(id); }
+    return;
+  }
+  if (dragGroup) {
+    dragGroup.g.members.forEach(m => { delete m.fx; delete m.fy; });
+    dragGroup = null; alpha = Math.max(alpha, 0.4);
+    return;
+  }
+  panStart = null;
+  if (!moved && downPos) unfocus();
+  downPos = null;
+}
+svg.addEventListener('pointerup', endPointer);
+svg.addEventListener('pointercancel', endPointer);
+svg.addEventListener('wheel', (ev) => {
+  ev.preventDefault();
+  userTouched = true; viewAnim = null;
+  let k = view.k * Math.exp(-ev.deltaY * 0.0012);
+  k = Math.max(0.3, Math.min(3, k));
+  const wx = (ev.clientX - view.tx) / view.k;
+  const wy = (ev.clientY - view.ty) / view.k;
+  view.k = k;
+  view.tx = ev.clientX - wx * k;
+  view.ty = ev.clientY - wy * k;
+}, { passive: false });
+
+// ---- HUD ----
+function buildSceneTabs() {
+  const wrap = document.getElementById('scene-tabs');
+  wrap.innerHTML = '';
+  if (!data.scenes || data.scenes.length === 0) return;
+  data.scenes.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'scene-tab' + (s.id === currentScene ? ' active' : '');
+    b.textContent = s[lang];
+    b.onclick = () => { setScene(s.id); };
+    wrap.appendChild(b);
+  });
+}
+function setScene(id) {
+  currentScene = id;
+  rebuildActive(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); updateNodeContents(); buildSceneTabs();
+  if (focusId !== null && !nodeById[focusId]) unfocus();
+  alpha = 1;
+}
+document.getElementById('mask').addEventListener('change', (e) => { maskOn = e.target.checked; updateNodeContents(); });
+document.getElementById('lang').addEventListener('click', () => {
+  lang = lang === 'ja' ? 'en' : 'ja';
+  document.getElementById('lang').textContent = lang === 'ja' ? 'EN' : 'JA';
+  document.getElementById('mask-label').textContent = lang === 'ja' ? '未解放を？？？' : 'Mask locked';
+  document.getElementById('reset').textContent = lang === 'ja' ? '⌂ 全体' : '⌂ Fit';
+  document.getElementById('hint').textContent = lang === 'ja'
+    ? 'ドラッグで移動 / ピンチ・ホイールで拡縮 / キャラをタップでフォーカス'
+    : 'Drag to pan / Pinch or wheel to zoom / Tap a character to focus';
+  updateNodeContents(); buildSceneTabs();
+  updateEdgeRests(); alpha = Math.max(alpha, 0.5); // EN/JAでラベル幅が変わるため矢印長を再計算
+});
+document.getElementById('reset').addEventListener('click', () => { unfocus(); fitAll(); });
+
+// ---- メインループ ----
+function loop() {
+  if (alpha > 0.021) tick();
+  if (viewAnim) {
+    view.tx += (viewAnim.tx - view.tx) * 0.14;
+    view.ty += (viewAnim.ty - view.ty) * 0.14;
+    if (Math.abs(viewAnim.tx - view.tx) < 0.5 && Math.abs(viewAnim.ty - view.ty) < 0.5) viewAnim = null;
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+// ---- 起動 ----
+(async () => {
+  data = await loadData();
+  currentScene = (data.scenes && data.scenes[0]) ? data.scenes[0].id : null;
+  nodes = data.nodes.map((n, i) => {
+    const ang = (i / data.nodes.length) * Math.PI * 2;
+    const rad = 220 + data.nodes.length * 12 + (Math.random() - 0.5) * 80; // 広め＋乱れで初期の重なりを減らす
+    return { ...n, x: Math.cos(ang) * rad + (Math.random() - 0.5) * 60, y: Math.sin(ang) * rad + (Math.random() - 0.5) * 60, vx: 0, vy: 0 };
+  });
+  nodeById = {}; nodes.forEach(n => nodeById[n.id] = n);
+  rebuildActive();
+  buildNodesDOM(); buildEdgesDOM(); buildXEdgesDOM(); buildGroupsDOM(); buildSceneTabs();
+  view.tx = W() / 2; view.ty = H() / 2 + 30;
+  loop();
+})();
+window.addEventListener('resize', () => { if (!userTouched) fitAll(); });
+</script>
+</body>
+</html>

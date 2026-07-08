@@ -16,61 +16,81 @@
       "id": "1",
       "ja": "タテガミ大学",
       "en": "Tategami University",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 2
     },
     {
       "id": "2",
       "ja": "テイル学園",
       "en": "Tail Academy",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 3
     },
     {
       "id": "3",
       "ja": "デロルスプロ",
       "en": "Delorus Pro",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 4
     },
     {
       "id": "4",
       "ja": "咆哮会",
       "en": "The Roar Family",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 5
     },
     {
       "id": "5",
       "ja": "クロワゼ",
       "en": "Croisée",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 6
     },
     {
       "id": "6",
       "ja": "みど川市役所",
       "en": "Midogawa City Hall",
-      "parent": ""
+      "parent": "",
+      "relCell": "▣パブ フェニキス|忘年会で利用|Used for a year-end party|",
+      "_row": 7
     },
     {
       "id": "7",
       "ja": "パブ フェニキス",
       "en": "Pub Phoenix",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 8
     },
     {
       "id": "8",
       "ja": "うぶげ保育園",
       "en": "Little Fluff Nursery",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 9
     },
     {
       "id": "9",
       "ja": "9",
       "en": "9",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 10
     },
     {
       "id": "10",
       "ja": "10",
       "en": "10",
-      "parent": ""
+      "parent": "",
+      "relCell": "",
+      "_row": 11
     }
   ],
   "nodes": [
@@ -479,6 +499,14 @@
       "memberships": [],
       "relations": [],
       "aliases": []
+    }
+  ],
+  "groupRelations": [
+    {
+      "from": "6",
+      "to": "7",
+      "ja": "忘年会で利用",
+      "en": "Used for a year-end party"
     }
   ]
 }

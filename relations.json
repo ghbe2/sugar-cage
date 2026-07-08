@@ -15,7 +15,7 @@
     {
       "id": "1",
       "ja": "タテガミ大学",
-      "en": "Tategami University",
+      "en": "Tatekami University",
       "parent": "",
       "relCell": "",
       "_row": 2
@@ -169,6 +169,12 @@
           "ja": "知り合い",
           "en": "acquaintance",
           "scene": "1"
+        },
+        {
+          "to": 9,
+          "ja": "ターゲット♡",
+          "en": "Target ♡",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -212,6 +218,31 @@
           "ja": "お姉ちゃん",
           "en": "Big sister",
           "scene": "1"
+        },
+        {
+          "to": 13,
+          "ja": "リスナー",
+          "en": "listener"
+        },
+        {
+          "to": 14,
+          "ja": "リスナー",
+          "en": "listener"
+        },
+        {
+          "to": 15,
+          "ja": "リスナー",
+          "en": "listener"
+        },
+        {
+          "to": 17,
+          "ja": "リスナー",
+          "en": "listener"
+        },
+        {
+          "to": 18,
+          "ja": "リスナー",
+          "en": "listener"
         }
       ],
       "aliases": []
@@ -250,7 +281,13 @@
           "g": "8"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": "6",
+          "ja": "仕事で行く",
+          "en": "I'm going for work."
+        }
+      ],
       "aliases": []
     },
     {
@@ -271,14 +308,14 @@
         },
         {
           "to": 3,
-          "ja": "リベンジポルノから助けた",
-          "en": "I saved him from revenge porn.",
+          "ja": "先生じゃない",
+          "en": "Not a teacher",
           "scene": "1"
         },
         {
           "to": 11,
-          "ja": "ロマンス詐欺から助けた",
-          "en": "I saved her from a romance scam.",
+          "ja": "ご主人様じゃない",
+          "en": "He's not my master.",
           "scene": "1"
         }
       ],
@@ -289,7 +326,13 @@
       "ja": "ユゥナリナ",
       "en": "Yuunarina",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 4,
+          "ja": "よか人",
+          "en": "Good person"
+        }
+      ],
       "aliases": []
     },
     {
@@ -301,7 +344,18 @@
           "g": "2"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 3,
+          "ja": "親友",
+          "en": "best friend"
+        },
+        {
+          "to": 9,
+          "ja": "ご主人様♡",
+          "en": "My dear master ♡"
+        }
+      ],
       "aliases": []
     },
     {
@@ -309,7 +363,13 @@
       "ja": "瑞珠",
       "en": "Mizutama",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 29,
+          "ja": "憧れ",
+          "en": "longing"
+        }
+      ],
       "aliases": []
     },
     {
@@ -321,7 +381,23 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 14,
+          "ja": "友達",
+          "en": "friend"
+        },
+        {
+          "to": 15,
+          "ja": "な、なにかした？",
+          "en": "Did I do something?"
+        },
+        {
+          "to": 6,
+          "ja": "友達",
+          "en": "friend"
+        }
+      ],
       "aliases": []
     },
     {
@@ -333,7 +409,18 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 13,
+          "ja": "友達",
+          "en": "friend"
+        },
+        {
+          "to": 6,
+          "ja": "友達",
+          "en": "friend"
+        }
+      ],
       "aliases": []
     },
     {
@@ -345,7 +432,13 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 13,
+          "ja": "気に食わない",
+          "en": "I don't like it"
+        }
+      ],
       "aliases": []
     },
     {
@@ -357,7 +450,19 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 14,
+          "ja": "気になる",
+          "en": "be on one's mind"
+        },
+        {
+          "to": 9,
+          "ja": "裏垢をフォロー",
+          "en": "Follow my private account",
+          "scene": "2"
+        }
+      ],
       "aliases": []
     },
     {
@@ -369,7 +474,13 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 5,
+          "ja": "ライバル",
+          "en": "rival"
+        }
+      ],
       "aliases": []
     },
     {
@@ -381,7 +492,14 @@
           "g": "1"
         }
       ],
-      "relations": [],
+      "relations": [
+        {
+          "to": 4,
+          "ja": "憧れのダンサー",
+          "en": "My idol dancer",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -389,7 +507,26 @@
       "ja": "リヅ",
       "en": "Lids",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 21,
+          "ja": "支配",
+          "en": "Domination",
+          "scene": "2"
+        },
+        {
+          "to": 20,
+          "ja": "優秀な取引先",
+          "en": "Excellent business partners",
+          "scene": "1"
+        },
+        {
+          "to": 22,
+          "ja": "競合",
+          "en": "Competitors",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -397,7 +534,20 @@
       "ja": "ナオリ",
       "en": "Naori",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 22,
+          "ja": "服従",
+          "en": "Obedience",
+          "scene": "2"
+        },
+        {
+          "to": 19,
+          "ja": "お得意様",
+          "en": "Our valued customers",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -405,7 +555,26 @@
       "ja": "アキコ",
       "en": "Achiko",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 19,
+          "ja": "服従",
+          "en": "Obedience",
+          "scene": "2"
+        },
+        {
+          "to": 22,
+          "ja": "無茶なクライアント",
+          "en": "Unreasonable client",
+          "scene": "1"
+        },
+        {
+          "to": 25,
+          "ja": "業界のレジェンド",
+          "en": "Industry legend",
+          "scene": "1"
+        }
+      ],
       "aliases": []
     },
     {
@@ -413,7 +582,26 @@
       "ja": "トウカ",
       "en": "Toka",
       "memberships": [],
-      "relations": [],
+      "relations": [
+        {
+          "to": 20,
+          "ja": "ストレス発散",
+          "en": "Stress relief",
+          "scene": "2"
+        },
+        {
+          "to": 7,
+          "ja": "欲しい",
+          "en": "want",
+          "scene": "2"
+        },
+        {
+          "to": 1,
+          "ja": "ヒロイベオの代替品",
+          "en": "Alternatives to Heroibeo",
+          "scene": "2"
+        }
+      ],
       "aliases": []
     },
     {
@@ -472,7 +660,11 @@
       "id": 29,
       "ja": "エノ",
       "en": "Eno",
-      "memberships": [],
+      "memberships": [
+        {
+          "g": "5"
+        }
+      ],
       "relations": [],
       "aliases": []
     },

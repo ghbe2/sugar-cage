@@ -268,6 +268,11 @@ function edgeSegPhys(e) {
   if (e.a !== undefined) { const a = nodeById[e.a], b = nodeById[e.b]; return (a && b) ? { A: { x: a.x, y: a.y, id: e.a }, B: { x: b.x, y: b.y, id: e.b } } : null; }
   const A = segEndPhys(e.endA), B = segEndPhys(e.endB); return (A && B) ? { A, B } : null;
 }
+// 端点（ノード or グループ）に力を加える。グループは全メンバーへ（＝グループごと動く）
+function applyPull(ep, fx, fy) {
+  if (ep.node !== undefined) { const n = nodeById[ep.node]; if (n) { n.vx += fx; n.vy += fy; } }
+  else { const g = activeGroups.find(g => g.id === ep.group); if (g) g.members.forEach(m => { m.vx += fx; m.vy += fy; }); }
+}
 
 // エッジの自然長：ラベルが長いほど矢印も伸びる（文字が線に収まる長さを確保）
 function updateEdgeRests() {
@@ -280,7 +285,7 @@ function updateEdgeRests() {
 
 // ---- force simulation ----
 function tick() {
-  const f = alpha * Math.min(1, 0.08 + warmupTicks * 0.01); // 序盤は弱く→ゆっくり本気に（読み込み・シーン切替の暴れ防止）
+  const f = alpha * Math.min(1, 0.03 + warmupTicks * 0.005); // 序盤は力をほぼゼロ→じわっと本気に（読み込み・シーン切替の暴れ防止）
   // 反発
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -288,7 +293,7 @@ function tick() {
       let dx = b.x - a.x, dy = b.y - a.y;
       let d2 = dx * dx + dy * dy; if (d2 < 1) { d2 = 1; dx = 1; }
       const d = Math.sqrt(d2);
-      let rep = Math.min(22, 3200 / d2) * f; // 近距離で発散しないよう上限（弾け飛び防止）
+      let rep = Math.min(30, 5200 / d2) * f; // ノード間隔を広めに（近距離は上限で発散防止）
       if (nodeAdj[a.id] && nodeAdj[a.id].has(b.id)) rep *= 0.3; // 繋がっている同士は反発を弱め、近づけるようにする
       const ux = dx / d, uy = dy / d;
       a.vx -= ux * rep; a.vy -= uy * rep;
@@ -312,10 +317,20 @@ function tick() {
     let r = 0; g.members.forEach(m => { r = Math.max(r, Math.hypot(m.x - cx, m.y - cy)); });
     g._cx = cx; g._cy = cy; g._r = r + 95;
   });
+  // ばね（グループ絡みの矢印 xEdges）＝ノード↔グループ／グループ↔グループも引き合う
+  xEdges.forEach(e => {
+    const A = segEndPhys(e.endA), B = segEndPhys(e.endB);
+    if (!A || !B) return;
+    const dx = B.x - A.x, dy = B.y - A.y, d = Math.max(1, Math.hypot(dx, dy));
+    const s = Math.max(-7, Math.min(7, (d - (e.rest || 300)) * 0.016)) * f;
+    const ux = dx / d, uy = dy / d;
+    applyPull(e.endA, ux * s, uy * s);
+    applyPull(e.endB, -ux * s, -uy * s);
+  });
   // グループ引力（深いほど強く＝チームは固く。人数が多いほど緩めて広がりを許す）
   activeGroups.forEach(g => {
     if (g.members.length < 2) return;
-    const s = (0.02 + g.depth * 0.012) * f; // 引き合いはノードのばねと同等に（人数で弱めない）
+    const s = (0.008 + g.depth * 0.006) * f; // 弱め＝グループ内でもノードが離れて見やすい
     g.members.forEach(m => { m.vx += (g._cx - m.x) * s; m.vy += (g._cy - m.y) * s; });
   });
   // バブル同士の反発（入れ子＝親子/祖先は除外）
@@ -624,7 +639,7 @@ function drawEdge(e, edgeLabels, lineSamples) {
 function render() {
   const maxDepth = activeGroups.reduce((m, g) => Math.max(m, g.depth), 0);
   activeGroups.forEach(gr => {
-    const pad = 44 + (maxDepth - gr.depth) * 18 + Math.sqrt(gr.members.length) * 11; // 人数が多いほど余白を広げる
+    const pad = 62 + (maxDepth - gr.depth) * 22 + Math.sqrt(gr.members.length) * 13; // グループの余白を広めに
     const { d, top } = hullPath(gr.members, pad);
     gr.el.querySelector('.grp-path').setAttribute('d', d);
     const lb = gr.el.querySelector('.grp-label');
@@ -665,11 +680,16 @@ function applyFocusClasses() {
   activeGroups.forEach(g => g.el.classList.toggle('dim', !g.members.some(m => adj.has(m.id))));
 }
 function focusNode(id) {
+  if (focusId !== null && focusId !== id) { const o = nodeById[focusId]; if (o) { delete o.fx; delete o.fy; } }
   focusId = id;
   const n = nodeById[id];
+  if (n) { n.fx = n.x; n.fy = n.y; } // フォーカス中はピン留め＝動かない（周囲だけ落ち着く）
   viewAnim = { tx: W() / 2 - n.x * view.k, ty: H() / 2 - n.y * view.k };
 }
-function unfocus() { focusId = null; viewAnim = null; }
+function unfocus() {
+  if (focusId !== null) { const n = nodeById[focusId]; if (n) { delete n.fx; delete n.fy; } }
+  focusId = null; viewAnim = null;
+}
 
 // ---- 全体フィット ----
 function fitAll() {

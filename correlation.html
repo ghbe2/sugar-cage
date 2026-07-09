@@ -416,7 +416,7 @@ function hullPath(members, pad) {
   const ex = [];
   members.forEach(m => { for (let a = 0; a < 8; a++) ex.push({ x: m.x + pad * Math.cos(a * Math.PI / 4), y: m.y + pad * Math.sin(a * Math.PI / 4) }); });
   const h = convexHull(ex);
-  if (h.length < 3) return { d: '', top: null };
+  if (h.length < 3) return { d: '', top: null, pts: h };
   let d = '', n = h.length;
   let topPt = h[0];
   h.forEach(pt => { if (pt.y < topPt.y) topPt = pt; });
@@ -427,7 +427,34 @@ function hullPath(members, pad) {
     else d += ' Q ' + p1.x + ' ' + p1.y + ' ' + mx + ' ' + my;
   }
   let cx = 0; h.forEach(pt => cx += pt.x); cx /= n;
-  return { d: d + ' Z', top: { x: cx, y: topPt.y } };
+  return { d: d + ' Z', top: { x: cx, y: topPt.y }, pts: h };
+}
+// 中心(cx,cy)から(tx,ty)方向に伸ばした半直線が凸包hullと交わる点（＝その方向のバブル境界）
+function rayHull(cx, cy, tx, ty, hull) {
+  if (!hull || hull.length < 3) return null;
+  const dx = tx - cx, dy = ty - cy, dl = Math.hypot(dx, dy) || 1, ux = dx / dl, uy = dy / dl;
+  let best = null, bestT = -1;
+  for (let i = 0; i < hull.length; i++) {
+    const p = hull[i], q = hull[(i + 1) % hull.length];
+    const ex = q.x - p.x, ey = q.y - p.y;
+    const denom = ux * ey - uy * ex;
+    if (Math.abs(denom) < 1e-6) continue;
+    const t = ((p.x - cx) * ey - (p.y - cy) * ex) / denom;
+    const s = ((p.x - cx) * uy - (p.y - cy) * ux) / denom;
+    if (t >= 0 && s >= -0.001 && s <= 1.001 && t > bestT) { bestT = t; best = { x: cx + ux * t, y: cy + uy * t }; }
+  }
+  return best;
+}
+// 端点（ノード/グループ）の、相手(toward)方向の境界点＋外側gap
+function endpointClip(end, tx, ty, gap) {
+  const dx = tx - end.x, dy = ty - end.y, dl = Math.hypot(dx, dy) || 1, ux = dx / dl, uy = dy / dl;
+  if (end.kind === 'g') {
+    const g = activeGroups.find(g => g.id === end.id);
+    const p = g && g._hull ? rayHull(end.x, end.y, tx, ty, g._hull) : null;
+    if (p) return { x: p.x + ux * gap, y: p.y + uy * gap };
+  }
+  const r = (end.kind === 'g') ? end.r : NODE_R;
+  return { x: end.x + ux * (r + gap), y: end.y + uy * (r + gap) };
 }
 
 // ---- DOM構築 ----
@@ -584,8 +611,8 @@ function drawEdge(e, edgeLabels, lineSamples) {
   const dx = B.x - A.x, dy = B.y - A.y, dist = Math.max(1, Math.hypot(dx, dy));
   const ux = dx / dist, uy = dy / dist;
   const gap = 5;
-  const P1 = { x: A.x + ux * (A.r + gap), y: A.y + uy * (A.r + gap) };
-  const P2 = { x: B.x - ux * (B.r + gap), y: B.y - uy * (B.r + gap) };
+  const P1 = endpointClip(A, B.x, B.y, gap); // グループは凸包境界に、ノードは円周に当てる
+  const P2 = endpointClip(B, A.x, A.y, gap);
   const mid = { x: (P1.x + P2.x) / 2, y: (P1.y + P2.y) / 2 };
   // 障害物回避オフセット（端点の当事者ノード/グループは除外）
   const skipN = new Set(), skipG = new Set();
@@ -647,7 +674,8 @@ function render() {
   const maxDepth = activeGroups.reduce((m, g) => Math.max(m, g.depth), 0);
   activeGroups.forEach(gr => {
     const pad = 62 + (maxDepth - gr.depth) * 22 + Math.sqrt(gr.members.length) * 13; // グループの余白を広めに
-    const { d, top } = hullPath(gr.members, pad);
+    const { d, top, pts } = hullPath(gr.members, pad);
+    gr._hull = pts; // 矢印を実際のバブル境界に当てるため保存
     gr.el.querySelector('.grp-path').setAttribute('d', d);
     const lb = gr.el.querySelector('.grp-label');
     if (top) { lb.setAttribute('x', top.x); lb.setAttribute('y', top.y + 18); lb.textContent = '⠿ ' + gr[lang]; }

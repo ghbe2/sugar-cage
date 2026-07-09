@@ -315,7 +315,7 @@ function tick() {
   // グループ引力（深いほど強く＝チームは固く。人数が多いほど緩めて広がりを許す）
   activeGroups.forEach(g => {
     if (g.members.length < 2) return;
-    const s = (0.012 + g.depth * 0.01) / (1 + g.members.length * 0.05) * f;
+    const s = (0.02 + g.depth * 0.012) * f; // 引き合いはノードのばねと同等に（人数で弱めない）
     g.members.forEach(m => { m.vx += (g._cx - m.x) * s; m.vy += (g._cy - m.y) * s; });
   });
   // バブル同士の反発（入れ子＝親子/祖先は除外）
@@ -368,11 +368,8 @@ function tick() {
     });
   });
   // 外周ソフト壁：一定半径の外側だけ中心へ引き戻す（内側は引力ゼロ＝引っ張った場所に留まる／画面外流出だけ防止）
-  const wall = 950;
-  nodes.forEach(n => {
-    const dd = Math.hypot(n.x, n.y);
-    if (dd > wall) { const s = (dd - wall) * 0.006 * f; n.vx -= (n.x / dd) * s; n.vy -= (n.y / dd) * s; }
-  });
+  // 常にじんわり中心へ寄せる（線形＝近いほど弱く/遠いほど強く。距離は反発・クリアランスで維持）
+  nodes.forEach(n => { n.vx -= n.x * 0.0016 * f; n.vy -= n.y * 0.0016 * f; });
   // 積分
   nodes.forEach(n => {
     if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
@@ -855,7 +852,14 @@ document.getElementById('back').addEventListener('click', () => { location.href 
 // ---- メインループ ----
 function loop() {
   if (alpha > 0.021) tick();
-  if (viewAnim) {
+  const interacting = dragNode || dragGroup || panStart || pinchStart;
+  if (focusId !== null && nodeById[focusId] && !interacting) {
+    // フォーカス中は対象ノードを常に画面中央に追従キープ（動いても中心）
+    const n = nodeById[focusId];
+    view.tx += (W() / 2 - n.x * view.k - view.tx) * 0.15;
+    view.ty += (H() / 2 - n.y * view.k - view.ty) * 0.15;
+    viewAnim = null;
+  } else if (viewAnim) {
     view.tx += (viewAnim.tx - view.tx) * 0.14;
     view.ty += (viewAnim.ty - view.ty) * 0.14;
     if (Math.abs(viewAnim.tx - view.tx) < 0.5 && Math.abs(viewAnim.ty - view.ty) < 0.5) viewAnim = null;
@@ -870,10 +874,12 @@ function loop() {
   currentScene = (data.scenes && data.scenes[0]) ? data.scenes[0].id : null;
   // 解放済み(viewed)本編キャラ＋脇役(ID100番台)のみ登場。未解放は相関図に出さない（少しずつ増える）
   const shown = (data.nodes || []).filter(n => n.id >= 100 || viewedSet.has(n.id));
+  // 初期は十分な間隔のグリッド配置＝最初から反発が起きない（弾け飛ばない）
+  const cols = Math.max(1, Math.ceil(Math.sqrt(shown.length)));
+  const rows = Math.ceil(shown.length / cols), sp = 200;
   nodes = shown.map((n, i) => {
-    const ang = (i / shown.length) * Math.PI * 2;
-    const rad = 380 + shown.length * 22 + (Math.random() - 0.5) * 140; // 広め＋乱れで初期の重なりを減らす
-    return { ...n, x: Math.cos(ang) * rad + (Math.random() - 0.5) * 100, y: Math.sin(ang) * rad + (Math.random() - 0.5) * 100, vx: 0, vy: 0 };
+    const cx = i % cols, cy = Math.floor(i / cols);
+    return { ...n, x: (cx - (cols - 1) / 2) * sp + (Math.random() - 0.5) * 24, y: (cy - (rows - 1) / 2) * sp + (Math.random() - 0.5) * 24, vx: 0, vy: 0 };
   });
   nodeById = {}; nodes.forEach(n => nodeById[n.id] = n);
   rebuildActive();

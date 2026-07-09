@@ -283,7 +283,7 @@ function tick() {
       let dx = b.x - a.x, dy = b.y - a.y;
       let d2 = dx * dx + dy * dy; if (d2 < 1) { d2 = 1; dx = 1; }
       const d = Math.sqrt(d2);
-      const rep = 8000 / d2 * f;
+      const rep = Math.min(48, 8000 / d2) * f; // 近距離で発散しないよう上限（弾け飛び防止）
       const ux = dx / d, uy = dy / d;
       a.vx -= ux * rep; a.vy -= uy * rep;
       b.vx += ux * rep; b.vy += uy * rep;
@@ -339,7 +339,7 @@ function tick() {
   });
   // ノード↔線の反発（線に当たると跳ね返る＝ノードが線をまたがない）
   const allEdgesP = activeEdges.concat(xEdges);
-  const eTh = NODE_R + 22;
+  const eTh = NODE_R + 30; // ノードと線の間隔を確保（広すぎると不安定なので程々に）
   allEdgesP.forEach(e => {
     const seg = edgeSegPhys(e); if (!seg) return;
     const A = seg.A, B = seg.B, ex = B.x - A.x, ey = B.y - A.y, el2 = ex * ex + ey * ey || 1;
@@ -352,17 +352,19 @@ function tick() {
       const cx = A.x + t * ex, cy = A.y + t * ey;
       let dx = n.x - cx, dy = n.y - cy, d = Math.hypot(dx, dy) || 0.001;
       if (d < eTh) {
-        const push = (eTh - d) / d * 1.1 * f;
+        const push = (eTh - d) / d * 0.5 * f;
         n.vx += dx * push; n.vy += dy * push;
-        if (A.id != null) { const na = nodeById[A.id]; na.vx -= dx * push * 0.25; na.vy -= dy * push * 0.25; }
-        if (B.id != null) { const nb = nodeById[B.id]; nb.vx -= dx * push * 0.25; nb.vy -= dy * push * 0.25; }
+        if (A.id != null) { const na = nodeById[A.id]; na.vx -= dx * push * 0.2; na.vy -= dy * push * 0.2; }
+        if (B.id != null) { const nb = nodeById[B.id]; nb.vx -= dx * push * 0.2; nb.vy -= dy * push * 0.2; }
       }
     });
   });
-  // 中心へ（画面アスペクトに合わせて配置＝縦画面なら縦長になるよう異方性）
-  const ar = W() / H();
-  const kx = 0.0011 * Math.max(1, 1 / ar), ky = 0.0011 * Math.max(1, ar);
-  nodes.forEach(n => { n.vx += (0 - n.x) * kx * f; n.vy += (0 - n.y) * ky * f; });
+  // 外周ソフト壁：一定半径の外側だけ中心へ引き戻す（内側は引力ゼロ＝引っ張った場所に留まる／画面外流出だけ防止）
+  const wall = 1500;
+  nodes.forEach(n => {
+    const dd = Math.hypot(n.x, n.y);
+    if (dd > wall) { const s = (dd - wall) * 0.003 * f; n.vx -= (n.x / dd) * s; n.vy -= (n.y / dd) * s; }
+  });
   // 積分
   nodes.forEach(n => {
     if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
@@ -702,13 +704,13 @@ svg.addEventListener('pointerdown', (ev) => {
   if (nodeG) {
     dragNode = nodeById[parseInt(nodeG.dataset.id)];
     dragNode.fx = dragNode.x; dragNode.fy = dragNode.y;
-    alpha = Math.max(alpha, 0.6);
+    alpha = Math.max(alpha, 0.35);
   } else if (grpLbl) {
     const g = activeGroups.find(x => x.id === grpLbl.dataset.gid);
     if (g) {
       dragGroup = { g: g, px: ev.clientX, py: ev.clientY, mem: g.members.map(m => ({ m: m, x: m.x, y: m.y })) };
       g.members.forEach(m => { m.fx = m.x; m.fy = m.y; });
-      alpha = Math.max(alpha, 0.5);
+      alpha = Math.max(alpha, 0.35);
     }
   } else {
     panStart = { x: ev.clientX, y: ev.clientY, tx: view.tx, ty: view.ty };
@@ -737,13 +739,13 @@ svg.addEventListener('pointermove', (ev) => {
   if (dragNode) {
     dragNode.fx = (ev.clientX - view.tx) / view.k;
     dragNode.fy = (ev.clientY - view.ty) / view.k;
-    alpha = Math.max(alpha, 0.5);
+    alpha = Math.max(alpha, 0.3);
     return;
   }
   if (dragGroup) {
     const dxw = (ev.clientX - dragGroup.px) / view.k, dyw = (ev.clientY - dragGroup.py) / view.k;
     dragGroup.mem.forEach(o => { o.m.fx = o.x + dxw; o.m.fy = o.y + dyw; });
-    alpha = Math.max(alpha, 0.45);
+    alpha = Math.max(alpha, 0.3);
     return;
   }
   if (panStart) {

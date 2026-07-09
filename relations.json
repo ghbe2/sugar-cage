@@ -500,17 +500,20 @@
         {
           "to": 14,
           "ja": "友達",
-          "en": "friend"
+          "en": "friend",
+          "scene": "1"
         },
         {
           "to": 15,
           "ja": "な、なにかした？",
-          "en": "Did I do something?"
+          "en": "Did I do something?",
+          "scene": "1"
         },
         {
           "to": 6,
           "ja": "友達",
-          "en": "friend"
+          "en": "friend",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -531,12 +534,14 @@
         {
           "to": 13,
           "ja": "友達",
-          "en": "friend"
+          "en": "friend",
+          "scene": "1"
         },
         {
           "to": 6,
           "ja": "友達",
-          "en": "friend"
+          "en": "friend",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -579,7 +584,8 @@
         {
           "to": 14,
           "ja": "気になる",
-          "en": "be on one's mind"
+          "en": "be on one's mind",
+          "scene": "2"
         },
         {
           "to": 9,

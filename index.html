@@ -239,8 +239,10 @@
                 <h1 class="glitch-text">Sugar Cage</h1>
                 <h2 style="font-family: var(--font-title); font-size: 1rem; opacity: 0.7; font-weight:normal; margin-bottom: 22px;" data-text="subtitle">パートナーマッチング</h2>
                 <button class="main-btn" onclick="startQuiz()" data-text="start_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; border: 2px solid var(--accent-color); white-space: nowrap;">START</button>
-                <br>
-                <button class="main-btn sub-btn" onclick="openArchive()" data-text="archive_btn" style="padding: 16px 24px; font-size: 1rem; letter-spacing: 1px; width: 240px; box-sizing: border-box; white-space: nowrap; margin-top: 12px;">ARCHIVE</button>
+                <div style="display: flex; gap: 10px; width: 240px; max-width: 100%; margin: 16px auto 8px;">
+                    <button class="main-btn sub-btn" onclick="openArchive()" data-text="roster_btn" style="flex: 1; margin: 0; padding: 15px 6px; font-size: 0.95rem; letter-spacing: 1px; min-width: 0; white-space: nowrap;">顔ぶれ</button>
+                    <button class="main-btn sub-btn" onclick="location.href='correlation.html'" data-text="graph_btn" style="flex: 1; margin: 0; padding: 15px 6px; font-size: 0.95rem; letter-spacing: 1px; min-width: 0; white-space: nowrap;">繋がり</button>
+                </div>
             </div>
         </div>
     </div>
@@ -420,6 +422,8 @@
         start_desc: { ja: "このマッチングアプリは、あなたの真の恋愛観を暴き出して、最高のパートナーとマッチングさせます♡", en: "This matching app reveals your true romantic outlook and finds the perfect partner for you. ♡" },
         start_btn: { ja: "出会いをさがす", en: "START" },
         archive_btn: { ja: "いままでの出会い", en: "ARCHIVE" },
+        roster_btn: { ja: "顔ぶれ", en: "Faces" },
+        graph_btn: { ja: "繋がり", en: "Ties" },
         agree: { ja: "わかる", en: "Agree" },
         neutral: { ja: "まよう", en: "Unsure" },
         disagree: { ja: "ちがう", en: "Disagree" },
@@ -775,7 +779,7 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => c.id <= 16);
+        let availableChars = characters.filter(c => c.id <= 18);
         let ranked = availableChars.map(char => {
             // 新マッチ度基準（P/M逆・I/E順）でスコア化。高いほど相性が良い
             let matchPct = calcMatchPercent(char);
@@ -1037,7 +1041,7 @@
         characters.forEach(char => {
             const slot = document.createElement('div');
             const isViewed = viewedCharIds.has(char.id);
-            const isUnimplemented = char.id > 16;
+            const isUnimplemented = char.id > 18;
             if (isUnimplemented) {
                 slot.className = 'archive-slot unimplemented';
                 slot.innerHTML = '？';
@@ -1356,7 +1360,7 @@
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
         const isLocked = !viewedCharIds.has(corr.id);
-        const isUnimplemented = corr.id > 16;
+        const isUnimplemented = corr.id > 18;
         const corrCard = document.createElement('div');
         corrCard.className = 'corr-card ' + ((isLocked || isUnimplemented) ? 'locked' : '');
         let iconHtml;
@@ -1473,7 +1477,7 @@
     function renderStartRanking() {
         const host = document.getElementById('rank-bg');
         if (!host || !characters || characters.length === 0) return;
-        const ranked = characters.filter(c => c.id <= 16).slice()
+        const ranked = characters.filter(c => c.id <= 18).slice()
             .sort((a, b) => (getVoteCount(b.id) - getVoteCount(a.id)) || (a.id - b.id));
         const top3 = ranked.slice(0, 3);
         if (top3.length < 3) { host.innerHTML = ''; return; }

@@ -15,7 +15,7 @@
     {
       "id": "1",
       "ja": "タテガミ大学",
-      "en": "Tatekami University",
+      "en": "Tategami University",
       "parent": "",
       "relCell": "",
       "_row": 2
@@ -86,11 +86,19 @@
     },
     {
       "id": "10",
-      "ja": "10",
-      "en": "10",
-      "parent": "",
-      "relCell": "",
+      "ja": "ストリーマーチーム「レゴリス」",
+      "en": "Streamer team \"Regolith\"",
+      "parent": "1",
+      "relCell": "▣即興ストリーマーチーム|宣戦布告|Declaration of war|1",
       "_row": 11
+    },
+    {
+      "id": "11",
+      "ja": "即興ストリーマーチーム",
+      "en": "Improvisational streamer team",
+      "parent": "1",
+      "relCell": "▣ストリーマーチーム「レゴリス」|なんで！？|why!?|1\nアウネ|助けて|help me|1",
+      "_row": 12
     }
   ],
   "nodes": [
@@ -109,7 +117,8 @@
         {
           "to": 22,
           "ja": "こわい",
-          "en": "scary"
+          "en": "scary",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -150,6 +159,18 @@
           "ja": "幼馴染",
           "en": "Childhood friend",
           "scene": "1"
+        },
+        {
+          "to": 9,
+          "ja": "たくさん教えて♡♡",
+          "en": "Please teach me lots of things ♡♡",
+          "scene": "2"
+        },
+        {
+          "to": 11,
+          "ja": "結託",
+          "en": "collusion",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -192,13 +213,20 @@
         {
           "to": 6,
           "ja": "妹",
-          "en": "younger sister"
+          "en": "younger sister",
+          "scene": "1"
         },
         {
           "to": 17,
           "ja": "知り合い",
           "en": "acquaintance",
           "scene": "1"
+        },
+        {
+          "to": 6,
+          "ja": "3人でしたいって",
+          "en": "I want to do it with three people.",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -222,27 +250,50 @@
         {
           "to": 13,
           "ja": "リスナー",
-          "en": "listener"
+          "en": "listener",
+          "scene": "1"
         },
         {
           "to": 14,
           "ja": "リスナー",
-          "en": "listener"
+          "en": "listener",
+          "scene": "1"
         },
         {
           "to": 15,
           "ja": "リスナー",
-          "en": "listener"
+          "en": "listener",
+          "scene": "1"
         },
         {
           "to": 17,
           "ja": "リスナー",
-          "en": "listener"
+          "en": "listener",
+          "scene": "1"
         },
         {
           "to": 18,
           "ja": "リスナー",
-          "en": "listener"
+          "en": "listener",
+          "scene": "1"
+        },
+        {
+          "to": 5,
+          "ja": "たまにならいいよ",
+          "en": "It's okay once in a while.",
+          "scene": "2"
+        },
+        {
+          "to": 14,
+          "ja": "秘密を知っている",
+          "en": "Knowing the secret",
+          "scene": "2"
+        },
+        {
+          "to": "11",
+          "ja": "お姉ちゃんと参加するね",
+          "en": "I'll be going with my older sister.",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -317,6 +368,30 @@
           "ja": "ご主人様じゃない",
           "en": "He's not my master.",
           "scene": "1"
+        },
+        {
+          "to": 3,
+          "ja": "もう！",
+          "en": "already!",
+          "scene": "2"
+        },
+        {
+          "to": 11,
+          "ja": "どうとでもなれ！",
+          "en": "Whatever happens, happens!",
+          "scene": "2"
+        },
+        {
+          "to": 12,
+          "ja": "ジムで知り合う",
+          "en": "Met at the gym",
+          "scene": "1"
+        },
+        {
+          "to": 12,
+          "ja": "避けられている……？",
+          "en": "Am I being avoided...?",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -330,7 +405,20 @@
         {
           "to": 4,
           "ja": "よか人",
-          "en": "Good person"
+          "en": "Good person",
+          "scene": "1"
+        },
+        {
+          "to": 23,
+          "ja": "家同士の繋がり",
+          "en": "Connections between families",
+          "scene": "1"
+        },
+        {
+          "to": 22,
+          "ja": "家同士の繋がり",
+          "en": "Connections between families",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -354,6 +442,18 @@
           "to": 9,
           "ja": "ご主人様♡",
           "en": "My dear master ♡"
+        },
+        {
+          "to": 9,
+          "ja": "お散歩して♡♡",
+          "en": "Let's go for a walk! ♡♡",
+          "scene": "2"
+        },
+        {
+          "to": 3,
+          "ja": "結託",
+          "en": "collusion",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -368,6 +468,18 @@
           "to": 29,
           "ja": "憧れ",
           "en": "longing"
+        },
+        {
+          "to": 9,
+          "ja": "ジムのお友達",
+          "en": "Gym friends",
+          "scene": "1"
+        },
+        {
+          "to": 9,
+          "ja": "仕事を隠さなきゃ……",
+          "en": "I have to hide my job...",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -436,7 +548,8 @@
         {
           "to": 13,
           "ja": "気に食わない",
-          "en": "I don't like it"
+          "en": "I don't like it",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -478,7 +591,8 @@
         {
           "to": 5,
           "ja": "ライバル",
-          "en": "rival"
+          "en": "rival",
+          "scene": "1"
         }
       ],
       "aliases": []
@@ -498,6 +612,18 @@
           "ja": "憧れのダンサー",
           "en": "My idol dancer",
           "scene": "1"
+        },
+        {
+          "to": 10,
+          "ja": "憧れのダンサー",
+          "en": "My idol dancer",
+          "scene": "1"
+        },
+        {
+          "to": 6,
+          "ja": "気が合いそう",
+          "en": "We seem to get along well",
+          "scene": "2"
         }
       ],
       "aliases": []
@@ -814,6 +940,27 @@
       "to": "7",
       "ja": "忘年会で利用",
       "en": "Used for a year-end party"
+    },
+    {
+      "from": "10",
+      "to": "11",
+      "ja": "宣戦布告",
+      "en": "Declaration of war",
+      "scene": "1"
+    },
+    {
+      "from": "11",
+      "to": "10",
+      "ja": "なんで！？",
+      "en": "why!?",
+      "scene": "1"
+    },
+    {
+      "from": "11",
+      "to": 6,
+      "ja": "助けて",
+      "en": "help me",
+      "scene": "1"
     }
   ]
 }

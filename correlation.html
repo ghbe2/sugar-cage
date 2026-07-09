@@ -159,6 +159,7 @@ let nodeById = {};
 let activeEdges = [];      // merged {a,b,abLabel,baLabel,bi}
 let activeGroups = [];     // {…group, members:[node], depth, palette, cx,cy,r}
 let xEdges = [];           // グループが端点の矢印 {from,to:{node|group}, label}
+let nodeAdj = {};          // id -> Set(直接つながるノードid)。繋がった相手/その線は避けない
 let focusId = null;
 let alpha = 1, tickCount = 0, userTouched = false, warmupTicks = 0;
 
@@ -244,6 +245,12 @@ function rebuildActive() {
     ...e, bi: !!(e.abLabel && e.baLabel), rest: 330,
     type: (e.endA.group !== undefined && e.endB.group !== undefined) ? 'gg' : 'cg'
   }));
+
+  // 隣接（直接つながるノード同士）＝互いに/その線を避けない
+  nodeAdj = {};
+  const addAdj = (a, b) => { (nodeAdj[a] = nodeAdj[a] || new Set()).add(b); (nodeAdj[b] = nodeAdj[b] || new Set()).add(a); };
+  activeEdges.forEach(e => addAdj(e.a, e.b));
+  xEdges.forEach(e => { if (e.endA.node !== undefined && e.endB.node !== undefined) addAdj(e.endA.node, e.endB.node); });
 }
 
 function endpointPos(ep) {
@@ -281,7 +288,8 @@ function tick() {
       let dx = b.x - a.x, dy = b.y - a.y;
       let d2 = dx * dx + dy * dy; if (d2 < 1) { d2 = 1; dx = 1; }
       const d = Math.sqrt(d2);
-      const rep = Math.min(48, 8000 / d2) * f; // 近距離で発散しないよう上限（弾け飛び防止）
+      let rep = Math.min(22, 3200 / d2) * f; // 近距離で発散しないよう上限（弾け飛び防止）
+      if (nodeAdj[a.id] && nodeAdj[a.id].has(b.id)) rep *= 0.3; // 繋がっている同士は反発を弱め、近づけるようにする
       const ux = dx / d, uy = dy / d;
       a.vx -= ux * rep; a.vy -= uy * rep;
       b.vx += ux * rep; b.vy += uy * rep;
@@ -345,6 +353,8 @@ function tick() {
     [A, B].forEach(p => { if (p.grp) { const g = activeGroups.find(g => g.id === p.grp); if (g) g.members.forEach(m => skip.add(m.id)); } });
     nodes.forEach(n => {
       if (skip.has(n.id)) return;
+      const nadj = nodeAdj[n.id];
+      if (nadj && (nadj.has(A.id) || nadj.has(B.id))) return; // 直接つながる相手の線は避けない
       const t = ((n.x - A.x) * ex + (n.y - A.y) * ey) / el2;
       if (t < 0.04 || t > 0.96) return;
       const cx = A.x + t * ex, cy = A.y + t * ey;
@@ -358,17 +368,17 @@ function tick() {
     });
   });
   // 外周ソフト壁：一定半径の外側だけ中心へ引き戻す（内側は引力ゼロ＝引っ張った場所に留まる／画面外流出だけ防止）
-  const wall = 1500;
+  const wall = 950;
   nodes.forEach(n => {
     const dd = Math.hypot(n.x, n.y);
-    if (dd > wall) { const s = (dd - wall) * 0.003 * f; n.vx -= (n.x / dd) * s; n.vy -= (n.y / dd) * s; }
+    if (dd > wall) { const s = (dd - wall) * 0.006 * f; n.vx -= (n.x / dd) * s; n.vy -= (n.y / dd) * s; }
   });
   // 積分
   nodes.forEach(n => {
     if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
     n.vx *= 0.9; n.vy *= 0.9;               // 粘り（摩擦）強め
     const sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
-    if (sp > 3) { n.vx = n.vx / sp * 3; n.vy = n.vy / sp * 3; }  // 最高速を半分に（スローモー）
+    if (sp > 1.6) { n.vx = n.vx / sp * 1.6; n.vy = n.vy / sp * 1.6; }  // 最高速をさらに抑えて滑走を防ぐ
     n.x += n.vx; n.y += n.vy;
   });
   alpha = Math.max(0.02, alpha * 0.996);

@@ -591,6 +591,8 @@ function drawEdge(e, edgeLabels, lineSamples) {
   const skipN = new Set(), skipG = new Set();
   if (A.kind === 'n') skipN.add(A.id); if (B.kind === 'n') skipN.add(B.id);
   if (A.kind === 'g') skipG.add(A.id); if (B.kind === 'g') skipG.add(B.id);
+  // 相手がグループの時、そのメンバーも当事者扱い（＝親グループも回避対象から外す：子グループを指す矢印の破綻防止）
+  [A, B].forEach(ep => { if (ep.kind === 'g') { const g = activeGroups.find(g => g.id === ep.id); if (g) g.members.forEach(m => skipN.add(m.id)); } });
   activeGroups.forEach(g => { if (g.members.some(m => skipN.has(m.id))) skipG.add(g.id); });
   let offx = 0, offy = 0;
   const consider = (ox, oy, R) => {
@@ -815,6 +817,10 @@ svg.addEventListener('pointercancel', endPointer);
 // iOS Safari のブラウザピンチ（画面全体＝固定ボタンごと拡縮）を無効化。拡縮はアプリ側の2本指ピンチのみ
 ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
 document.addEventListener('touchmove', e => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+// ダブルタップズーム無効化（右下ダイヤルの誤ダブルタップで復帰不能になるのを防止）
+let lastTapT = 0;
+document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTapT < 350) e.preventDefault(); lastTapT = now; }, { passive: false });
+document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
 svg.addEventListener('wheel', (ev) => {
   ev.preventDefault();
   userTouched = true; viewAnim = null;

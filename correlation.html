@@ -330,8 +330,13 @@ function tick() {
   // グループ引力（深いほど強く＝チームは固く。人数が多いほど緩めて広がりを許す）
   activeGroups.forEach(g => {
     if (g.members.length < 2) return;
-    const s = (0.008 + g.depth * 0.006) * f; // 弱め＝グループ内でもノードが離れて見やすい
-    g.members.forEach(m => { m.vx += (g._cx - m.x) * s; m.vy += (g._cy - m.y) * s; });
+    const s = (0.003 + g.depth * 0.003) * f; // かなり弱め＝ノード反発で広がった間隔をバブルが縮めない
+    // メンバーが十分広がっている間は中心へ引かず、離れすぎた分だけ緩く引き戻す（＝密集防止）
+    const slack = 70 + g.members.length * 26; // この半径内は引力ゼロ
+    g.members.forEach(m => {
+      const dx = g._cx - m.x, dy = g._cy - m.y, dd = Math.hypot(dx, dy);
+      if (dd > slack) { const pull = (dd - slack) * s; m.vx += (dx / dd) * pull; m.vy += (dy / dd) * pull; }
+    });
   });
   // バブル同士の反発（入れ子＝親子/祖先は除外）
   const gById = {}; activeGroups.forEach(g => gById[g.id] = g);

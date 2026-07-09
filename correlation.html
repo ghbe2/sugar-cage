@@ -615,7 +615,7 @@ function drawEdge(e, edgeLabels, lineSamples) {
   const rest = e.rest || 170, wf = Math.max(0.65, Math.min(1.5, rest / dist)); // 伸びると細く/縮むと太く
   const width = (1.6 * wf).toFixed(2);
   // 進行方向の「右」に膨らませる＝双方向は必ず反対側へ開く。一方向でもグループ絡みは少しカーブ
-  const bow = e.bi ? (grpEdge ? 34 : 18) : (grpEdge ? 20 : 0);
+  const bow = e.bi ? (grpEdge ? 34 : 18) : (grpEdge ? 20 : 13); // 一方向にも軽い弧＝隣接する矢印同士が離れて密集感が減る
   const so = grpEdge ? 11 : (e.bi ? 4 : 0); // 出発/到着点を横にずらす（12時でなく1時/11時から）
   const drawStrand = (lineSel, ahSel, labSel, src, tgt, labObj) => {
     const lineEl = e.el.querySelector(lineSel), ahEl = e.el.querySelector(ahSel), labEl = e.el.querySelector(labSel);
@@ -680,9 +680,15 @@ function applyFocusClasses() {
     n.el.classList.toggle('focused', n.id === focusId);
   });
   activeEdges.forEach(e => e.el.classList.toggle('dim', !(e.a === focusId || e.b === focusId)));
-  // グループ絡みの矢印は、focus対象キャラが直接の端点でなければ減光（所属グループから他へ出る矢印を消す）
-  xEdges.forEach(e => e.el.classList.toggle('dim', !(e.endA.node === focusId || e.endB.node === focusId)));
-  activeGroups.forEach(g => g.el.classList.toggle('dim', !g.members.some(m => adj.has(m.id))));
+  // グループ絡みの矢印は、focus対象キャラが直接の端点なら残す＋相手グループのバブルをアクティブ化
+  const activeGrpIds = new Set();
+  xEdges.forEach(e => {
+    const inc = (e.endA.node === focusId || e.endB.node === focusId);
+    e.el.classList.toggle('dim', !inc);
+    if (inc) { if (e.endA.group !== undefined) activeGrpIds.add(e.endA.group); if (e.endB.group !== undefined) activeGrpIds.add(e.endB.group); }
+  });
+  // バブルは「メンバーが隣接」or「矢印でfocusと繋がるグループ」ならアクティブ（中のノードは非アクティブのまま）
+  activeGroups.forEach(g => g.el.classList.toggle('dim', !(g.members.some(m => adj.has(m.id)) || activeGrpIds.has(g.id))));
 }
 function focusNode(id) {
   if (focusId !== null && focusId !== id) { const o = nodeById[focusId]; if (o) { delete o.fx; delete o.fy; } }

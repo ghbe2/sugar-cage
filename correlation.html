@@ -67,7 +67,7 @@
     <marker id="arr-cc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#b0688a"></path></marker>
     <marker id="arr-cg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#2f9e8f"></path></marker>
     <marker id="arr-gg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8a5cc7"></path></marker>
-    <clipPath id="nodeclip"><circle cx="0" cy="0" r="27"></circle></clipPath>
+    <clipPath id="nodeclip"><circle cx="0" cy="0" r="52"></circle></clipPath>
   </defs>
   <g id="world">
     <g id="g-groups"></g>
@@ -138,7 +138,7 @@ try {
 } catch (e) {}
 
 const RAW_ICON = 'https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/';
-const NODE_R = 27;
+const NODE_R = 52;
 // エッジ種別ごとの色（cc=キャラ↔キャラ / cg=キャラ↔グループ / gg=グループ↔グループ）と太さ（双方向=太/一方向=細）
 const EDGE_COLOR = { cc: '#b0688a', cg: '#2f9e8f', gg: '#8a5cc7' };
 function edgeWidth(bi) { return bi ? 3 : 1.4; }

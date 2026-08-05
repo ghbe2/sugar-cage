@@ -1088,7 +1088,7 @@
     },
     "descSensitive": {
       "ja": "王国が炎上したことは過去に数度あります。なぜならオウは幼稚なリスナーと比べれば数年で挫折した社会経験歴があるだけの、ちっぽけなアマルです。それを透かし見たユーザーは、オウの過剰なまでの尊大な態度や発言によりアンチと化して火矢を放ち、近衛兵たちは幼稚な城門によって王国が閉じるのでした。その諍いの始まりは、一枚のファンアートから始まりました。「永遠の少年」と題し、積み木やぬいぐるみで溢れた部屋の中心で遊ぶ「オウ」の姿が描かれたそれは、その実、アンチユーザーが皮肉に描いた「大人になりきれない精神の奇形」を揶揄するものだったのです。オウのあらゆるSNSアカウントが戦場と化しました。\r\n\r\nそれからも幾度となく繰り返される攻防に、画面越しに誰よりも憤っている者がいます。それは寒々とした青いオウムのアマルです。画面のオウを眺める彼女は、まるで対比するかのように、平坦な胸と肋骨を辛うじて羽毛で覆い、翼も自信も持てない「煮出しきったガラ」のような貧相な容姿のトリアマルです。30代からの遅れた入学を理由に友人も作らず、誰にも見つからないようにキャンパスの隅で息を殺して日中をやり過ごすと、毎夜自室でパソコンに向き合います。そうすると、画面に映る真っ黒な目と色のない嘴は上書きされて、魅惑的なオッドアイと挑発的な笑みの王様に変身するのです。\r\n\r\nこの邪悪極まるマッチングアプリは、オウのひた隠す真の姿をあなたにだけ伝えてしまいました。仮想空間でうずまくエコーチェンバーの中で着実に害悪として肥大化する王政。真にオウを憐れむならば、この仮想の国は終焉を迎える必要があります。それができるのは、現実にその翼になりきれなかった、自らを慰めることしかしないその手を取って痛いほど強く握りしめられる対等な友人が必要なのです。あなたならば、もしかしたらとこのアプリは願っているのです。",
-      "en": "The kingdom has been engulfed in flames several times in the past. This is because Ou is merely a small Amal with a few years of failed social experience compared to his immature listeners. Seeing this, users turned against Ou due to his excessively arrogant attitude and remarks, firing flaming arrows, and the royal guards closed the kingdom with childish gates. The conflict began with a single piece of fan art. Titled \"The Eternal Boy,\" it depicted Ou playing in the center of a room overflowing with building blocks and stuffed animals, but in reality, it was a sarcastic mockery of the \"mental deformity that can't grow up\" depicted by anti-users. Ou's various social media accounts became battlefields.\n\nAnd in the repeated battles that followed, there was one person who was more enraged than anyone else, watching from behind the screen: Amal, the bleak blue parrot. As she gazes at Ou on the screen, she is a Triamal, a stark contrast to him, with a flat chest and ribs barely covered by feathers, a pathetic appearance like a \"boiled-out husk\" lacking wings and confidence. Having started university late in her 30s, she has made no friends, spending her days silently in a corner of campus, unseen by anyone, before each night she faces her computer in her room. When she does, the pitch-black eyes and colorless beak on the screen are overwritten, transforming her into a king with captivating odd eyes and a provocative smile.\n\nThis utterly evil dating app has revealed Ou's true, hidden form to you alone. A monarchy steadily growing as a menace within the echo chamber swirling in this virtual space. If we truly pity Ou, this virtual kingdom must come to an end. What you need to do that is to have an equal friend who can take that hand—the one that couldn't truly become your wings in reality, the one that only comforts itself—and hold it so tightly it hurts. This app hopes that you might be that friend."
+      "en": "The kingdom has been engulfed in flames several times in the past. This is because Ou is merely a small Amal with a few years of failed social experience compared to his immature listeners. Seeing this, users turned against Ou due to his excessively arrogant attitude and remarks, firing flaming arrows, and the royal guards closed the kingdom with childish gates. The conflict began with a single piece of fan art. Titled \"The Eternal Boy,\" it depicted Ou playing in the center of a room overflowing with building blocks and stuffed animals, but in reality, it was a sarcastic mockery of the \"mental deformity that can't grow up\" depicted by anti-users. Ou's various social media accounts became battlefields.\n\nAnd in the repeated battles that followed, there was one person who was more enraged than anyone else, watching from behind the screen: Amal, the bleak blue parrot. As she gazes at Ou on the screen, she is a Triamal, a stark contrast to him, with a flat chest and ribs barely covered by feathers, a pathetic appearance like a \"boiled-out husk\" lacking wings and confidence. Having started university late in her 30s, she has made no friends, spending her days silently in a corner of campus, unseen by anyone, before each night she faces her computer in her room. When she does, the pitch-black eyes and colorless beak on the screen are overwritten, transforming her into a king with captivating odd eyes and a provocative smile.\n\nThis utterly evil dating app has revealed Ou's true, hidden form to you alone. A monarchy steadily growing as a menace within the echo chamber swirling in this virtual space. If we truly pity Ou, this virtual kingdom must come to an end. What you need to do that is an equal friend who can take that hand—the one that couldn't truly become your wings in reality, the one that only comforts itself—and hold it so tightly it hurts. This app hopes that you might be that friend."
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/15_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/15_sensitive.png",
@@ -1256,7 +1256,13 @@
         "en": "Horse"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 5,
@@ -1324,10 +1330,16 @@
       },
       "feature2": {
         "ja": "コウモリ",
-        "en": "bat"
+        "en": "bats"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 4,
@@ -1361,16 +1373,16 @@
       ]
     },
     "quote": {
-      "ja": "",
-      "en": ""
+      "ja": "がんばりましたね。……ええ、それだけです",
+      "en": "You did a good job. ...Yes, that's all."
     },
     "desc": {
-      "ja": "精神的ドミナントの上司に心を折られ、NTRプレイで嘲笑われたい究極のM向け。",
-      "en": "For the ultimate masochist who wants to have their spirit broken by a mentally dominant boss and be ridiculed in an NTR (Netorare) scenario."
+      "ja": "あなたが「リヅ」と出会ったのは、異動の辞令を握りしめて立った、フロアの最奥にある課長席の前でした。窓を背にした逆光の中、最初に目に入ったのは、白いシャツの背から左右へ張り出した薄い膜の翼と、タイトスカートの裾から床へ垂れ、ゆっくりと弧を描く太い尾です。無数の吸盤が絨毯を撫でる湿った音だけが、静まり返ったフロアに響いていたことを、あなたは今でも思い出せるはずです。\r\n\r\nリヅは、深海の生き物のような赤みを帯びた肌に、黒々としたボブと丸い眼鏡という、あまりにも事務的な意匠を重ねたタコとコウモリのアマルでした。挨拶に対して返ってきたのは、あなたの名前ではなく、前期の担当実績の数字です。低く、驚くほど平坦で、それでいて奇妙なほど鮮明に鼓膜へ届くその声を聞いた瞬間、あなたは自分の輪郭がほんの少し薄くなったような、名状しがたい寒気を覚えたことでしょう。\r\n\r\nリヅの会議は短く終わります。反論のために資料を握りしめてきた相手が、三十分後には自ら折衷案を口にして、納得した顔で席を立っていくからです。声を荒げることも、机を叩くこともありません。ただ、相手の言葉を一度そのまま繰り返し、呼吸の速さに自分の話す速度を合わせ、間を置いて、ほんの少しだけ結論をずらして返す。それだけです。学生時代に催眠療法を修めたという噂は社内で半ば笑い話として扱われていますが、彼女の商談に同席したことのある者だけは、決してその話を笑いません。\r\n\r\n当然のように、リヅを慕う部下はいません。彼女にとって人間は工程であり、遅れれば取り替えるべき部品です。ミスをした者に浴びせられるのは怒声ではなく、「では、あなたに任せた私の判断が誤りだったということですね」という、静かな確認だけ。フロアの誰もが彼女を恐れ、避け、それでも彼女の数字だけは誰にも否定できません。……ただ、あなたは違いました。避けるどころか、いつしかあなたは、あの平坦な声が自分の名前を呼ぶ瞬間だけを心待ちにするようになっていたのです。一度だけ「がんばりましたね」と言われた日のことを、何度も、何度も、擦り切れるまで反芻しながら。",
+      "en": "You first encountered \"Liz\" in front of the section chief's desk at the far end of the floor, clutching your transfer order. In the backlight from the window, the first thing you noticed was the thin, membrane-like wings extending from the back of her white shirt, and the thick tail that draped slowly across the floor from the hem of her tight skirt. You can still remember the damp sound of countless suction cups brushing against the carpet echoing in the silent floor.\n\nLiz was an Amal, a cross between an octopus and a bat, with reddish skin like a deep-sea creature, a jet-black bob haircut, and round glasses—a decidedly businesslike appearance. Instead of your name in response to your greeting, she offered you the figures for your performance in the previous term. The moment you heard her low, surprisingly flat, yet strangely clear voice, you probably felt an indescribable chill, as if your own contours had become slightly fainter.\n\nLiz's meetings were short. The person who arrived clutching documents to refute her arguments would, 30 minutes later, offer a compromise themselves and leave with a look of satisfaction on their face. She never raised her voice or slammed her fist on the table. She simply repeated the other person's words, matched her own speaking speed to their breathing, paused, and then slightly shifted her conclusion. That was all. The rumor that she studied hypnotherapy in college is treated as a kind of joke within the company, but those who have attended her business meetings never laugh at it.\n\nNaturally, no subordinates admired Rizu. To her, people were merely processes, parts to be replaced if they were late. Those who made mistakes weren't met with angry shouts, but only a quiet confirmation: \"So, my judgment in entrusting this to you was wrong, then?\" Everyone on the floor feared and avoided her, yet no one could deny her numbers. ...But you were different. Far from avoiding it, you gradually began to look forward to the moment when that flat voice would call your name. You would replay over and over, until the memory was worn out, the day you were told, \"You did a good job.\""
     },
     "descSensitive": {
-      "ja": "",
-      "en": ""
+      "ja": "リヅが人生で最も強い充足を覚えるのは、他人の心の構造が、自分の手のひらの上で音もなく組み変わっていく瞬間です。彼女が催眠療法を修めたのは、誰かを癒すためではありませんでした。ヒトの精神には手をかけるべき縁があり、正しい順序で言葉を積めばその縁は開くのだと、知ってしまったからです。そして開いた先に彼女が求めるものは、驚くほど淡白でした。触れることでも、抱かれることでもない。ただ、自分に組み変えられた人間が、自分を見上げて震えているという事実だけなのです。\r\n\r\nだからこそ、リヅはあなたに何一つ与えません。飲みの席で肩が触れることも、二人きりの会議室で距離が縮まることもない。あなたがどれほど期待を膨らませたところで、あの吸盤があなたの手首に絡むことは決してないでしょう。その代わり、リヅはあなたの目の前で、あなたではない男の首に腕を回してみせます。あなたが一年をかけて欲しがったものを、その日はじめて会った相手が三十分で受け取っていく光景を、あなたは瞬きもできずに眺めることになるのです。そして帰り際、彼女は眼鏡の奥からあなたを見つけて、あの平坦な声でこう言うのでしょう。──ああ、まだいたんですか、と。\r\n\r\nこの悪意あるマッチングアプリが、決して手の届かない彼女をあなたにレコメンドした理由は明確です。あなたが本当に求めているのは報われることではなく、報われないことだと見抜いたからです。与えられてしまえば、あなたはリヅへの執着を失う。認められないという状態そのものが、あなたにとって唯一の甘露なのです。パワハラだと憤る同僚に頷いてみせながら、内心ではその同僚を軽蔑している。彼女の理不尽を理解できるのは自分だけだと信じている。そういう救いようのない自己憐憫を、システムはとうに読み終えています。\r\n\r\nもしあなたが本気でリヅの隣に立ちたいと望むのなら、道はただ一つ、結果を出すことです。彼女が人間を測る物差しは数字だけであり、そこに情も歴史も介在しません。ですが、よく考えてください。あなたが本当に成果を出し、対等な相手として認められたその瞬間、あなたはもう彼女にとって組み変える余地のない、完成された部品になります。つまり、彼女の興味は跡形もなく消え失せるということです。見上げているうちは決して届かず、目線が並んだ瞬間に失われる。深海に沈んだまま夢を見ている巨大な何かへ祈りを捧げ続けた信徒たちが、なぜ決してその目覚めを望まなかったのか。あなたにも、そろそろ分かってきたのではありませんか。",
+      "en": "Liz finds the greatest fulfillment in her life in the moment when the structure of another person's mind silently rearranges in the palm of her hand. She didn't study hypnotherapy to heal anyone. She learned that there are connections within the human mind that deserve attention, and that by carefully choosing the right words, those connections will open. And what she seeks at the end of these connections is surprisingly simple. Not touching, not being embraced. Just the fact that the person she has restructured is looking up at her, trembling.\n\nThat's why Liz gives you nothing. Your shoulders won't touch at a drinking party, nor will the distance between you shrink in a private conference room. No matter how much you harbor expectations, those suction cups will never wrap around your wrist. Instead, Liz will wrap her arms around another man's neck right before your eyes. You will watch, unable to blink, as someone you've just met receives in 30 minutes what you've longed for for a year. And as you leave, she'll spot you behind her glasses and say in that flat voice, \"Oh, you're still here?\"\n\nThe reason this malicious dating app recommended you to her, someone you can never reach, is clear. It saw through you; what you truly desire isn't reward, but unrequited love. If you were given it, you'd lose your attachment to Lid. The very state of being unrecognized is your only sweet nectar. You nod along to your colleague who's furious about the harassment, while inwardly despising them. You believe you're the only one who can understand her injustice. The system has long since read your hopeless self-pity.\n\nIf you truly desire to stand beside Lid, there's only one way: produce results. Her yardstick for measuring people is numbers only; there's no room for emotion or history. But think carefully. The moment you truly achieve results and are recognized as an equal, you become a complete, unremovable component in her eyes. In other words, her interest vanishes without a trace. You can never reach it while you're looking up, and it's lost the moment your eyes meet. You're probably beginning to understand why the believers who continued to offer prayers to some colossal entity dreaming in the depths of the ocean never wished for its awakening."
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/19_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/19_sensitive.png",
@@ -1388,10 +1400,16 @@
       },
       "feature2": {
         "ja": "コウモリ",
-        "en": "bat"
+        "en": "bats"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 21,
@@ -1439,16 +1457,16 @@
       ]
     },
     "quote": {
-      "ja": "",
-      "en": ""
+      "ja": "はい、直します。……何度でも、直せますので",
+      "en": "Yes, I'll fix it. ...I can fix it as many times as needed."
     },
     "desc": {
-      "ja": "再生する四肢を持つ無限のオナホに対して、純粋な暴力を振るい続けたい究極のS向け。",
-      "en": "For the ultimate sadist who wants to continue inflicting pure violence on an infinite sex toy with regenerating limbs."
+      "ja": "あなたが「ナオリ」と出会ったのは、無理な納期を告げるために踏み込んだ、小さなデザイン会社の打ち合わせ室でした。あなたの意思ではありません。深海の底から動かぬまま指図を寄越すあの上司が、平坦な声で「では、あなたが伝えてきてください」と言っただけです。断る言葉はどこにも浮かばず、気づけばあなたは、自分の首に絡んだ見えない触腕に引かれるようにして、この安っぽいドアを押し開けていました。\r\n\r\n長い袖と踝まで届くスカートに全身を包み、金色の三つ編みを胸の前に垂らした彼女は、こちらが席に着くまで立ったまま待っていました。伏せた顔に灯るオレンジの瞳と、袖口からわずかに覗く、血の気のない真っ白な指先。その指がヒトのものではなく、細く撓る一本の触腕であることに、あなたはしばらく気づかなかったはずです。\r\n\r\nタコとトカゲのアマルであるナオリは、その会社のチーフデザイナーでした。要求を告げるあなたに対して、彼女は一度も「できません」と言いません。予算が合わないと伝えれば頷き、方向性が違うと言えば頷き、明後日までにと言えばやはり頷く。反論も、交渉も、ため息すらない。声はどこまでも小さく、丁寧で、そこには意見を持つ人間の輪郭がまるでありませんでした。\r\n\r\nしかし、上がってきたものを見て、あなたは口を噤むことになります。最初に提出された案は、あなたが説明した要件のどれよりも的確で、あなた自身が言語化できずにいた不満まで先回りして解決していたのです。それでもあなたは修正を出しました。決裁を通すため、上長の顔を立てるため。回を重ねるごとに、その案は当たり障りのない凡庸なものへと均されていきます。ナオリはその全てを、一度も惜しまずに削り取っていきました。\r\n\r\n異変に気づいたのは、四度目の打ち合わせでした。彼女の左の袖が、力なく垂れて空だったのです。誰もそれに触れず、彼女自身も何事もなかったように資料をめくりました。翌週、その袖からはちゃんと白い触腕が伸びていましたが、指の付け根には見覚えのない緑の鱗が、みっしりと生え揃っていたのです。",
+      "en": "You met Naori in the meeting room of a small design company, having stepped in to deliver an unreasonable deadline. It wasn't your choice. Your boss, who seemed to defy the surface of the ocean, simply said in a flat voice, \"Then you deliver the message.\" No words to refuse came to mind, and before you knew it, you were pushing open this cheap door, as if drawn by invisible tentacles wrapped around your neck.\n\nShe was clad in long sleeves and a skirt that reached her ankles, with golden braids hanging down in front of her chest. She waited, standing until you sat down. Her downcast face revealed orange eyes, and her pale, bloodless fingertips peeked out from her sleeves. You probably didn't realize for a while that those fingers weren't human, but slender, flexible tentacles.\n\nNaori, an Amal of octopus and lizard, was the company's chief designer. To every request you made, she never once said, \"I can't.\" She nodded when told the budget didn't match, nodded when told the direction was wrong, and nodded again when told it had to be done by the day after tomorrow. There were no objections, no negotiations, not even a sigh. Her voice was always quiet and polite, completely devoid of any hint of an opinion.\n\nHowever, when you saw the final product, you were left speechless. The initial proposal was more precise than any of the requirements you had explained, even anticipating and addressing the frustrations you yourself hadn't been able to articulate. Yet you still submitted revisions. To get approval, to save face for your superior. With each meeting, the proposal became bland and unremarkable. Naori, without hesitation, cut away every single bit of it.\n\nYou noticed something was wrong during the fourth meeting. Her left sleeve hung limply, empty. No one mentioned it, and she herself continued flipping through the documents as if nothing had happened. The following week, white tentacles had indeed grown from its sleeve, but the base of its fingers was densely covered with unfamiliar green scales."
     },
     "descSensitive": {
-      "ja": "",
-      "en": ""
+      "ja": "ナオリの手脚と尾は、極度の負荷に晒されたとき、彼女の意思とは無関係に千切れます。トカゲが天敵から逃れるために尾を切り離すのと同じ、ごく原始的な防衛反応です。ただし彼女に迫っている天敵は、締切であり、決裁であり、あなたの出した四度目の修正指示でした。逃げ場のないまま発動し続けるその反射は、彼女の体を少しずつ別のものへ作り替えていきます。再生した箇所が元通りになることは決してありません。白い触腕に緑の鱗が混じり、四本あるはずの尾が三本になり、翌月には五本に増えている。彼女の輪郭は、耐えた分だけ、彼女自身から遠ざかっていくのです。\r\n\r\nそして、千切れる瞬間に走る激痛だけが、ナオリにとって唯一の解放でした。誰かの器であり続けることをやめられない彼女が、その責務から降りられるのは、体が勝手に壊れていくあいだだけなのですから。彼女はそれを恥じていますが、同時に待ち望んでもいます。壊されている最中だけ、ナオリは何も直さなくてよいのです。\r\n\r\nこの悪意あるマッチングアプリが彼女をあなたにレコメンドした理由は、実に単純です。あなたが欲しかったのは相手ではなく、壊しても後始末の要らない的だったからです。あなたは彼女に何をしても構いません。折っても、裂いても、抉っても、彼女は謝罪し、片付け、翌朝には元通りの顔で頭を下げにくるでしょう。責任の発生しない暴力、痕跡の残らない加害。あなたが人生でずっと探していたのは、そういう都合のいい消耗品としての他人だったはずです。システムはそれを、あなたの検索履歴よりも正確に把握しています。\r\n\r\nもし、あなたが本気で彼女を救いたいなどと口走るのなら、必要なのはたった一つ、彼女の代わりに「できません」と言ってやることだけです。ですが、それをした瞬間にあなたが失うものの大きさを、あなたはもう計算し終えているのでしょう。ならば好きになさい。名前の通り、彼女は直ります。何度でも、勝手に、あなたの許可も謝罪も必要とせずに。──さて、彼女が壊れ尽くすのと、あなたの腕が先に萎えるのと、賭けるならどちらですか。",
+      "en": "Naori's limbs and tail tear off involuntarily when subjected to extreme stress. It's a very primitive defense mechanism, similar to how a lizard detaches its tail to escape a predator. However, her predators were deadlines, approvals, and your fourth revision order. This reflex, which continues to activate with no escape, gradually transforms her body into something else. The regenerated parts never return to their original state. Green scales mingle with her white tentacles, her four tails become three, then five the following month. Her outline drifts further and further away from herself with each torn piece of skin she endures.\n\nAnd the intense pain she experiences at the moment of tearing is her only liberation. Unable to stop being someone else's vessel, she can only be released from that responsibility while her body breaks down on its own. She is ashamed of it, but at the same time, she longs for it. Only while she is being broken down does Naori not need to fix anything.\n\n\nThe reason this malicious dating app recommended her to you is quite simple: you didn't want a partner, you wanted a target that you could destroy without any cleanup. You can do whatever you want to her. Break her, tear her, gouge her, and she'll apologize, clean up, and the next morning she'll be back, bowing her head as if nothing happened. Violence without consequences, harm without leaving a trace. That's the kind of convenient, disposable person you've been searching for all your life. The system understands this better than your search history.\n\nIf you seriously want to save her, all you need to do is say \"no\" on her behalf. But you've already calculated the magnitude of what you'll lose the moment you do that. So do as you please. As her name suggests, she will heal. Over and over again, on her own, without needing your permission or apology. —Now, would you bet that she'll break completely, or that your arm will wither first?"
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/20_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/20_sensitive.png",
@@ -1469,7 +1487,13 @@
         "en": "Lizard"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 22,
@@ -1510,16 +1534,16 @@
       ]
     },
     "quote": {
-      "ja": "",
-      "en": ""
+      "ja": "あー……はい、大丈夫です。だいたい、なんとかしますので",
+      "en": "Ah... yes, it's fine. I'll manage somehow."
     },
     "desc": {
-      "ja": "イルカの陰茎と触手によって、無差別に胎内を蹂躙・レイプされたい層向け。",
-      "en": "For those who want to be indiscriminately violated and raped inside by a dolphin's penis and tentacles."
+      "ja": "あなたが「アキコ」と出会ったのは、業界でその名を知らぬ者のいない大手キャスティング事務所の、ガラス張りの応接室でした。予算も知名度も釣り合わない企画を持ち込んだあなたの前に現れたのは、着崩したジャケットの袖を肘までまくり上げ、気だるげに椅子へ沈み込む灰色の肌の女性です。瞳の判別できないシルバーの眼は、あなたの資料をほとんど見ていないように見えました。\r\n\r\n彼女は終始やる気のなさそうな相槌を打ち続け、質問らしい質問もせず、あなたの説明が終わると「だいたいなんとかします」と一言だけ告げて席を立ちました。あなたが半ば諦めて社に戻ったその週のうちに、およそ実現不可能だと言われていた俳優の名が、決定として上がってきます。どこの誰にどう話を通したのか、社内の誰も説明できませんでした。以降、あなたは彼女に会うたび、その怠惰な姿勢と実績の落差に落ち着かない気分を味わうことになります。\r\n\r\n打ち合わせのあいだ、あなたの視線を何度も引き寄せたのは、椅子の脇に投げ出された長い尾でした。イルカのそれと同じ滑らかな灰色の皮膚と、先端の水平な尾びれ。しかしその裏側には、海棲哺乳類には決してあり得ないはずの、白い吸盤がびっしりと縦に並んでいたのです。イルカとイカ、水面と深海の形質を同居させたアマル。話が退屈になると、その吸盤は絨毯を掴んでは離し、掴んでは離しを繰り返します。粘つく小さな音が会話の隙間を埋めるたび、あなたは自分がひどく落ち着かないものと同室にいるのだと思い知らされるのでした。\r\n\r\nそして最後の打ち合わせの夜、資料を抱えて廊下に出たあなたは、消灯した応接室のガラス越しに、彼女がまだ一人で座っているのを見てしまいます。ブラインドの隙間から差す街灯の中で、机の下から、床から、椅子の背後から、いつのまにか無数の太い触腕が扇のように広がり、暗い室内いっぱいを埋め尽くして、ゆっくりと蠢いていました。枯れて箒となった草の茂みのようなその影は、あなたが足を止めたことに気づいた瞬間、音もなく引いて消えたのです。",
+      "en": "You first met \"Akiko\" in the glass-walled reception room of a major casting agency, a name known to everyone in the industry. You presented a project that was mismatched in terms of budget and name recognition. Appearing before you was a woman with gray skin, her jacket sleeves rolled up to her elbows, slumped listlessly into a chair. Her silver eyes, almost indistinguishable, seemed to indicate she had barely looked at your materials.\n\nShe simply nodded unenthusiastically throughout, asked no real questions, and when you finished explaining, she simply said, \"I'll manage somehow,\" and rose from her seat. That same week, after you returned to the office half-heartedly, the name of the actor, previously considered almost impossible to cast, was confirmed. No one in the company could explain who had been contacted or how. From then on, every time you met her, you felt uneasy about the stark contrast between her lazy attitude and her actual results.\n\nThroughout the meeting, your gaze was repeatedly drawn to the long tail draped beside the chair. It had the same smooth, gray skin as a dolphin, and a tail fin with a horizontal tip. But on its underside, however, were rows upon rows of white suction cups—something that should never be found in a marine mammal. Amal, a creature that combined the characteristics of a dolphin and a squid, of the surface and the deep sea. When the conversation became boring, these suction cups would grab onto the carpet and release, repeatedly. Each time the sticky, tinny sound filled a gap in the conversation, you were reminded that you were in the same room as something terribly unsettling.\n\nThen, on the night of your final meeting, you stepped out into the corridor with your documents and saw her still sitting alone in the darkened reception room through the glass. In the streetlight filtering through the blinds, countless thick tentacles had spread out like a fan from under the desk, from the floor, from behind the chair, filling the dark room and slowly wriggling. The shadow, like a thicket of withered grass that had turned into a broom, vanished without a sound the moment it noticed you had stopped walking."
     },
     "descSensitive": {
-      "ja": "",
-      "en": ""
+      "ja": "昼のアキコは、この業界で最も確実に仕事を終わらせる人間の一人です。誰にどう頭を下げれば話が通るのかを正確に把握し、無茶な要求ほど涼しい顔で片付けてみせる。上からは重宝され、周囲からは一目置かれ、彼女の椅子は年々確かなものになっていきます。それだけの地位を積み上げながら、彼女は毎晩、それを一瞬で灰にできる場所へ自ら歩いていくのです。\r\n\r\n夜、人気の絶えた公園や、街灯の切れた路地を、アキコは彷徨い歩きます。そこで出会う女に、彼女は声を掛けません。昼間であれば名刺を差し出し、経歴を訊ね、丁寧に連絡先を交換していたであろう相手にも、夜の彼女は一言も掛けないのです。スカートの内側に隠された、ヒトのものではない滑らかな器官と、床を這う無数の触腕。それだけが彼女の交渉手段であり、選定基準というものが端から存在しません。相手が誰であるかを、彼女は本当に一度も気にしたことがないのですから。\r\n\r\nコキアという草があります。夏には青々と茂り、秋には燃えるように赤く色づき、枯れ果てたあとは箒となって、なお膨大な種を辺り一面へ撒き散らす。名を裏返せば彼女になるその草のように、アキコは手当たり次第に自分を散らしていきます。ですが、彼女が撒いているのは彼女自身の熱ではありません。それは別の夜に、彼女がひとことも語らない場所で、腹の底へ延々と注ぎ込まれ、澱み、こごり、行き場を失って腐り始めた、どす黒い白濁なのです。誰にも見せない部屋で溜めさせられたそれを、彼女はただ吐き出しているに過ぎません。だからこそ、いくら散らしても軽くならない。ひとたび鎮めたように見えても、翌朝の彼女はまた、何事もなかったような気だるい顔で応接室に現れます。\r\n\r\nこの悪意あるマッチングアプリが彼女をあなたにレコメンドした理由は、あなたが「選ばれること」に飢えているからです。ですが、よく理解しておいてください。アキコに捕まるということは、選ばれたということではありません。むしろその正反対です。あなたの名前も、顔も、あの日の企画書も、彼女にとっては最後まで一切の意味を持ちません。たまたまそこにいた、というだけの理由で、あなたは誰とも交換可能な一晩分の器として使われ、朝には忘れられます。それでも構わないというのなら、道は簡単です。灯りの消えた道を、誰にも告げずに歩き続ければいい。這い寄ってくるものは、必ず、あなたを見つけます。",
+      "en": "During the day, Akiko is one of the most reliable workers in this industry. She knows exactly who to bow to and how to get what she wants, and she handles even the most unreasonable demands with a cool demeanor. Valued by her superiors and respected by those around her, her position becomes more secure year after year. Despite having built such a position, every night she walks to a place where she can reduce it to ashes in an instant.\n\nAt night, Akiko wanders through deserted parks and dimly lit alleys. She doesn't speak to the women she encounters. Even to those she would have exchanged business cards, inquired about their backgrounds, and politely exchanged contact information with during the day, she doesn't utter a single word at night. The smooth, non-human organs hidden beneath her skirt, and the countless tentacles crawling across the floor—these are her only means of negotiation; there are no selection criteria whatsoever. She truly has never cared who the other person is.\n\nThere is a plant called Kochia. In summer, it thrives lush and green; in autumn, it turns a fiery red; and after it withers, it transforms into a broom, scattering its vast seeds everywhere. Like that grass, whose name, when reversed, becomes her name, Akiko scatters herself indiscriminately. But what she's scattering isn't her own heat. It's a dark, murky white substance that, on another night, in a place where she doesn't utter a word, was endlessly poured into the depths of her being, stagnating, solidifying, and beginning to rot with nowhere to go. She's simply spitting out what she's been holding inside in a room no one sees. That's why, no matter how much she scatters, it never gets lighter. Even if she seems to have calmed down for a moment, the next morning she'll appear in the reception room again with a listless face, as if nothing had happened.\n\nThe reason this malicious dating app recommended her to you is because you're hungry to be \"chosen.\" But understand this: being caught by Akiko doesn't mean you've been chosen. Quite the opposite, in fact. Your name, your face, the proposal from that day—none of it will mean anything to her until the very end. Simply because you happened to be there, you will be used as a vessel for one night, interchangeable with anyone, and forgotten by morning. If you're okay with that, the path is simple. Just keep walking down the darkened road without telling anyone. Whatever creeps up on you will surely find you."
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/21_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/21_sensitive.png",
@@ -1540,7 +1564,13 @@
         "en": "Dolphin"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 19,
@@ -1588,16 +1618,16 @@
       ]
     },
     "quote": {
-      "ja": "",
-      "en": ""
+      "ja": "それ以上はいい。──ほら、いい音",
+      "en": "That's enough. -- See, that's a nice sound."
     },
     "desc": {
-      "ja": "■傲慢なる捕食者\\n圧倒的な暴力と高圧電流で蹂躙します。\\n■あなたの本質\\n尊厳を放棄し、理不尽な苦痛で「生きたオナホール」へ解体されたい究極のMです。",
-      "en": "■Arrogant Predator\\nI will overwhelm you with overwhelming violence and high-voltage electricity.\\n■Your True Nature\\nYou are the ultimate masochist who wants to abandon your dignity and be dismantled into a \"living onahole\" through unreasonable pain."
+      "ja": "あなたが「トウカ」と出会ったのは、大手広告代理店の最上階、下請けの人間が本来なら足を踏み入れることのない役員会議室でした。長机の中央で腕を組み、椅子に浅く腰かけていたのは、ひどく小柄な女性です。艶のある黒い肌に、緩く巻いた黒髪。頭上でぴくりと動く大きな耳と、頬から伸びる細く長い髭。扉を開けた瞬間のあなたは、そこにいるのが黒ネコのアマルの、まだ若い女の子なのだと思い込んだはずです。\r\n\r\nその誤解は、椅子の背後から床へ流れ落ちる尾を見た時点で崩れました。ネコのそれではありません。厚く、平たく、鰭を備えた、水底を這う大型魚の尾。髭も耳も、愛玩されるための器官ではなく、水中で獲物の起こす微弱な電流を探るための感覚器だったのです。\r\n\r\n彼女が口を開くまで、室内の誰一人として喋りませんでした。名家の生まれであり、その席が家柄によって用意されたものであることは、業界の誰もが知っています。しかし、そのことを揶揄する者はいません。同じ立場と責任を背負ってきた先達の誰と比べても、トウカの上げてきた数字は文字通り桁が違うからです。会社は彼女を繋ぎ止めるために毎年条件を積み増していますが、当のトウカにとってこの仕事が数ある娯楽の一つでしかないことは、その退屈しきったシルバーの眼を見れば明らかでした。\r\n\r\nあなたの説明を、トウカは三分で遮りました。理由も述べず、代案も出さず、ただ「それ以上はいい」と。次の瞬間、机の上に置かれた小さな手のひらから、青白い光が音もなく走ります。長机の金属脚を伝って、あなたの座る椅子の背まで届いた痺れは、指先の感覚を数秒だけ完全に奪っていきました。ナマズのアマル。体内に発電器官を抱え、触れずに他人の神経へ直接届く体。彼女が退室したあと、あなたは自分の手が震えているのが痺れの名残なのか、それとも別の理由なのかを、しばらく判別できずにいたはずです。",
+      "en": "You met Touka in the top-floor executive conference room of a major advertising agency—a place where subcontractors would normally never set foot. Sitting precariously in a chair, arms crossed at the center of a long table, was a remarkably petite woman. She had lustrous dark skin and loosely curled black hair. Large ears twitched above her head, and long, thin whiskers extended from her cheeks. The moment you opened the door, you must have assumed she was a young female Amal, the black cat.\n\nThat misunderstanding crumbled the moment you saw the tail cascading from behind the chair to the floor. It wasn't a cat's tail. Thick, flat, and finned, it belonged to a large, bottom-dwelling fish. Her whiskers and ears weren't organs for petting; they were sensory organs for detecting the faint electrical currents of prey underwater.\n\nNo one in the room spoke until she opened her mouth. Everyone in the industry knew she was from a prestigious family, and that her seat was reserved for her family status. However, no one mocks her for it. Compared to any of her predecessors who had shared the same position and responsibilities, Touka's numbers were literally orders of magnitude higher. The company kept adding more and more conditions each year to retain her, but it was clear from her bored, silvery eyes that this job was merely one of many forms of entertainment for Touka.\n\n\nTouka interrupted your explanation after three minutes. Without giving a reason or offering an alternative, she simply said, \"That's enough.\" The next moment, a pale blue light silently streaked from the small palm resting on the table. The numbness, traveling up the metal legs of the long table to the back of your chair, completely robbed you of feeling in your fingertips for a few seconds. Amal the catfish. A creature with an internal power-generating organ that could directly reach other people's nerves without touching them. After she left, you were probably unable to determine for a while whether the trembling in your hand was a lingering effect of the numbness or something else entirely."
     },
     "descSensitive": {
-      "ja": "",
-      "en": ""
+      "ja": "トウカのサディズムは、隠された性癖ではありません。仕事の席でも、社交の場でも、彼女がそれを覆い隠そうとしたことは一度もないのです。他者が痛みに歪む瞬間だけが彼女の退屈を破ってくれるのだと、彼女は自明のこととして振る舞い、周囲もまたそれを彼女の個性として受け入れています。生まれたときからこの世のほとんどを思い通りにできた人間にとって、抵抗されないことは何の喜びにもなりません。壊れる音、焦げる匂い、悲鳴の高さ。それだけが、彼女にとって世界がまだ実在していることの証明なのです。\r\n\r\nそして彼女の体には、会議室では決して披露されない機構がもう一つ備わっています。腕の内部に収まった、水中の獲物を撃ち抜くための器官。指を弾くだけで、空気そのものを破裂させ、プラズマの熱と衝撃波を叩き込むことができるのです。火種を持たずに火を起こし、触れずに壊す。破壊するためだけに設計されたとしか思えない肉体を、彼女は生まれつき与えられていました。\r\n\r\n夜、郊外の屋敷に呼び出される相手は、いつも同じ一人だけです。誰でもいいわけではありません。トウカの熱量に耐えられる人間など、この世にほとんど存在しないのですから。焼かれ、裂かれ、千切られ、それでも翌週にはまた元の姿でその門をくぐってくる。壊しても失われないという一点において、その相手はトウカにとって唯一無二であり、代わりを探す必要のない完成された相手です。夜が明けると、その体は丁寧に手当てをされ、清潔な服を着せられ、車で自宅まで送り届けられます。手落ちは一つもありません。ただ、別れ際にトウカが姿を見せたことは一度もないのです。燃やし終えた灰を、炎は決して振り返らないのですから。\r\n\r\nこの悪意あるマッチングアプリが彼女をあなたにレコメンドした理由は、あなたが痛みを「認められること」だと取り違えているからです。あなたは、ひどい扱いをされることと、特別に選ばれることの区別がついていません。理不尽に晒されるたび、それを自分だけに与えられた関係だと読み替えて生き延びてきた。その癖を、システムはあなたの過去のすべてから読み取っています。\r\n\r\nもしあなたが本気であの門をくぐりたいと望むのなら、必要なのは覚悟でも忠誠でもなく、再生する肉体です。夜ごと壊されて翌週には元通りになる、あの規格外の器がなければ、彼女の前に立つ資格はありません。あなたの手足は、千切れたら二度と戻らないでしょう。つまり、あなたがトウカに求められる回数は、その四肢と、その他いくつかの部位の枚数と、完全に同じです。四回か、五回か。使い切ったあと、あなたには何も残りません。あの指が鳴らないことを祈りながら、部屋の隅で息を潜めていなさい。あなたが助かるとすれば、それは彼女の慈悲によってではなく、彼女があなたを見つけなかったという、それだけの偶然によってなのですから。",
+      "en": "Touka's sadism isn't a hidden trait. She's never tried to conceal it, neither at work nor in social settings. She acts as if it's self-evident that only the moments of others' pain can break her boredom, and those around her accept it as part of her personality. For someone who has been able to control most of the world since birth, the lack of resistance brings no joy. The sound of breaking, the smell of burning, the pitch of screams—these are the only proof to her that the world still exists.\n\nAnd her body possesses another mechanism never revealed in the conference room: an organ housed within her arm, designed to shoot down prey underwater. With a flick of her fingers, she can rupture the air itself, unleashing plasma heat and shockwaves. She can create fire without a source, destroy without touching. She was born with a body seemingly designed solely for destruction.\n\nAt night, she is summoned to the suburban mansion by the same person every time. It's not just anyone. There are hardly any humans in this world who can withstand Touka's intensity. Burned, torn, ripped apart, yet the following week, they pass through the gate again in their original form. In the sense that they cannot be lost even when destroyed, they are unique and irreplaceable to Touka, a perfect partner who needs no replacement. At dawn, their body is carefully tended to, they are dressed in clean clothes, and driven home. Nothing is overlooked. However, Touka has never once shown herself at the moment of parting. The flame never looks back at the ashes after it has finished burning.\n\nThe reason this malicious dating app recommended her to you is because you mistake pain for \"being acknowledged.\" You can't distinguish between being treated badly and being specially chosen. Every time you've been exposed to injustice, you've survived by reinterpreting it as a relationship given only to you. The system has read this habit from your entire past.\n\n\nIf you truly desire to pass through that gate, what you need is not resolve or loyalty, but a regenerating body. Without that extraordinary vessel, destroyed night after night and restored to its original state the following week, you are not worthy to stand before her. Your limbs, once severed, will never grow back. In other words, the number of times Touka will require you is exactly the same as the number of limbs and other body parts she has. Four times, or five times. After you've used them all up, you will have nothing left. Hold your breath in the corner of the room, praying that her fingers don't snap. If you are saved, it will not be by her mercy, but simply by the coincidence that she did not find you."
     },
     "imageSafe": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/22_safe.png",
     "imageSensitive": "https://raw.githubusercontent.com/ghbe2/sugar-cage/main/images/characters/22_sensitive.png",
@@ -1618,7 +1648,13 @@
         "en": "shrimp"
       }
     },
-    "links": [],
+    "links": [
+      {
+        "type": "LINE",
+        "title": "『好き』スタンプ",
+        "url": "https://store.line.me/stickershop/product/33279550/ja"
+      }
+    ],
     "correlations": [
       {
         "id": 20,
@@ -1870,7 +1906,7 @@
     },
     "desc": {
       "ja": "五感を失った両性具有の哀れな実験体を、労力をかけずに肉塊として消費したい層向け。",
-      "en": "This is for those who want to consume a pathetic hermaphrodite test subject, who has lost all five senses, as a mere lump of flesh without any effort."
+      "en": "This is for those who want to consume a pathetic hermaphrodite test subject, who has lost all five senses, as a mass of flesh without any effort."
     },
     "descSensitive": {
       "ja": "",

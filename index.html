@@ -91,15 +91,17 @@
         .blind-card:hover { transform: scale(1.02); filter: brightness(1.1); }
         .blind-card.glow { border: 2px solid #ff4081; box-shadow: 0 0 15px rgba(255, 64, 129, 0.5); animation: neonPulse 1.5s infinite alternate; }
         @keyframes neonPulse { from { box-shadow: 0 0 5px #f06292; } to { box-shadow: 0 0 20px #e91e63; } }
-        .blind-card.rejected { cursor: default; border-color: rgba(128,128,128,0.25); box-shadow: none; animation: cardReject 2.4s ease-out forwards; }
+        /* box-sizing を border-box にしないと、JSで offsetHeight を height に入れた時に枠+余白ぶん膨らむ */
+        .blind-card.rejected { cursor: default; overflow: hidden; box-sizing: border-box; border-color: rgba(128,128,128,0.25); box-shadow: none; animation: cardReject 1.5s ease-out forwards; }
         .blind-card.rejected:hover { transform: none; filter: none; }
-        .card-reject-msg { font-family: var(--font-main); font-size: 0.85rem; color: var(--text-color); opacity: 0.6; flex: 1; text-align: center; letter-spacing: 1px; }
+        /* 高さ・余白・枠も一緒に縮めることで、下のカードとボタンが滑らかに繰り上がる */
+        .blind-card.collapsing { transition: height 0.7s ease, opacity 0.7s ease, padding 0.7s ease, margin 0.7s ease, border-width 0.7s ease; opacity: 0; padding-top: 0; padding-bottom: 0; border-width: 0; }
+        .card-reject-msg { font-family: var(--font-main); font-size: 0.85rem; color: var(--text-color); opacity: 0.6; flex: 1; text-align: center; letter-spacing: 1px; white-space: nowrap; }
         @keyframes cardReject {
-            0% { opacity: 1; transform: translateX(0); }
-            6% { transform: translateX(-5px); } 12% { transform: translateX(5px); }
-            18% { transform: translateX(-3px); } 24% { transform: translateX(0); }
-            70% { opacity: 1; }
-            100% { opacity: 0; transform: scale(0.96); }
+            0% { transform: translateX(0); }
+            8% { transform: translateX(-5px); } 16% { transform: translateX(5px); }
+            24% { transform: translateX(-3px); } 32% { transform: translateX(0); }
+            100% { transform: translateX(0); }
         }
         .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; transition: 0.3s; }
         .card-icon-mystery.filled { opacity: 1; }
@@ -854,8 +856,21 @@
         card.onclick = null;
         card.classList.remove('glow');
         card.classList.add('rejected');
+        // 内容を差し替える前に高さを固定する。後にすると、アイコン+タグから
+        // 1行のメッセージに変わった瞬間にカードが縮んでガタつく
+        const GAP = 14; // .blind-cards-container の gap
+        card.style.height = card.offsetHeight + 'px';
         card.innerHTML = '<div class="card-reject-msg">' + ui.gate_reject[currentLang] + '</div>';
-        setTimeout(() => card.remove(), 2400);
+        // メッセージを読ませてから、すぅ…と縮めて消す。
+        // 即 remove すると下のカードとボタンが瞬間移動する
+        setTimeout(() => {
+            card.classList.add('collapsing');
+            card.style.height = '0px';
+            // gap の分も詰めないと、最後に14pxだけカクッと動いてしまう
+            if (card.nextElementSibling) card.style.marginBottom = -GAP + 'px';
+            else if (card.previousElementSibling) card.style.marginTop = -GAP + 'px';
+        }, 1500);
+        setTimeout(() => card.remove(), 2500);
     }
 
     function playSSRAnimation(char) {

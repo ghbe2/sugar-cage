@@ -91,6 +91,16 @@
         .blind-card:hover { transform: scale(1.02); filter: brightness(1.1); }
         .blind-card.glow { border: 2px solid #ff4081; box-shadow: 0 0 15px rgba(255, 64, 129, 0.5); animation: neonPulse 1.5s infinite alternate; }
         @keyframes neonPulse { from { box-shadow: 0 0 5px #f06292; } to { box-shadow: 0 0 20px #e91e63; } }
+        .blind-card.rejected { cursor: default; border-color: rgba(128,128,128,0.25); box-shadow: none; animation: cardReject 2.4s ease-out forwards; }
+        .blind-card.rejected:hover { transform: none; filter: none; }
+        .card-reject-msg { font-family: var(--font-main); font-size: 0.85rem; color: var(--text-color); opacity: 0.6; flex: 1; text-align: center; letter-spacing: 1px; }
+        @keyframes cardReject {
+            0% { opacity: 1; transform: translateX(0); }
+            6% { transform: translateX(-5px); } 12% { transform: translateX(5px); }
+            18% { transform: translateX(-3px); } 24% { transform: translateX(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: scale(0.96); }
+        }
         .card-icon-mystery { font-family: var(--font-title); font-size: 1.5rem; opacity: 0.5; width: 40px; transition: 0.3s; }
         .card-icon-mystery.filled { opacity: 1; }
         .card-tags { font-family: var(--font-main); font-size: 0.85rem; color: var(--accent-color); flex: 1; text-align: left; padding-left: 15px; font-weight: bold; letter-spacing: 0.5px; }
@@ -337,6 +347,17 @@
     let quizQuestions = [];
     let allQuestions = [];
     let top3Results = [];
+    // トリガー質問への回答方向（agree / disagree / unsure）。診断ごとにリセット
+    let triggerAnswers = {};
+    // 特別条件つきキャラ。相性上位3人に入っても、対応する質問へ指定方向で
+    // 答えていなければ選択時に弾かれる（マッチはするが出会えない）。
+    // 質問側は effects の後ろの trigger: で印を付けている（並べ替えに強い）
+    const MATCH_GATES = {
+        19: { trigger: 'RIZU',  need: 'agree' }, // リヅ：自分の価値を否定されたい
+        20: { trigger: 'NAORI', need: 'agree' }, // ナオリ：完全に支配しコントロールしたい
+        21: { trigger: 'AKIKO', need: 'agree' }, // アキコ：本当の姿（醜さ）を自分だけが知りたい
+        22: { trigger: 'TOKA',  need: 'agree' }  // トウカ：傷ついても離れる選択肢はない
+    };
     let characters = [];
     let viewedCharIds = new Set();
     let bestMatchRates = {}; // { charId: 最高マッチ率% }
@@ -438,14 +459,15 @@
         archive_title: { ja: "マッチング中♥", en: "Matching ♥" },
         correlations: { ja: "▸ 関係性", en: "▸ Relations" },
         subtitle_know: { ja: "あなたを知る", en: "Knowing You" },
-        subtitle_secret: { ja: "あなただけが知る", en: "Only You Know" }
+        subtitle_secret: { ja: "あなただけが知る", en: "Only You Know" },
+        gate_reject: { ja: "今回のあなたでは、出会えない……", en: "Not the one you are today…" }
     };
 
     allQuestions = [
         { q: { ja: "恋人は自分のすべてを知るべきだ。", en: "A lover should know absolutely everything about me." }, effects: { P: 1, M: 0, I: -1, E: -1 } },
         { q: { ja: "相手が望むなら、自分を傷つけても構わない。", en: "If my partner desires it, I don't mind hurting myself." }, effects: { P: -2, M: -1, I: -1, E: 1 } },
         { q: { ja: "秘密や嘘は、愛を深めるスパイスになる。", en: "Secrets and lies are spices that deepen love." }, effects: { P: 0, M: -2, I: 2, E: 2 } },
-        { q: { ja: "相手を完全に支配し、コントロールしたい。", en: "I want to completely dominate and control my partner." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
+        { q: { ja: "相手を完全に支配し、コントロールしたい。", en: "I want to completely dominate and control my partner." }, effects: { P: 2, M: -2, I: 1, E: 0 }, trigger: 'NAORI' },
         { q: { ja: "愛情表現は言葉よりも、肉体的な痛みが伴う方が信じられる。", en: "Physical pain makes expressions of love more believable than mere words." }, effects: { P: 1, M: -2, I: -1, E: -1 } },
         { q: { ja: "誰にも言えない性癖や願望がある。", en: "I have sexual desires and fetishes I can't tell anyone." }, effects: { P: 0, M: -1, I: 1, E: 2 } },
         { q: { ja: "恋人が他の誰かに惹かれていくのを見ることに、興奮を覚えるかもしれない。", en: "I might feel aroused watching my lover be attracted to someone else." }, effects: { P: -1, M: -2, I: 1, E: 2 } },
@@ -454,7 +476,7 @@
         { q: { ja: "相手の絶望した顔こそが、最も美しいと思う。", en: "My partner's face in despair is the most beautiful thing." }, effects: { P: 2, M: -2, I: 1, E: 2 } },
         { q: { ja: "愛する人のためなら、社会的な地位や名誉を失ってもいい。", en: "For the one I love, I don't mind losing my social status and honor." }, effects: { P: 0, M: -1, I: -1, E: -1 } },
         { q: { ja: "美しいものより、汚れて堕ちていくものに惹かれる。", en: "I am more attracted to things that are dirty and falling than beautiful things." }, effects: { P: 1, M: -1, I: 1, E: 2 } },
-        { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 } },
+        { q: { ja: "自分だけが相手の「本当の姿（醜さ）」を知っていたい。", en: "I want to be the only one who knows my partner's 'true (ugly) self'." }, effects: { P: 2, M: 0, I: 1, E: -1 }, trigger: 'AKIKO' },
         { q: { ja: "相手を束縛するためなら、どんな手段も厭わない。", en: "I will use any means necessary to bind my partner to me." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
         { q: { ja: "究極の愛とは、互いを破壊し尽くすことだ。", en: "Ultimate love is destroying each other completely." }, effects: { P: 1, M: -1, I: -2, E: 2 } },
         { q: { ja: "相手が自分に依存して泣き叫ぶ姿を、ずっと眺めていたい。", en: "I want to watch my partner cry out in dependency on me forever." }, effects: { P: 2, M: -2, I: 1, E: 1 } },
@@ -464,8 +486,8 @@
         { q: { ja: "もし相手が犯罪を犯したら、迷わずその共犯者になりたい。", en: "If my partner committed a crime, I would want to be their accomplice without hesitation." }, effects: { P: 0, M: -2, I: -2, E: 2 } },
         { q: { ja: "相手の過去や記憶を、すべて自分色に塗り替えたい。", en: "I want to repaint all of my partner's past and memories in my own colors." }, effects: { P: 2, M: -1, I: 1, E: 0 } },
         { q: { ja: "自分の体は、相手のための「消耗品」だと理解している。", en: "I understand that my body is merely a 'consumable' for my partner." }, effects: { P: -2, M: -1, I: 1, E: 0 } },
-        { q: { ja: "相手に自分の価値を完全に否定されたいという願望がある。", en: "I have a desire to have my worth completely denied by my partner." }, effects: { P: -1, M: -1, I: -1, E: 1 } },
-        { q: { ja: "どれだけ傷ついても、相手から離れるという選択肢は存在しない。", en: "No matter how much I am hurt, the option to leave my partner does not exist." }, effects: { P: -1, M: 0, I: -1, E: 0 } },
+        { q: { ja: "相手に自分の価値を完全に否定されたいという願望がある。", en: "I have a desire to have my worth completely denied by my partner." }, effects: { P: -1, M: -1, I: -1, E: 1 }, trigger: 'RIZU' },
+        { q: { ja: "どれだけ傷ついても、相手から離れるという選択肢は存在しない。", en: "No matter how much I am hurt, the option to leave my partner does not exist." }, effects: { P: -1, M: 0, I: -1, E: 0 }, trigger: 'TOKA' },
         { q: { ja: "相手を絶望の淵に突き落とし、その唯一の救い主でありたい。", en: "I want to plunge my partner into despair and be their only savior." }, effects: { P: 2, M: -2, I: 2, E: 1 } },
         { q: { ja: "他者から見て軽蔑されるような性的な振る舞いに、言いようのない喜びを感じる。", en: "I feel an unspeakable joy in sexual behavior that others would despise." }, effects: { P: -1, M: -2, I: -2, E: 2 } },
         { q: { ja: "相手を飼い殺しにして、自分なしでは生きていけない身体にしたい。", en: "I want to keep my partner caged, making them a body that cannot live without me." }, effects: { P: 2, M: -2, I: 1, E: 0 } },
@@ -656,6 +678,7 @@
         comingFromResult = false;
         quizQuestions = [];
         top3Results = [];
+        triggerAnswers = {};
         document.getElementById('screen-result').classList.add('hidden');
         document.getElementById('screen-result').classList.remove('anim-fade-in');
         document.getElementById('screen-quiz').classList.add('hidden');
@@ -675,6 +698,7 @@
         stats = { P: 4, M: 4, I: 4, E: 4 };
         currentQuestionIndex = 0;
         top3Results = [];
+        triggerAnswers = {};
         comingFromResult = false;
         selectRandomQuestions();
         resetColorPhase();
@@ -723,7 +747,7 @@
         }
         // onclick だけ毎問差し替え（要素自体は保持されるので色がフェードする）
         Array.from(container.children).forEach((btnEl, idx) => {
-            btnEl.onclick = () => selectOption(q.effects, btns[idx].mult);
+            btnEl.onclick = () => selectOption(q, btns[idx].mult);
         });
     }
 
@@ -745,7 +769,12 @@
         }, 350);
     }
 
-    function selectOption(effects, multiplier) {
+    function selectOption(question, multiplier) {
+        const effects = question.effects;
+        // トリガー質問は「わかる/ちがう」の方向だけ記録する（・はどちらでもない扱い）
+        if (question.trigger) {
+            triggerAnswers[question.trigger] = (multiplier === 'random') ? 'unsure' : (multiplier > 0 ? 'agree' : 'disagree');
+        }
         if (multiplier === 'random') {
             const keys = ['P', 'M', 'I', 'E'];
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
@@ -779,7 +808,7 @@
     }
 
     function processResult() {
-        let availableChars = characters.filter(c => c.id <= 18);
+        let availableChars = characters.filter(c => c.id <= 22);
         let ranked = availableChars.map(char => {
             // 新マッチ度基準（P/M逆・I/E順）でスコア化。高いほど相性が良い
             let matchPct = calcMatchPercent(char);
@@ -803,9 +832,30 @@
             const tagsText = char.tags[currentLang] ? char.tags[currentLang].map(t => '#' + t).join(' ') : '#???';
             const heartIcon = viewedCharIds.has(char.id) ? '♥' : '♡';
             card.innerHTML = '<div class="card-icon-mystery' + (viewedCharIds.has(char.id) ? ' filled' : '') + '">' + heartIcon + '</div><div class="card-tags">' + tagsText + '</div>';
-            card.onclick = () => playSSRAnimation(char);
+            card.onclick = () => {
+                // 条件つきキャラは、必要な回答をしていなければここで弾く
+                if (!isGateOpen(char.id)) { rejectCard(card); return; }
+                playSSRAnimation(char);
+            };
             container.appendChild(card);
         });
+    }
+
+    // 特別条件を満たしているか。条件のないキャラは常に true
+    function isGateOpen(charId) {
+        const gate = MATCH_GATES[charId];
+        if (!gate) return true;
+        return triggerAnswers[gate.trigger] === gate.need;
+    }
+
+    // 弾かれたカード：メッセージを出して消滅させる。残りのカードは引き続き選べる
+    function rejectCard(card) {
+        if (card.classList.contains('rejected')) return;
+        card.onclick = null;
+        card.classList.remove('glow');
+        card.classList.add('rejected');
+        card.innerHTML = '<div class="card-reject-msg">' + ui.gate_reject[currentLang] + '</div>';
+        setTimeout(() => card.remove(), 2400);
     }
 
     function playSSRAnimation(char) {
@@ -1041,7 +1091,7 @@
         characters.forEach(char => {
             const slot = document.createElement('div');
             const isViewed = viewedCharIds.has(char.id);
-            const isUnimplemented = char.id > 18;
+            const isUnimplemented = char.id > 22;
             if (isUnimplemented) {
                 slot.className = 'archive-slot unimplemented';
                 slot.innerHTML = '？';
@@ -1360,7 +1410,7 @@
         const corrChar = characters.find(c => c.id === corr.id);
         if (!corrChar) return null;
         const isLocked = !viewedCharIds.has(corr.id);
-        const isUnimplemented = corr.id > 18;
+        const isUnimplemented = corr.id > 22;
         const corrCard = document.createElement('div');
         corrCard.className = 'corr-card ' + ((isLocked || isUnimplemented) ? 'locked' : '');
         let iconHtml;
@@ -1477,7 +1527,7 @@
     function renderStartRanking() {
         const host = document.getElementById('rank-bg');
         if (!host || !characters || characters.length === 0) return;
-        const ranked = characters.filter(c => c.id <= 18).slice()
+        const ranked = characters.filter(c => c.id <= 22).slice()
             .sort((a, b) => (getVoteCount(b.id) - getVoteCount(a.id)) || (a.id - b.id));
         const top3 = ranked.slice(0, 3);
         if (top3.length < 3) { host.innerHTML = ''; return; }

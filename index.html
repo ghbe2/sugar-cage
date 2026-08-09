@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>しゅがけウェイティング</title>
+<link rel="icon" type="image/png" href="images/rank_sugarcube.png">
+<link rel="apple-touch-icon" href="images/rank_sugarcube.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DotGothic16&family=Roboto+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
@@ -34,6 +36,24 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   --edge:linear-gradient(148deg,var(--rim) 0%,var(--rim) 34%,
           color-mix(in srgb,var(--line) 55%,var(--rim)) 52%,var(--line) 78%,var(--line) 100%);
   transition:--liq 6.5s linear, --spec 6.5s linear}
+
+/* ── 広い画面ではグラスを実物の幅に固定する ──
+   スマホでは画面いっぱいがグラスの中でよかったが、PCやタブレットで
+   横に伸ばすと「幅3メートルのグラス」になってしまう。
+   幅を止めて中央に置き、外側をカフェの背景に明け渡す。
+   いまの外側は無地。ここに写真なり絵なりを敷けば、テーブルの上に
+   置かれた1杯になる（背景は .room の background を差し替えるだけ） */
+@media (min-width:600px){
+  .glass{left:50%;right:auto;width:430px;transform:translateX(-50%);
+    /* グラスの縁が背景の上に立つので、外側に影と縁を出す */
+    box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 30%,transparent),
+               0 24px 60px rgba(52,18,31,.28), 0 2px 10px rgba(52,18,31,.16)}
+  /* グラスの外側＝これから背景が入るところ。いまは無地で置いておく */
+  body{background:#ddd6cb}
+  /* シートもグラスの中に収める。画面全体に広がると、
+     グラスの外にUIが出てしまって作り物に見える */
+  .sheet{left:50%;right:auto;width:430px;transform:translateX(-50%)}
+}
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
   background:linear-gradient(#fdf7ea,#fdf7ea) padding-box, var(--edge) border-box}
@@ -349,20 +369,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   border-bottom:1px solid rgba(52,18,31,.15);margin-top:-9px}
 .ach{display:flex;gap:10px;align-items:center;padding:9px 2px;
   border-bottom:1px solid rgba(52,18,31,.15)}
-.ach .ic{width:32px;height:32px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;
-  justify-content:center;font-size:.9rem;background:#fdf7ea;color:var(--line);
-  box-shadow:0 0 0 2.5px var(--line)}
-.ach.lock .ic{background:#ded9d1;color:rgba(52,18,31,.3)}
-.ach .tx b{display:flex;align-items:center;gap:7px;font-size:.68rem;color:var(--line)}
+/* 段の色で囲った丸に、糖度のアイコンを1つ。四角い枠だと
+   グループ見出しの罫線と直交して騒がしくなるので、丸で抜く */
+.ach .ic{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-size:1rem;background:#fdf7ea;
+  box-shadow:inset 0 0 0 2px var(--rc)}
+.ach.lock .ic{opacity:.45}
+.ach .tx b{display:block;font-size:.68rem;color:var(--line)}
 .ach .tx span{display:block;font-size:.53rem;color:rgba(52,18,31,.55);margin-top:2px}
 .ach.lock .tx b{color:rgba(52,18,31,.45)}
-/* 格付け＝糖度。未取得でも段だけは見せる（どれが重いのか分からないと目標にならない）。
-   数字を落としてアイコン1つにしたので、丸で囲って徽章として立たせる */
-.ach .tx b i{font-style:normal;font-size:.62rem;line-height:1;
-  width:22px;height:22px;flex-shrink:0;border-radius:50%;
-  display:inline-flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 0 0 1.5px var(--rc)}
-.ach.lock .tx b i{opacity:.4}
 /* 糖度の目盛り。アイコンだけでは順序が伝わらないので、左から重い順に並べて示す */
 .scale{display:flex;gap:6px;margin-top:11px}
 .scale div{flex:1;text-align:center;font-size:.8rem;line-height:1.1;
@@ -470,7 +485,6 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 <div class="sheet" id="sheet">
   <div class="inner">
     <h2>ACHIEVEMENTS<i id="achTotal">0 / 0</i></h2>
-    <p class="lead">しゅがけの全ゲームで得た記録が、ここに集まります。<br>同じ端末の同じブラウザで遊んだぶんが対象です。</p>
     <div class="scale" id="achScale"></div>
     <div id="achList"></div>
     <button class="close" id="closeBtn">とじる</button>
@@ -577,49 +591,49 @@ const RANKS = {
    旗が来るまでは未取得のまま出る（壊れはしない） */
 const ACH_DEFS = [
   { label:'しゅがけマッチング', items:[
-    { ic:'♥', r:1, open:1, name:'はじめての出会い', desc:'ひとり診断した',   on:s => s.m.viewed >= 1 },
-    { ic:'✓', r:1, open:1, name:'推し活',           desc:'キャラに投票した', on:s => s.m.voted },
-    { ic:'⇄', r:1, open:1, name:'推し変',           desc:'推しを乗り換えた',
+    { r:1, open:1, name:'はじめての出会い', desc:'ひとり診断した',   on:s => s.m.viewed >= 1 },
+    { r:1, open:1, name:'推し活',           desc:'キャラに投票した', on:s => s.m.voted },
+    { r:1, open:1, name:'推し変',           desc:'推しを乗り換えた',
       on:s => !!s.f['m.revote'], f:'m.revote' },
-    { ic:'⌇', r:2, open:1, name:'伸びて縮んで',     desc:'つながりを見た',
+    { r:2, open:1, name:'伸びて縮んで',     desc:'つながりを見た',
       on:s => !!s.f['m.relations'], f:'m.relations' },
     /* 章ごとの解放。会ったキャラID（sugar_cage_viewed）が章の全員を含むか */
-    { ic:'子', r:3, open:1, name:'THE ORDINARY ZODIACS',
+    { r:3, open:1, name:'THE ORDINARY ZODIACS',
       desc:'ある12人に出会った',  on:s => hasAll(s.m.ids, 1, 12) },
-    { ic:'龍', r:3, open:0, name:'THE ALGORITHM SACRED BEASTS',
+    { r:3, open:0, name:'THE ALGORITHM SACRED BEASTS',
       desc:'ある6人に出会った',   on:s => hasAll(s.m.ids, 13, 18) },
-    { ic:'旧', r:4, open:0, name:'THE INDUSTRY OLD ONES',
+    { r:4, open:0, name:'THE INDUSTRY OLD ONES',
       desc:'ある4人に出会った',   on:s => hasAll(s.m.ids, 19, 22) },
-    { ic:'☾', r:2, open:0, name:'開示請求',         desc:'相性90%以上を出した',  on:s => s.m.top >= 90 },
-    { ic:'♡', r:4, open:0, name:'月がきれいですね', desc:'相性100%を引き当てた', on:s => s.m.top >= 100 }]},
+    { r:2, open:0, name:'開示請求',         desc:'相性90%以上を出した',  on:s => s.m.top >= 90 },
+    { r:4, open:0, name:'月がきれいですね', desc:'相性100%を引き当てた', on:s => s.m.top >= 100 }]},
   { label:'しゅがけカーリング', items:[
-    { ic:'✎', r:1, open:1, name:'選手登録',       desc:'プレイヤー名を登録した', on:s => s.c.named },
-    { ic:'🥉', r:1, open:1, name:'そだ↑ね～↓？',  desc:'1,500点',   on:s => s.c.best >= 1500 },
-    { ic:'🥈', r:2, open:1, name:'ヤップ？',       desc:'5,000点',   on:s => s.c.best >= 5000 },
-    { ic:'🥇', r:2, open:1, name:'ウォー？',       desc:'12,000点',  on:s => s.c.best >= 12000 },
-    { ic:'👑', r:3, open:1, name:'ナイス～？',     desc:'25,000点',  on:s => s.c.best >= 25000 },
-    { ic:'◎', r:3, open:1, name:'オリンピック出れる', desc:'トリプルテイクを成功',
+    { r:1, open:1, name:'選手登録',       desc:'プレイヤー名を登録した', on:s => s.c.named },
+    { r:1, open:1, name:'そだ↑ね～↓？',  desc:'1,500点',   on:s => s.c.best >= 1500 },
+    { r:2, open:1, name:'ヤップ？',       desc:'5,000点',   on:s => s.c.best >= 5000 },
+    { r:2, open:1, name:'ウォー？',       desc:'12,000点',  on:s => s.c.best >= 12000 },
+    { r:3, open:1, name:'ナイス～？',     desc:'25,000点',  on:s => s.c.best >= 25000 },
+    { r:3, open:1, name:'オリンピック出れる', desc:'トリプルテイクを成功',
       on:s => !!s.f['c.triple'], f:'c.triple' },
-    { ic:'🏆', r:4, open:1, name:'ワイルドエンド', desc:'50,000点',  on:s => s.c.best >= 50000 }]},
+    { r:4, open:1, name:'ワイルドエンド', desc:'50,000点',  on:s => s.c.best >= 50000 }]},
   { label:'しゅがけレーティング', items:[
-    { ic:'◎', r:1, open:1, name:'初勝利', desc:'1勝した', on:s => s.r.rako + s.r.ou >= 1 },
+    { r:1, open:1, name:'初勝利', desc:'1勝した', on:s => s.r.rako + s.r.ou >= 1 },
     /* ゲーム側のラダーは グラニュ→ザラメ→カラメル→ワサンボン。
        README の「糖蜜級」は古い記述で、いまのコードには存在しない */
-    { ic:'ラ', r:2, open:1, name:'ワサンボン・ラコ', desc:'ラコで最上位クラスへ', on:s => s.r.reachedRako },
-    { ic:'オ', r:2, open:1, name:'ワサンボン・オウ', desc:'オウで最上位クラスへ', on:s => s.r.reachedOu },
-    { ic:'☜', r:2, open:1, name:'指何本つかった？', desc:'1回の対戦で100回タップした',
+    { r:2, open:1, name:'ワサンボン・ラコ', desc:'ラコで最上位クラスへ', on:s => s.r.reachedRako },
+    { r:2, open:1, name:'ワサンボン・オウ', desc:'オウで最上位クラスへ', on:s => s.r.reachedOu },
+    { r:2, open:1, name:'指何本つかった？', desc:'1回の対戦で100回タップした',
       on:s => !!s.f['r.tap100'], f:'r.tap100' },
-    { ic:'◈', r:3, open:0, name:'二人とも登らせた', desc:'ラコもオウも最上位へ', on:s => s.r.reachedRako && s.r.reachedOu },
+    { r:3, open:0, name:'二人とも登らせた', desc:'ラコもオウも最上位へ', on:s => s.r.reachedRako && s.r.reachedOu },
     /* 保存されているのは通算勝利数だけ。単位表から逆算した「235勝で無量大数」は
        いまのラダーでは検算できないので、勝利数そのもので判定する */
-    { ic:'∞', r:4, open:0, name:'途中突き指しなかった？', desc:'通算300勝した', on:s => s.r.rako + s.r.ou >= 300 }]},
+    { r:4, open:0, name:'途中突き指しなかった？', desc:'通算300勝した', on:s => s.r.rako + s.r.ou >= 300 }]},
   { label:'ぜんたい', items:[
     /* 「3本」と固定するとゲームが増えるたびに直すことになる。
        遊んだ本数を数えて3以上、にしておけば足すだけで済む */
-    { ic:'⌘', r:3, open:1, name:'しゅがけ好き', desc:'3つ以上のゲームで遊んだ',
+    { r:3, open:1, name:'しゅがけ好き', desc:'3つ以上のゲームで遊んだ',
       on:s => s.played >= 3 },
     /* Xアイコンを押した時点で立てる。自己申告のボタンは廃止 */
-    { ic:'𝕏', r:2, open:1, name:'フォロワー', desc:'Xのアカウントを覗いた',
+    { r:2, open:1, name:'フォロワー', desc:'Xのアカウントを覗いた',
       on:s => !!s.f['x.visit'] }]}
 ];
 /* 各ゲームが scFlag() を仕込み終わったら、ここを true にすると注記が消える。
@@ -644,10 +658,12 @@ function renderAch() {
       /* 名前は取るまで必ず伏せる。名前そのものがオチなので、
          先に見せてしまうと取ったときの一番おいしいところが消える。
          open が効くのはヒント（何をすれば取れるか）だけ */
+      /* 左の丸は糖度そのもの。項目ごとの飾りアイコンを置いていたが、
+         行の見分けは名前が担っているので、あの位置は段を示すのに使うほうが効く */
       const R = RANKS[it.r];
-      rows += '<div class="ach' + (has ? '' : ' lock') + '"><div class="ic">' + (has ? it.ic : '?') +
-        '</div><div class="tx"><b>' + (has ? it.name : '？？？') +
-        '<i style="--rc:' + R.col + '" title="' + R.name + '">' + R.ic + '</i></b><span>' +
+      rows += '<div class="ach' + (has ? '' : ' lock') + '" style="--rc:' + R.col + '">' +
+        '<div class="ic" title="' + R.name + '">' + R.ic + '</div>' +
+        '<div class="tx"><b>' + (has ? it.name : '？？？') + '</b><span>' +
         (has || it.open ? it.desc : 'まだ伏せられている') + '</span></div></div>';
       /* ゲーム側の対応待ちのものは、条件を満たしようが無いので明示する。
          黙って未取得のままだと「取れないアチーブメント」に見える */
@@ -703,8 +719,13 @@ document.querySelectorAll('.app').forEach(a => {
    ロゴは左に寄っているのだから、非対称な弧になるのが正しい。
    半径も画面半分に固定する（θ=±90°が画面端＝液面の楕円と同じ幾何になる） */
 /* 起動時の幅で固定すると、回転や画面回転で軸がずれる。毎回いまの幅から取る */
-const CX = () => window.innerWidth / 2;
-const R  = () => window.innerWidth / 2;
+/* 円筒の軸と半径は「グラスの幅」から出す。画面幅ではない。
+   広い画面ではグラスを430pxに固定するので、画面幅を使うと
+   幅3メートルの円筒に文字を貼ることになり、ロゴもアイコンも
+   グラスの外へ飛び出す */
+const GW = () => glassEl.clientWidth;
+const CX = () => GW() / 2;
+const R  = () => GW() / 2;
 const ELL = parseFloat(getComputedStyle(glassEl).getPropertyValue('--ell'));
 let rot = 0;
 const printLines = [...document.querySelectorAll('.print .line')].map(el => {
@@ -906,7 +927,11 @@ function spin(d) {
   document.querySelectorAll('#dots b').forEach((b, i) => b.classList.toggle('on', i === page));
 }
 let sx = null;
-glassEl.addEventListener('pointerdown', e => { sx = e.clientX; splash(1, e.clientX / window.innerWidth * 100); });
+/* 波打つ位置はグラスの中の割合。画面ではなくグラスの左端から測る */
+glassEl.addEventListener('pointerdown', e => {
+  sx = e.clientX;
+  splash(1, (e.clientX - glassEl.getBoundingClientRect().left) / GW() * 100);
+});
 glassEl.addEventListener('pointerup', e => {
   if (sx === null) return;
   const dx = e.clientX - sx; sx = null;
@@ -1030,7 +1055,7 @@ function crown(x, y, power) {
 }
 const cubes = [...document.querySelectorAll('.sink i')].map(el => ({ el, t: 0 }));
 function respawn(c, firstRun) {
-  c.x = 8 + Math.random() * (window.innerWidth - 50);
+  c.x = 8 + Math.random() * (GW() - 50);
   c.y = -40 - Math.random() * 260;
   c.vy = 0.6 + Math.random() * 0.5;
   c.rot = Math.random() * 60 - 30;
@@ -1051,7 +1076,7 @@ function stepCubes() {
         c.wet = true;
         c.vy = Math.min(c.vy * 0.12, 1.6);            // 水に食われて一気に失速
         c.vr *= 0.3;
-        splash(Math.min(1, 0.45 + c.vy * 0.4), (c.x + 19) / window.innerWidth * 100);  // 落ちた位置で跳ねる
+        splash(Math.min(1, 0.45 + c.vy * 0.4), (c.x + 19) / GW() * 100);  // 落ちた位置で跳ねる
         crown(c.x + 19, SURF_PX, c.vy);              // 水冠
       }
     } else {

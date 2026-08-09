@@ -156,9 +156,12 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      当てる（余白を可変にした時点で、CSS の決め打ちはずれる）。
      z は .glass より下。口のふちの向こうから生えてくるので、
      手前に重ねると「グラスの前に立てたストロー」になる */
-  .strawout{display:block;position:fixed;z-index:0;pointer-events:none;
-    transform-origin:bottom center}
+  .strawout{display:block;position:fixed;z-index:0;pointer-events:none}
+  /* 回すのは細い板だけ。パネルごと回すと、幅ぶんの角が
+     グラスの中まで振り下ろされる（口へ19px食い込んでいた）。
+     軸は下端＝口の高さ。中のストローの軸（top center, top:2px）と同じ点 */
   .strawout i{position:absolute;bottom:0;border-radius:9px 9px 0 0;
+    transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
     /* 水より上なので、中のストローの .air と同じ塗り */
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
@@ -923,8 +926,8 @@ function placeStrawOut(sa, sc) {
   strawOut.style.width  = r.width + 'px';
   strawOut.style.height = OUT + 'px';
   strawOut.style.top    = (r.top - OUT) + 'px';
-  /* 中のストローと同じ横位置・同じ傾き。回転の軸は口の高さ＝この板の下端 */
-  strawOut.style.transform = 'rotate(' + (9 * sc).toFixed(2) + 'deg)';
+  /* 傾きは細い板だけに当てる（パネルごと回すと角が口へ食い込む） */
+  strawOut.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   const i = strawOut.firstElementChild;
   i.style.width  = (15 * s) + 'px';
   i.style.height = (OUT + 2) + 'px';

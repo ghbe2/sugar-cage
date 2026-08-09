@@ -156,7 +156,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      当てる（余白を可変にした時点で、CSS の決め打ちはずれる）。
      z は .glass より下。口のふちの向こうから生えてくるので、
      手前に重ねると「グラスの前に立てたストロー」になる */
-  .strawout{display:block;position:fixed;z-index:0;pointer-events:none}
+  /* グラス（z1）より前。奥にすると口のふちの線がストローの手前に来て、
+     「グラスの裏に立てたストロー」に見える */
+  .strawout{display:block;position:fixed;z-index:2;pointer-events:none}
   /* 回すのは細い板だけ。パネルごと回すと、幅ぶんの角が
      グラスの中まで振り下ろされる（口へ19px食い込んでいた）。
      軸は下端＝口の高さ。中のストローの軸（top center, top:2px）と同じ点 */
@@ -287,24 +289,21 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 30%, transparent),
              inset 0 2px 0 rgba(255,255,255,.5)}
 
-/* ストロー：1本。液面より上は輪郭が出て、液中は溶ける */
-.straw{position:absolute;inset:0;z-index:5;pointer-events:none}
+/* ストロー：1本。塗り分けはしない。
+   以前は clip-path の割合（15%/84%）で水上と水中を描き分けていたが、
+   あの割合はストロー自身の高さ基準で、水面（--surf）とは無関係。
+   だから必ず境目がずれた。
+
+   代わりに、ストローを液より下のレイヤーに置く。液は半透明なので、
+   水中のぶんは液が上から染め、水上のぶんはそのまま出る。
+   境目は液の上辺そのものなので、原理的にずれようがない */
+.straw{position:absolute;inset:0;z-index:0;pointer-events:none}
 .straw i{position:absolute;display:block;right:64px;top:-44px;width:15px;height:118%;
-  border-radius:8px;transform:rotate(var(--tilt,9deg));transform-origin:top center}
-.straw .air{clip-path:inset(0 0 84% 0);
+  border-radius:9px;transform:rotate(var(--tilt,9deg));transform-origin:top center;
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
     color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
   box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
-.straw .sub{clip-path:inset(15% 0 0 0);
-  background:linear-gradient(90deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.28) 42%,
-    rgba(255,255,255,.42) 52%,rgba(255,255,255,.18) 74%,rgba(255,255,255,.06) 100%);
-  filter:blur(1.2px);mix-blend-mode:screen;opacity:.8}
-/* 液中は白のスクリーン合成で描いていたので、オレンジや卵色のドリンクでは
-   下地が明るく、ストローがまるごと背景に溶けて見えなくなっていた。
-   ドリンク色の細い輪郭を1本重ねて、どの色でも形だけは残す */
-.straw .ln{clip-path:inset(15% 0 0 0);box-sizing:border-box;
-  border:1.2px solid color-mix(in srgb, var(--line) 26%, transparent)}
 
 /* 落ちてくる角砂糖。動きは重力と水の抵抗でJS側が決めるので、
    ここでは見た目だけ持たせる（CSSの等速アニメーションでは重さが出ない）。
@@ -549,7 +548,7 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   </div>
 
   <div class="surface"><div class="ell"></div><div class="far"></div><div class="near"></div></div>
-  <div class="straw"><i class="sub"></i><i class="ln"></i><i class="air"></i></div>
+  <div class="straw"><i></i></div>
 
   <div class="floaters">
     <i style="width:42px;height:42px;left:8%;top:62%;animation-duration:11s;opacity:.5"></i>

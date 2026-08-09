@@ -121,6 +121,17 @@
     document.body.appendChild(wrap);
     return wrap;
   }
+  /* 表示中は body に sc-toasting を付ける。
+     通知は画面下中央に固定で出るので、ゲーム側の下部UI（吹き出し・
+     音量ボタンなど）と重なる。押せなくなるわけではない（.sc-toasts は
+     pointer-events:none）が、避けたいときに掴めるフックを出しておく。
+       body.sc-toasting .my-bottom-ui { transform: translateY(-76px) }
+     のように、ゲーム側だけで完結して持ち上げられる */
+  var live = 0;
+  function mark(delta) {
+    live += delta;
+    if (document.body) document.body.classList.toggle('sc-toasting', live > 0);
+  }
   function toast(def) {
     var R = RANKS[def.r] || RANKS[1];
     var el = document.createElement('div');
@@ -133,10 +144,14 @@
     el.querySelector('.sc-n').textContent = def.name;   // 名前は textContent で入れる
     el.querySelector('.sc-d').textContent = def.desc;
     ensure().appendChild(el);
+    mark(1);
     requestAnimationFrame(function () { el.classList.add('in'); });
     setTimeout(function () {
       el.classList.remove('in');
-      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400);
+      setTimeout(function () {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        mark(-1);
+      }, 400);
     }, 4200);
   }
 

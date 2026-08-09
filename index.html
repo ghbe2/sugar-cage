@@ -274,6 +274,12 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 .surface{position:absolute;left:0;right:0;top:calc(var(--surf) - var(--ell)/2);
   height:var(--ell);z-index:4;filter:url(#warp);
   transform-origin:var(--ox,50%) 62%}
+/* 奥の縁＝上半分。ストロー(z0)と同じ層に置き、DOM順で先に来るので
+   ストローが上に乗る。液(z1)より下だが、上半分は液の上辺より上に
+   あるので重ならない */
+.surffar{z-index:0;clip-path:inset(0 0 50% 0)}
+/* 手前の縁＝下半分。ストローの前に出す */
+.surfnear{clip-path:inset(50% 0 0 0)}
 /* 揺れは控えめに。振幅は --amp で毎回変える（同じ揺れ方の繰り返しに見せない） */
 .surface.wob{animation:wob var(--wdur,1.5s) cubic-bezier(.22,.7,.32,1)}
 @keyframes wob{
@@ -316,6 +322,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 .straw{position:absolute;inset:0;z-index:0;pointer-events:none}
 .straw i{position:absolute;display:block;right:64px;top:-44px;width:15px;height:118%;
   border-radius:9px;transform:rotate(var(--tilt,9deg));transform-origin:top center;
+  /* 完全な不透明だとプラスチックに見えない。少し透かして、
+     水上ではグラスの向こうが、水中では液が薄く抜けるようにする */
+  opacity:.92;
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
     color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
@@ -564,8 +573,12 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     <i style="width:41px;height:41px;left:92%;bottom:-5px;transform:rotate(-4deg)"></i>
   </div>
 
-  <div class="surface"><div class="ell"></div><div class="far"></div><div class="near"></div></div>
+  <!-- 水面も口と同じで、奥の弧と手前の弧でストローとの前後が逆になる。
+       ストローは奥の縁の前を通り、手前の縁の後ろへ入る。
+       ストローを挟んで前後に置くので、この3行の順序を入れ替えないこと -->
+  <div class="surface surffar"><div class="ell"></div><div class="far"></div></div>
   <div class="straw"><i></i></div>
+  <div class="surface surfnear"><div class="ell"></div><div class="near"></div></div>
 
   <div class="floaters">
     <i style="width:42px;height:42px;left:8%;top:62%;animation-duration:11s;opacity:.5"></i>
@@ -1144,7 +1157,9 @@ document.querySelectorAll('#dots b').forEach((d, i) => d.onclick = () => spin((i
 
 /* ══ 水面 ══ */
 const disp = document.getElementById('disp');
-const surfEl = document.querySelector('.surface');
+/* 水面は奥／手前の2枚に分かれている。揺れは両方に同じだけ当てないと
+   縁が割れて見えるので、まとめて扱う */
+const surfEls = [...document.querySelectorAll('.surface')];
 const BASE = 4;
 let amp = BASE, araf = null;
 /* xPct を渡すと、その位置を中心に水面が撓む。
@@ -1153,13 +1168,18 @@ function splash(p, xPct) {
   amp = BASE + 9 * p;                        // 歪みの振れ幅も控えめに
   if (!araf) araf = requestAnimationFrame(decay);
   if (xPct != null) {
-    surfEl.style.setProperty('--ox', xPct.toFixed(1) + '%');
-    // 毎回そっくり同じ揺れ方にしない。強さと尺をばらす
-    surfEl.style.setProperty('--wamp', (p * (0.75 + Math.random() * 0.5)).toFixed(2));
-    surfEl.style.setProperty('--wdur', (1.25 + Math.random() * 0.6).toFixed(2) + 's');
-    surfEl.classList.remove('wob');
-    void surfEl.offsetWidth;                 // アニメーションを確実に再生し直す
-    surfEl.classList.add('wob');
+    // 毎回そっくり同じ揺れ方にしない。強さと尺をばらす。
+    // 2枚で別々の乱数を引くと縁がずれるので、先に決めてから両方へ配る
+    const wamp = (p * (0.75 + Math.random() * 0.5)).toFixed(2);
+    const wdur = (1.25 + Math.random() * 0.6).toFixed(2) + 's';
+    surfEls.forEach(el => {
+      el.style.setProperty('--ox', xPct.toFixed(1) + '%');
+      el.style.setProperty('--wamp', wamp);
+      el.style.setProperty('--wdur', wdur);
+      el.classList.remove('wob');
+      void el.offsetWidth;                   // アニメーションを確実に再生し直す
+      el.classList.add('wob');
+    });
   }
 }
 function decay() {

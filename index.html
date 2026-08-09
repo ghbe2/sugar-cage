@@ -24,6 +24,7 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 .glass{position:fixed;inset:0;overflow:hidden;touch-action:pan-y;
   --surf:132px;      /* 水面は高く。ヘッドスペースは僅かでいい */
   --ell:15px;        /* ほぼ真横から見るので、液面の楕円はごく浅い */
+  --base:0px;        /* ガラスの床の厚み。スマホでは底が見えないので0 */
   --liq:#f6a8bd;
   --spec:#7fe3d0;
   /* ── しゅがけの輪郭 ──
@@ -43,16 +44,92 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    幅を止めて中央に置き、外側をカフェの背景に明け渡す。
    いまの外側は無地。ここに写真なり絵なりを敷けば、テーブルの上に
    置かれた1杯になる（背景は .room の background を差し替えるだけ） */
+/* 口と底は、スマホでは存在しない。画面いっぱいがグラスの中なので、
+   どちらも視界の外にある。PCでだけ現れる */
+.rim,.gbase{display:none}
+
 @media (min-width:600px){
+  /* 上下に余白を取ってグラスを1個の物にする。画面の端まで伸ばすと
+     「切り取られた筒」に見えて、テーブルの上に置かれた感じが出ない */
   .glass{left:50%;right:auto;width:430px;transform:translateX(-50%);
-    /* グラスの縁が背景の上に立つので、外側に影と縁を出す */
+    top:6vh;bottom:8vh;height:auto;
+    --base:34px;
+    /* 底は丸い。口はほぼ直角。実際のタンブラーの形 */
+    border-radius:3px 3px 30px 30px;
+    /* グラスの縁が背景の上に立つので、外側に影と縁を出す。
+       接地影は下に長く落として、浮かないようにする */
     box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 30%,transparent),
-               0 24px 60px rgba(52,18,31,.28), 0 2px 10px rgba(52,18,31,.16)}
+               0 26px 46px -18px rgba(52,18,31,.55),
+               0 60px 90px -40px rgba(52,18,31,.4)}
   /* グラスの外側＝これから背景が入るところ。いまは無地で置いておく */
   body{background:#ddd6cb}
   /* シートもグラスの中に収める。画面全体に広がると、
      グラスの外にUIが出てしまって作り物に見える */
   .sheet{left:50%;right:auto;width:430px;transform:translateX(-50%)}
+
+  /* ── 口 ──
+     液面とまったく同じ楕円（幅いっぱい・高さ --ell）。ここを変えると
+     「口と液面で別の円筒」に見えるので、寸法は液面に合わせる。
+     奥の弧は明るく、手前の弧は線が残る＝しゅがけの半分だけの輪郭 */
+  .rim{display:block;position:absolute;left:0;right:0;top:0;height:var(--ell);
+    z-index:11;pointer-events:none;border-radius:50%;
+    /* 手前の弧は太く濃く、奥の弧は細く明るく。
+       ここが弱いと「上が切れた筒」になって口に見えない */
+    border:1.5px solid color-mix(in srgb,var(--line) 40%,transparent);
+    border-top-color:color-mix(in srgb,var(--rim) 92%,transparent);
+    border-bottom:3px solid color-mix(in srgb,var(--line) 72%,transparent);
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--rim) 78%,transparent) 0%,
+      color-mix(in srgb,var(--rim) 30%,transparent) 45%,
+      transparent 70%)}
+  /* ふちの厚み。口のすぐ下に明るい帯を1本入れると、
+     紙のような1枚の楕円ではなく、厚みのあるガラスの縁になる */
+  .rim::after{content:'';position:absolute;left:-1.5px;right:-1.5px;
+    top:55%;height:calc(var(--ell) * 0.9);border-radius:50%;
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--rim) 60%,transparent),transparent 70%)}
+
+  /* ── 底 ──
+     ガラスの厚み。液はここで止まり、下は透明なガラスの塊になる。
+     上端の楕円が「内側の床」、下端の丸みが .glass の border-radius */
+  /* 結露は z9 で下半分を白く覆っている。底をその下に置くと埋もれて
+     まったく読めなかった。厚い底は冷えが伝わりにくく曇りも薄いので、
+     結露を底の上で止めて、底は結露より前に出す */
+  .glass .frost{bottom:var(--base)}
+  .gbase{display:block;position:absolute;left:0;right:0;bottom:0;
+    height:var(--base);z-index:11;pointer-events:none;
+    border-radius:0 0 30px 30px;
+    /* 厚いガラスは光をためて明るく、接地する縁で急に暗くなる */
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--liq) 34%,transparent) 0%,
+      color-mix(in srgb,var(--rim) 72%,transparent) 38%,
+      color-mix(in srgb,var(--rim) 95%,transparent) 66%,
+      color-mix(in srgb,var(--line) 55%,transparent) 100%)}
+  /* 内側の床。液が接している面なので、ここに楕円が出る。
+     底は目線より下にあるぶん、口より楕円が開く */
+  .gbase::before{content:'';position:absolute;left:0;right:0;
+    top:calc(var(--ell) * -0.9);height:calc(var(--ell) * 1.8);border-radius:50%;
+    border:1px solid color-mix(in srgb,var(--line) 26%,transparent);
+    border-bottom:2.5px solid color-mix(in srgb,var(--line) 60%,transparent);
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--liq) 30%,transparent) 0%,
+      color-mix(in srgb,var(--rim) 62%,transparent) 100%)}
+  /* 接地。底の下端に落ちる濃い影が無いと、置かれている感じが出ない */
+  .gbase::after{content:'';position:absolute;left:6%;right:6%;bottom:-2px;
+    height:calc(var(--ell) * 1.5);border-radius:50%;
+    background:radial-gradient(50% 100% at 50% 100%,
+      rgba(52,18,31,.42) 0%, rgba(52,18,31,0) 72%)}
+
+  /* 液とその中身は、ガラスの床の上で止める。
+     .liquid / .pile の定義はこのブロックより後ろにあるので、
+     同じ詳細度だと後勝ちで打ち消される。親を1つ足して勝たせる */
+  .glass .liquid, .glass .pile{bottom:var(--base)}
+
+  /* ストローはスマホでは画面外へ抜けていくが、PCでは口が見えるので
+     抜き先が無い。上端を口のすぐ内側に置いて、丸い切り口を見せる。
+     はみ出させるにはグラスの外まで描く必要があり、そうすると
+     液のクリップが効かなくなる。ここは切り口を見せるほうを取る */
+  .glass .straw i{top:2px;height:112%}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -410,6 +487,11 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   <div class="glasswall"></div>
   <div class="gloss" id="gloss"></div>
   <div class="liquid" id="liquid"></div>
+  <!-- 口と底。スマホでは描かない（画面いっぱいがグラスの中で、
+       どちらも視界の外にあるため）。PCではグラスが1個の物として
+       テーブルに置かれるので、描き切らないと宙に浮いた筒に見える -->
+  <div class="rim"></div>
+  <div class="gbase"></div>
 
   <!-- 底に積まれた角砂糖。正方形で、積み重なった山にする -->
   <div class="pile" id="pile">

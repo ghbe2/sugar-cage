@@ -53,8 +53,13 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      「切り取られた筒」に見えて、テーブルの上に置かれた感じが出ない */
   .glass{left:50%;right:auto;width:430px;transform:translateX(-50%);
     /* 余白はたっぷり取る。グラスの外がカフェになるので、
-       ここが狭いと「画面に貼り付いたグラス」のままになる */
-    top:18vh;bottom:24vh;height:auto;
+       ここが狭いと「画面に貼り付いたグラス」のままになる。
+       ただし中身（約590px）が入らないと底を突き抜けるので、
+       画面が低いときは余った分を上下 43:57 で分け合う。
+       1080px 以上の画面なら 18vh/24vh がそのまま出る */
+    top:clamp(0px, calc((100vh - 590px) * 0.43), 18vh);
+    bottom:clamp(0px, calc((100vh - 590px) * 0.57), 24vh);
+    height:auto;
     --base:34px;
     /* ── 箱の輪郭そのものを楕円にする ──
        口と底に楕円を描いても、その外側にある箱の上辺・下辺が
@@ -74,7 +79,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 余白を大きく取ったぶんグラスが短くなる。スマホと同じ間隔のままだと
      中身が底を突き抜けるので、ヘッドスペースとロゴ下の間を詰める */
   .glass{--surf:104px}
-  .ui{padding-top:calc(var(--surf) + 96px)}
+  /* .ui の padding 一括指定はこのブロックより後ろにあるので、
+     同じ詳細度だと後勝ちで消される。親を足して勝たせる */
+  .glass .ui{padding-top:calc(var(--surf) + 140px)}
   /* シートもグラスの中に収める。画面全体に広がると、
      グラスの外にUIが出てしまって作り物に見える */
   .sheet{left:50%;right:auto;width:430px;transform:translateX(-50%)}

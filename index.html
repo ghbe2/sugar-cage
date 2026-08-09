@@ -641,12 +641,14 @@ function renderAch() {
       const has = !!it.on(s); gt++; if (has) gu++;
       /* 伏せているものは、取るまで名前も条件も出さない。
          公開しているものは、未取得でも名前と条件を出す（目標にならないと意味がない） */
-      const show = has || it.open;
+      /* 名前は取るまで必ず伏せる。名前そのものがオチなので、
+         先に見せてしまうと取ったときの一番おいしいところが消える。
+         open が効くのはヒント（何をすれば取れるか）だけ */
       const R = RANKS[it.r];
-      rows += '<div class="ach' + (has ? '' : ' lock') + '"><div class="ic">' + (show ? it.ic : '?') +
-        '</div><div class="tx"><b>' + (show ? it.name : '？？？') +
+      rows += '<div class="ach' + (has ? '' : ' lock') + '"><div class="ic">' + (has ? it.ic : '?') +
+        '</div><div class="tx"><b>' + (has ? it.name : '？？？') +
         '<i style="--rc:' + R.col + '" title="' + R.name + '">' + R.ic + '</i></b><span>' +
-        (show ? it.desc : 'まだ伏せられている') + '</span></div></div>';
+        (has || it.open ? it.desc : 'まだ伏せられている') + '</span></div></div>';
       /* ゲーム側の対応待ちのものは、条件を満たしようが無いので明示する。
          黙って未取得のままだと「取れないアチーブメント」に見える */
       if (it.f && !has && !FLAG_READY[it.f]) rows +=

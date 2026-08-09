@@ -148,7 +148,9 @@
       var d = DEFS[i];
       if (game && d.g !== game) continue;        // 自分のゲームのぶんだけ見る
       var key = d.g + '.' + d.name;
-      if (seen[key]) continue;
+      /* 値ではなくキーの有無で見る。prime() が遡って既読にしたものは
+         値が 0 で入っており、真偽で見ると「未読」に化けて全部流れる */
+      if (Object.prototype.hasOwnProperty.call(seen, key)) continue;
       var ok = false; try { ok = !!d.on(s); } catch (e) {}
       if (!ok) continue;
       seen[key] = Date.now();

@@ -46,16 +46,24 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    置かれた1杯になる（背景は .room の background を差し替えるだけ） */
 /* 口と底は、スマホでは存在しない。画面いっぱいがグラスの中なので、
    どちらも視界の外にある。PCでだけ現れる */
-.rim,.gbase{display:none}
+.rim,.gbase,.strawout{display:none}
 
 @media (min-width:600px){
   /* 上下に余白を取ってグラスを1個の物にする。画面の端まで伸ばすと
      「切り取られた筒」に見えて、テーブルの上に置かれた感じが出ない */
   .glass{left:50%;right:auto;width:430px;transform:translateX(-50%);
-    top:6vh;bottom:8vh;height:auto;
+    /* 余白はたっぷり取る。グラスの外がカフェになるので、
+       ここが狭いと「画面に貼り付いたグラス」のままになる */
+    top:18vh;bottom:24vh;height:auto;
     --base:34px;
-    /* 底は丸い。口はほぼ直角。実際のタンブラーの形 */
-    border-radius:3px 3px 30px 30px;
+    /* ── 箱の輪郭そのものを楕円にする ──
+       口と底に楕円を描いても、その外側にある箱の上辺・下辺が
+       水平な直線だと、そちらが勝って「水平に切った筒」に見える。
+       角丸の縦横比を分けて、上下の辺を液面と同じ弧にする。
+       横半径は幅の半分（50%）、縦半径は液面の楕円 --ell に合わせる。
+       底は目線より下にあるぶん、縦半径を大きくして開かせる */
+    border-radius:50% 50% 50% 50% /
+      calc(var(--ell)/2) calc(var(--ell)/2) calc(var(--ell)*0.9) calc(var(--ell)*0.9);
     /* グラスの縁が背景の上に立つので、外側に影と縁を出す。
        接地影は下に長く落として、浮かないようにする */
     box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 30%,transparent),
@@ -63,6 +71,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
                0 60px 90px -40px rgba(52,18,31,.4)}
   /* グラスの外側＝これから背景が入るところ。いまは無地で置いておく */
   body{background:#ddd6cb}
+  /* 余白を大きく取ったぶんグラスが短くなる。スマホと同じ間隔のままだと
+     中身が底を突き抜けるので、ヘッドスペースとロゴ下の間を詰める */
+  .glass{--surf:104px}
+  .ui{padding-top:calc(var(--surf) + 96px)}
   /* シートもグラスの中に収める。画面全体に広がると、
      グラスの外にUIが出てしまって作り物に見える */
   .sheet{left:50%;right:auto;width:430px;transform:translateX(-50%)}
@@ -98,7 +110,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   .glass .frost{bottom:var(--base)}
   .gbase{display:block;position:absolute;left:0;right:0;bottom:0;
     height:var(--base);z-index:11;pointer-events:none;
-    border-radius:0 0 30px 30px;
+    /* 箱の下辺と同じ弧で終わらせる。ここが直線だと底だけ水平に見える */
+    border-radius:0 0 50% 50% / 0 0 calc(var(--ell)*0.9) calc(var(--ell)*0.9);
     /* 厚いガラスは光をためて明るく、接地する縁で急に暗くなる */
     background:linear-gradient(180deg,
       color-mix(in srgb,var(--liq) 34%,transparent) 0%,
@@ -130,6 +143,22 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      はみ出させるにはグラスの外まで描く必要があり、そうすると
      液のクリップが効かなくなる。ここは切り口を見せるほうを取る */
   .glass .straw i{top:2px;height:112%}
+
+  /* ── 口から突き出すぶん ──
+     .glass は overflow:hidden なので、中のストローは天面で切られる。
+     クリップを外すと液まで溢れるため、外に出た部分だけを
+     グラスの外側に別の板として描き、同じ変形をJSから当てる。
+     グラスと同じ幅・同じ中心に置くので、線はつながって見える */
+  .strawout{display:block;position:fixed;left:50%;width:430px;
+    bottom:calc(100vh - 18vh);height:74px;margin-left:-215px;
+    z-index:12;pointer-events:none}
+  .strawout i{position:absolute;right:64px;bottom:-6px;width:15px;height:100%;
+    border-radius:8px 8px 0 0;
+    transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
+    background:linear-gradient(90deg,
+      color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
+      color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
+    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -338,7 +367,12 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 
 /* 結露は下半分だけ。上まで掛けるとロゴまでぼやける。
    触れたところは曇りが拭き取られ、時間をかけてまた曇る（canvasで消しゴム描画） */
-.frost{position:absolute;left:0;right:0;bottom:0;height:52%;z-index:9;pointer-events:none}
+/* 結露。iOS で黒ずんで見えるという指摘があった。canvas のアルファ合成は
+   端末やブラウザで結果がばらつくので、値の調整では直しきれない。
+   screen 合成にすると「明るくすることしかできない」ので、
+   どの環境でも黒くはならない */
+.frost{position:absolute;left:0;right:0;bottom:0;height:52%;z-index:9;pointer-events:none;
+  mix-blend-mode:screen}
 
 /* 粒子感。これが無いとCSSの平面塗りに見える */
 .grain{position:absolute;inset:0;z-index:14;pointer-events:none;opacity:.13;
@@ -563,6 +597,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 
   <div class="grain"></div>
 </div>
+
+<!-- 口から突き出すストロー。グラスの外に置くのでクリップされない -->
+<div class="strawout" id="strawout"><i></i></div>
 
 <div class="sheet" id="sheet">
   <div class="inner">
@@ -836,6 +873,7 @@ const PY = 62;       // .print の高さ124pxの中心＝perspective-origin の 
    細い縦列を「角度」で置くと、端ほど列が詰まって曲面に貼りついて見える */
 const glossEl = document.getElementById('gloss');
 const strawEl = document.querySelector('.straw');
+const strawOut = document.getElementById('strawout');
 
 /* 炭酸の筋。粒はここで作る。間隔を等分にすると機械的な点線に見えるので、
    遅延も大きさも毎回ばらす */
@@ -956,6 +994,13 @@ function layoutCylinder() {
   strawEl.style.transform = 'translateX(' + (r * Math.sin(sa) * 0.16).toFixed(1) + 'px)';
   strawEl.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   strawEl.style.opacity = (0.88 + 0.12 * Math.max(0, sc)).toFixed(3);
+  /* 口から突き出すぶんは別の板なので、同じ値を当てて線をつなぐ。
+     スマホでは display:none なので触っても無害 */
+  if (strawOut) {
+    strawOut.style.transform = strawEl.style.transform;
+    strawOut.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
+    strawOut.style.opacity = strawEl.style.opacity;
+  }
   /* アイコン：内壁の半径で回す。奥に行くほど小さく淡く、裏に回ったら押せなくする */
   const rIn = r * 0.72;   // 内壁沿い。広げすぎるとグラスの外に出る
   appEls.forEach(o => {
@@ -1072,8 +1117,8 @@ function fogSize() {
 function paintFog(alpha) {
   const g = fctx.createLinearGradient(0, 0, 0, fh);
   g.addColorStop(0, 'rgba(255,255,255,0)');
-  g.addColorStop(0.45, 'rgba(255,255,255,' + (0.16 * alpha) + ')');
-  g.addColorStop(1, 'rgba(255,255,255,' + (0.30 * alpha) + ')');
+  g.addColorStop(0.45, 'rgba(255,255,255,' + (0.22 * alpha) + ')');
+  g.addColorStop(1, 'rgba(255,255,255,' + (0.40 * alpha) + ')');
   fctx.globalCompositeOperation = 'source-over';
   fctx.fillStyle = g;
   fctx.fillRect(0, 0, fw, fh);

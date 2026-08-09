@@ -51,16 +51,18 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 @media (min-width:600px){
   /* 上下に余白を取ってグラスを1個の物にする。画面の端まで伸ばすと
      「切り取られた筒」に見えて、テーブルの上に置かれた感じが出ない */
-  .glass{left:50%;right:auto;width:430px;transform:translateX(-50%);
-    /* 余白はたっぷり取る。グラスの外がカフェになるので、
-       ここが狭いと「画面に貼り付いたグラス」のままになる。
-       ただし中身（約590px）が入らないと底を突き抜けるので、
-       画面が低いときは余った分を上下 43:57 で分け合う。
-       1080px 以上の画面なら 18vh/24vh がそのまま出る */
-    top:clamp(0px, calc((100vh - 590px) * 0.43), 18vh);
-    bottom:clamp(0px, calc((100vh - 590px) * 0.57), 24vh);
-    height:auto;
+  /* ── スマホの箱をそのまま縮小する ──
+     幅だけ固定して高さを余白で決めると、画面が低いほど寸胴になる。
+     細いグラスの形はスマホ比率（390:844）で決まっているので、
+     箱の寸法はスマホのまま置き、transform: scale() で小さくする。
+     こうすると中の間合い・文字組み・円筒の計算がすべて据え置きになり、
+     「同じものが小さく置かれている」状態になる。
+     倍率と位置は JS（fitGlass）が画面の高さから決める */
+  .glass{left:50%;top:50%;right:auto;bottom:auto;z-index:1;
+    width:390px;height:844px;
+    transform-origin:center center;
     --base:34px;
+    /* 縮小するぶん、影は実寸で効くよう少し強めに置く */
     /* ── 箱の輪郭そのものを楕円にする ──
        口と底に楕円を描いても、その外側にある箱の上辺・下辺が
        水平な直線だと、そちらが勝って「水平に切った筒」に見える。
@@ -76,15 +78,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
                0 60px 90px -40px rgba(52,18,31,.4)}
   /* グラスの外側＝これから背景が入るところ。いまは無地で置いておく */
   body{background:#ddd6cb}
-  /* 余白を大きく取ったぶんグラスが短くなる。スマホと同じ間隔のままだと
-     中身が底を突き抜けるので、ヘッドスペースとロゴ下の間を詰める */
-  .glass{--surf:104px}
-  /* .ui の padding 一括指定はこのブロックより後ろにあるので、
-     同じ詳細度だと後勝ちで消される。親を足して勝たせる */
-  .glass .ui{padding-top:calc(var(--surf) + 140px)}
-  /* シートもグラスの中に収める。画面全体に広がると、
-     グラスの外にUIが出てしまって作り物に見える */
-  .sheet{left:50%;right:auto;width:430px;transform:translateX(-50%)}
+  /* 箱がスマホ寸法のままなので、中身の詰め直しは要らない。
+     --surf も .ui の padding もスマホと同じ値で、そのまま縮む */
+  /* シートはグラスの見かけの幅に合わせる（JS が実測して当てる） */
+  .sheet{right:auto;transform:none}
 
   /* ── 口 ──
      液面とまったく同じ楕円（幅いっぱい・高さ --ell）。ここを変えると
@@ -154,14 +151,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* ── 口から突き出すぶん ──
      .glass は overflow:hidden なので、中のストローは天面で切られる。
      クリップを外すと液まで溢れるため、外に出た部分だけを
-     グラスの外側に別の板として描き、同じ変形をJSから当てる。
-     グラスと同じ幅・同じ中心に置くので、線はつながって見える */
-  .strawout{display:block;position:fixed;left:50%;width:430px;
-    bottom:calc(100vh - 18vh);height:74px;margin-left:-215px;
-    z-index:12;pointer-events:none}
-  .strawout i{position:absolute;right:64px;bottom:-6px;width:15px;height:100%;
-    border-radius:8px 8px 0 0;
-    transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
+     グラスの外側に別の板として描く。
+     位置・大きさ・傾きは CSS で決め打ちせず、JS がグラスの実測値から
+     当てる（余白を可変にした時点で、CSS の決め打ちはずれる）。
+     z は .glass より下。口のふちの向こうから生えてくるので、
+     手前に重ねると「グラスの前に立てたストロー」になる */
+  .strawout{display:block;position:fixed;z-index:0;pointer-events:none;
+    transform-origin:bottom center}
+  .strawout i{position:absolute;bottom:0;border-radius:9px 9px 0 0;
+    /* 水より上なので、中のストローの .air と同じ塗り */
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
       color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
@@ -882,6 +880,58 @@ const glossEl = document.getElementById('gloss');
 const strawEl = document.querySelector('.straw');
 const strawOut = document.getElementById('strawout');
 
+/* ── PCで、グラスの縮小率と位置を決める ──
+   幅だけ固定して高さを余白で埋めると寸胴になる。箱はスマホ寸法のまま置き、
+   まるごと縮小する。中の間合いも文字組みも円筒の計算も据え置きになる。
+   glassEl.clientWidth は transform の影響を受けないので、
+   円筒の半径はスマホ座標（390px）のまま。ここは触らなくてよい */
+const BOX_W = 390, BOX_H = 844;
+let gScale = 1;
+function fitGlass() {
+  if (innerWidth < 600) {                    // スマホは従来どおり画面いっぱい
+    glassEl.style.transform = '';
+    gScale = 1;
+    return;
+  }
+  /* 上18% / 下24% を空ける。ただし小さくしすぎると文字が読めないので
+     0.72 で下げ止め、そのぶん余白を譲る */
+  const avail = innerHeight * (1 - 0.18 - 0.24);
+  gScale = Math.max(0.72, Math.min(1, avail / BOX_H, (innerWidth * 0.86) / BOX_W));
+  /* 上下の余白は 43:57。中心をその比率ぶん上へずらす */
+  const free = innerHeight - BOX_H * gScale;
+  const top = free * 0.43;
+  glassEl.style.transform =
+    'translate(-50%,-50%) translateY(' + (top + BOX_H * gScale / 2 - innerHeight / 2).toFixed(1) +
+    'px) scale(' + gScale.toFixed(4) + ')';
+  /* シートはグラスの見かけの幅にそろえる。画面全体に広がると、
+     グラスの外にUIが出て作り物に見える */
+  const sh = document.getElementById('sheet');
+  if (sh) { sh.style.left = (innerWidth - BOX_W * gScale) / 2 + 'px';
+            sh.style.width = (BOX_W * gScale) + 'px'; }
+}
+
+/* 口から突き出すストロー。グラスの外にあるので、位置も大きさも
+   グラスの実測値から毎回出す。CSSに決め打ちすると余白を変えた瞬間ずれる */
+function placeStrawOut(sa, sc) {
+  if (!strawOut) return;
+  if (innerWidth < 600) { strawOut.style.display = 'none'; return; }
+  strawOut.style.display = 'block';
+  const r = glassEl.getBoundingClientRect();
+  const s = gScale;
+  const OUT = 58 * s;                        // 口から出る長さ
+  strawOut.style.left   = r.left + 'px';
+  strawOut.style.width  = r.width + 'px';
+  strawOut.style.height = OUT + 'px';
+  strawOut.style.top    = (r.top - OUT) + 'px';
+  /* 中のストローと同じ横位置・同じ傾き。回転の軸は口の高さ＝この板の下端 */
+  strawOut.style.transform = 'rotate(' + (9 * sc).toFixed(2) + 'deg)';
+  const i = strawOut.firstElementChild;
+  i.style.width  = (15 * s) + 'px';
+  i.style.height = (OUT + 2) + 'px';
+  i.style.right  = (64 * s - (R() * Math.sin(sa) * 0.16) * s) + 'px';
+  strawOut.style.opacity = strawEl.style.opacity;
+}
+
 /* 炭酸の筋。粒はここで作る。間隔を等分にすると機械的な点線に見えるので、
    遅延も大きさも毎回ばらす */
 const streams = [...document.querySelectorAll('.stream')].map(el => {
@@ -1001,13 +1051,7 @@ function layoutCylinder() {
   strawEl.style.transform = 'translateX(' + (r * Math.sin(sa) * 0.16).toFixed(1) + 'px)';
   strawEl.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   strawEl.style.opacity = (0.88 + 0.12 * Math.max(0, sc)).toFixed(3);
-  /* 口から突き出すぶんは別の板なので、同じ値を当てて線をつなぐ。
-     スマホでは display:none なので触っても無害 */
-  if (strawOut) {
-    strawOut.style.transform = strawEl.style.transform;
-    strawOut.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
-    strawOut.style.opacity = strawEl.style.opacity;
-  }
+  placeStrawOut(sa, sc);
   /* アイコン：内壁の半径で回す。奥に行くほど小さく淡く、裏に回ったら押せなくする */
   const rIn = r * 0.72;   // 内壁沿い。広げすぎるとグラスの外に出る
   appEls.forEach(o => {
@@ -1031,9 +1075,9 @@ function layoutCylinder() {
     o.el.style.transform = 'translateX(' + (r * Math.sin(a) * 0.28).toFixed(1) + 'px) ' + o.el.dataset.baseTf;
   });
 }
-measurePrint(); layoutCylinder();
+fitGlass(); measurePrint(); layoutCylinder();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measurePrint(); layoutCylinder(); });
-addEventListener('resize', () => { measurePrint(); layoutCylinder(); });
+addEventListener('resize', () => { fitGlass(); measurePrint(); layoutCylinder(); });
 
 /* アイコンも円筒に乗ったので、別途スライドさせる必要はない。
    回転角ひとつで、ロゴもアイコンも氷も一緒に動く */

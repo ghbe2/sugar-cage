@@ -47,6 +47,7 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 /* 口と底は、スマホでは存在しない。画面いっぱいがグラスの中なので、
    どちらも視界の外にある。PCでだけ現れる */
 .rim,.gbase,.strawout{display:none}
+/* PCでは .rim は個別クラス側で display を戻す */
 
 @media (min-width:600px){
   /* 上下に余白を取ってグラスを1個の物にする。画面の端まで伸ばすと
@@ -87,20 +88,29 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      液面とまったく同じ楕円（幅いっぱい・高さ --ell）。ここを変えると
      「口と液面で別の円筒」に見えるので、寸法は液面に合わせる。
      奥の弧は明るく、手前の弧は線が残る＝しゅがけの半分だけの輪郭 */
+  /* 口はひとつの楕円だが、奥の弧と手前の弧でストローとの前後が逆になる。
+     ストローは「奥のふちの前」を通り、「手前のふちの後ろ」へ入る。
+     1枚で描くとどちらかが必ず嘘になるので、上下に割って別の層に置く */
   .rim{display:block;position:absolute;left:0;right:0;top:0;height:var(--ell);
-    z-index:11;pointer-events:none;border-radius:50%;
-    /* 手前の弧は太く濃く、奥の弧は細く明るく。
-       ここが弱いと「上が切れた筒」になって口に見えない */
-    border:1.5px solid color-mix(in srgb,var(--line) 40%,transparent);
+    pointer-events:none;border-radius:50%;
+    border:1.5px solid transparent}
+  /* 奥＝上の弧。ストロー(z0)より下に敷く。DOM順で .straw より前にあるので、
+     同じ z0 ならストローが上に乗る */
+  .rimfar{z-index:0;clip-path:inset(0 0 46% 0);
     border-top-color:color-mix(in srgb,var(--rim) 92%,transparent);
-    border-bottom:3px solid color-mix(in srgb,var(--line) 72%,transparent);
+    border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
+    border-right-color:color-mix(in srgb,var(--line) 40%,transparent);
     background:linear-gradient(180deg,
       color-mix(in srgb,var(--rim) 78%,transparent) 0%,
       color-mix(in srgb,var(--rim) 30%,transparent) 45%,
       transparent 70%)}
-  /* ふちの厚み。口のすぐ下に明るい帯を1本入れると、
-     紙のような1枚の楕円ではなく、厚みのあるガラスの縁になる */
-  .rim::after{content:'';position:absolute;left:-1.5px;right:-1.5px;
+  /* 手前＝下の弧。いちばん前に出す */
+  .rimnear{z-index:11;clip-path:inset(46% 0 0 0);
+    border-bottom:3px solid color-mix(in srgb,var(--line) 72%,transparent);
+    border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
+    border-right-color:color-mix(in srgb,var(--line) 40%,transparent)}
+  /* ふちの厚み。手前側にだけ付ける */
+  .rimnear::after{content:'';position:absolute;left:-1.5px;right:-1.5px;
     top:55%;height:calc(var(--ell) * 0.9);border-radius:50%;
     background:linear-gradient(180deg,
       color-mix(in srgb,var(--rim) 60%,transparent),transparent 70%)}
@@ -146,7 +156,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      抜き先が無い。上端を口のすぐ内側に置いて、丸い切り口を見せる。
      はみ出させるにはグラスの外まで描く必要があり、そうすると
      液のクリップが効かなくなる。ここは切り口を見せるほうを取る */
-  .glass .straw i{top:2px;height:112%}
+  /* PCでは底が見えるので、ガラスの床の手前で終わらせる。
+     112% のままだと箱を突き抜け、半透明な底の向こうに透けていた */
+  .glass .straw i{top:2px;height:95%;border-radius:2px}
 
   /* ── 口から突き出すぶん ──
      .glass は overflow:hidden なので、中のストローは天面で切られる。
@@ -162,7 +174,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 回すのは細い板だけ。パネルごと回すと、幅ぶんの角が
      グラスの中まで振り下ろされる（口へ19px食い込んでいた）。
      軸は下端＝口の高さ。中のストローの軸（top center, top:2px）と同じ点 */
-  .strawout i{position:absolute;bottom:0;border-radius:9px 9px 0 0;
+  /* 吸い口は丸めない。ストローは切りっぱなしの断面 */
+  .strawout i{position:absolute;bottom:0;border-radius:2px 2px 0 0;
     transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
     /* 水より上なので、中のストローの .air と同じ塗り */
     background:linear-gradient(90deg,
@@ -242,7 +255,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    ベタ塗りにした瞬間、ただの色面になってガラスではなくなる */
 .liquid{position:absolute;left:0;right:0;top:var(--surf);bottom:0;z-index:1;
   background:color-mix(in srgb, var(--liq) 62%, transparent);
-  backdrop-filter:saturate(1.2) blur(.5px);-webkit-backdrop-filter:saturate(1.2) blur(.5px)}
+  /* backdrop-filter は外した。ストローを液の下へ移した結果、ストローが
+     この「背景」に含まれるようになり、iOS では回転中の更新が遅れて
+     水面より下だけが置き去りに見えた。saturate1.2 と blur0.5px の
+     効果は僅かで、この症状と釣り合わない */}
 /* 側面の陰影も段に割る */
 .liquid::after{content:'';position:absolute;inset:0;
   background:linear-gradient(90deg,
@@ -531,7 +547,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   <!-- 口と底。スマホでは描かない（画面いっぱいがグラスの中で、
        どちらも視界の外にあるため）。PCではグラスが1個の物として
        テーブルに置かれるので、描き切らないと宙に浮いた筒に見える -->
-  <div class="rim"></div>
+  <div class="rim rimfar"></div>
+  <div class="rim rimnear"></div>
   <div class="gbase"></div>
 
   <!-- 底に積まれた角砂糖。正方形で、積み重なった山にする -->

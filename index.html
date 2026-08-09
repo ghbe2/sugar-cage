@@ -15,6 +15,13 @@
 /* 光沢の色。白だと画面が単一色相に浸かったままになる。
    ドリンクの反対側に振って、色の対比で締める */
 @property --spec { syntax:'<color>'; inherits:true; initial-value:#7fe3d0; }
+/* --liq / --spec から作る色も登録する。未登録のカスタムプロパティは
+   ただの文字列置換なので、元の色が補間で動いても再計算が走る保証がない。
+   iOS では実際に、左右端（.glasswall が使う3色）だけ更新が遅れて、
+   ドリンクが緑なのにふちはピンクのまま、という状態になっていた */
+@property --line { syntax:'<color>'; inherits:true; initial-value:#5a2a3a; }
+@property --g1   { syntax:'<color>'; inherits:true; initial-value:#cdf3ea; }
+@property --g2   { syntax:'<color>'; inherits:true; initial-value:#e4f7f2; }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -34,9 +41,16 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      ＝アウトラインが半分だけ存在するデザイン */
   --line:color-mix(in srgb, var(--liq) 78%, #5a2a3a);
   --rim:#fff9ee;
+  /* 左右端の照り。.glasswall で定義していたが、あちらに transition が
+     無いと補間されない。派生色はまとめてここへ置き、まとめて動かす */
+  --g1:color-mix(in srgb, var(--spec) 55%, #fff);
+  --g2:color-mix(in srgb, var(--spec) 28%, #fff);
   --edge:linear-gradient(148deg,var(--rim) 0%,var(--rim) 34%,
           color-mix(in srgb,var(--line) 55%,var(--rim)) 52%,var(--line) 78%,var(--line) 100%);
-  transition:--liq 6.5s linear, --spec 6.5s linear}
+  /* 派生色も明示的に動かす。元の2色だけ動かして派生は放っておく、が
+     iOS で左右端だけ遅れる原因だった */
+  transition:--liq 6.5s linear, --spec 6.5s linear,
+             --line 6.5s linear, --g1 6.5s linear, --g2 6.5s linear}
 
 /* ── 広い画面ではグラスを実物の幅に固定する ──
    スマホでは画面いっぱいがグラスの中でよかったが、PCやタブレットで
@@ -96,14 +110,13 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     border:1.5px solid transparent}
   /* 奥＝上の弧。ストロー(z0)より下に敷く。DOM順で .straw より前にあるので、
      同じ z0 ならストローが上に乗る */
+  /* 塗りは持たせない。奥と手前を分けた時点で「上ほど明るい」塗り分けは
+     役目を終えており、残すとクリップ位置で横一直線の継ぎ目になる。
+     ふちは線だけで足りる */
   .rimfar{z-index:0;clip-path:inset(0 0 46% 0);
     border-top-color:color-mix(in srgb,var(--rim) 92%,transparent);
     border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
-    border-right-color:color-mix(in srgb,var(--line) 40%,transparent);
-    background:linear-gradient(180deg,
-      color-mix(in srgb,var(--rim) 78%,transparent) 0%,
-      color-mix(in srgb,var(--rim) 30%,transparent) 45%,
-      transparent 70%)}
+    border-right-color:color-mix(in srgb,var(--line) 40%,transparent)}
   /* 手前＝下の弧。いちばん前に出す */
   .rimnear{z-index:11;clip-path:inset(46% 0 0 0);
     border-bottom:3px solid color-mix(in srgb,var(--line) 72%,transparent);
@@ -219,8 +232,7 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 /* ガラス自体も白のままだと画面が単調になる。反対色を薄く混ぜて締める */
 .glasswall{position:absolute;inset:0;z-index:6;
   pointer-events:none;
-  --g1:color-mix(in srgb, var(--spec) 55%, #fff);
-  --g2:color-mix(in srgb, var(--spec) 28%, #fff);
+  /* --g1 / --g2 は .glass 側へ移した（あちらで補間させるため） */
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--g1) 78%, transparent) 0%,
     color-mix(in srgb, var(--line) 26%, transparent) 3.5%,

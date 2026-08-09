@@ -134,16 +134,23 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 結露は z9 で下半分を白く覆っている。底をその下に置くと埋もれて
      まったく読めなかった。厚い底は冷えが伝わりにくく曇りも薄いので、
      結露を底の上で止めて、底は結露より前に出す */
-  .glass .frost{bottom:var(--base)}
+  /* 結露を底の上で止めると、キャンバスの下辺が幅いっぱいの直線になる。
+     しかもそこが一番濃い（0.40）ので、床に横線が引かれたように見えていた。
+     下端だけ抜いて、線ではなく「消えぎわ」にする */
+  .glass .frost{bottom:var(--base);
+    -webkit-mask-image:linear-gradient(180deg,#000 76%,transparent 100%);
+    mask-image:linear-gradient(180deg,#000 76%,transparent 100%)}
   .gbase{display:block;position:absolute;left:0;right:0;bottom:0;
     height:var(--base);z-index:11;pointer-events:none;
     /* 箱の下辺と同じ弧で終わらせる。ここが直線だと底だけ水平に見える */
     border-radius:0 0 50% 50% / 0 0 calc(var(--ell)*0.9) calc(var(--ell)*0.9);
-    /* 厚いガラスは光をためて明るく、接地する縁で急に暗くなる */
+    /* 厚いガラスは光をためて明るく、接地する縁で急に暗くなる。
+       0% を透明から始めるのが肝。ここに色を置くと、四角い上辺が
+       そのまま横線として出る。床の輪郭は ::before の楕円に任せる */
     background:linear-gradient(180deg,
-      color-mix(in srgb,var(--liq) 34%,transparent) 0%,
-      color-mix(in srgb,var(--rim) 72%,transparent) 38%,
-      color-mix(in srgb,var(--rim) 95%,transparent) 66%,
+      transparent 0%,
+      color-mix(in srgb,var(--rim) 72%,transparent) 42%,
+      color-mix(in srgb,var(--rim) 95%,transparent) 68%,
       color-mix(in srgb,var(--line) 55%,transparent) 100%)}
   /* 内側の床。液が接している面なので、ここに楕円が出る。
      底は目線より下にあるぶん、口より楕円が開く */
@@ -163,7 +170,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 液とその中身は、ガラスの床の上で止める。
      .liquid / .pile の定義はこのブロックより後ろにあるので、
      同じ詳細度だと後勝ちで打ち消される。親を1つ足して勝たせる */
-  .glass .liquid, .glass .pile{bottom:var(--base)}
+  /* 液も四角いまま終わると、床に直線の切り口が出る。
+     .gbase::before の床の楕円と同じ弧で終わらせる */
+  .glass .liquid, .glass .pile{bottom:var(--base);
+    border-radius:0 0 50% 50% / 0 0 calc(var(--ell)*0.9) calc(var(--ell)*0.9)}
 
   /* ストローはスマホでは画面外へ抜けていくが、PCでは口が見えるので
      抜き先が無い。上端を口のすぐ内側に置いて、丸い切り口を見せる。
@@ -973,7 +983,13 @@ function placeStrawOut(sa, sc) {
   i.style.width  = (15 * s) + 'px';
   i.style.height = (OUT + 2) + 'px';
   i.style.right  = (64 * s - (R() * Math.sin(sa) * 0.16) * s) + 'px';
-  strawOut.style.opacity = strawEl.style.opacity;
+  /* 輪郭も縮尺に乗せる。1.5px 固定のままだと、0.72倍された本体側の
+     輪郭（1.1px相当）より4割太く、上部だけ線が濃く見えていた */
+  i.style.boxShadow = '0 0 0 ' + (1.5 * s).toFixed(2) +
+    'px color-mix(in srgb, var(--line) 26%, transparent)';
+  i.style.borderRadius = (2 * s).toFixed(1) + 'px ' + (2 * s).toFixed(1) + 'px 0 0';
+  /* 中のストロー本体と同じ透け方にそろえる（.straw i の opacity:.92 ぶん） */
+  strawOut.style.opacity = (parseFloat(strawEl.style.opacity || 1) * 0.92).toFixed(3);
 }
 
 /* 炭酸の筋。粒はここで作る。間隔を等分にすると機械的な点線に見えるので、

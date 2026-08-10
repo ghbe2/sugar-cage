@@ -472,7 +472,12 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   mix-blend-mode:screen}
 
 /* 粒子感。これが無いとCSSの平面塗りに見える */
-.grain{position:absolute;inset:0;z-index:14;pointer-events:none;opacity:.13;
+/* 紙のノイズ。以前はグラスの中だけに掛けていたが、それだと
+   グラスの内側だけが 13% 沈み、口から上に出たストローとの間に
+   明るさの段差ができていた（口のところで切れて見える正体）。
+   画面全体に掛ける。カフェの背景にも同じ紙質が乗るので、
+   絵としてもこちらが正しい */
+.grain{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:.13;
   mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
 
@@ -689,11 +694,16 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     </div>
   </div>
 
-  <div class="grain"></div>
 </div>
 
 <!-- 口から突き出すストロー。グラスの外に置くのでクリップされない -->
 <div class="strawout" id="strawout"><i></i></div>
+
+<!-- 紙のノイズ。グラスの中だけに掛けると、そこだけ13%沈んで、
+     口から出たストローとの間に段差ができる。画面全体に掛ける。
+     .glass には transform があるため、中に置くと position:fixed でも
+     祖先にクリップされる。必ずグラスの外に置くこと -->
+<div class="grain"></div>
 
 <div class="sheet" id="sheet">
   <div class="inner">

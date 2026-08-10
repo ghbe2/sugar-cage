@@ -1073,10 +1073,14 @@ const strawEl = document.querySelector('.straw');
    背景ごとにテーブルの向こう端の高さも空き場所も違うので、
    1枚ずつ見て決める。実際に画面を見ながら詰めた値 */
 const CAFES = [
+  /* 朝：左の鉢と右の読書する子のあいだ、テーブルの明るいところへ */
   { from: 5,  file: 'bg01', name: '朝・温室',        x:-0.14, y: 0.030 },
-  { from: 10, file: 'bg02', name: '昼・カフェ',      x:-0.24, y: 0.020 },
-  { from: 16, file: 'bg03', name: '夕・海辺のテラス', x:-0.26, y: 0.030 },
-  { from: 19, file: 'bg04', name: '夜・バー',        x: 0.14, y: 0.060 }
+  /* 昼：左の窓辺。右の椅子とは重ねない */
+  { from: 10, file: 'bg02', name: '昼・カフェ',      x:-0.19, y: 0.020 },
+  /* 夕：左の手すりを避けつつ、海が背に来る位置 */
+  { from: 16, file: 'bg03', name: '夕・海辺のテラス', x:-0.15, y: 0.030 },
+  /* 夜：右のふたりに被せない。カウンターの空いているところ */
+  { from: 19, file: 'bg04', name: '夜・バー',        x:-0.04, y: 0.060 }
 ];
 function cafeByClock() {
   const h = new Date().getHours();

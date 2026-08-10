@@ -25,7 +25,12 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
+/* グラスを回すのに横へドラッグするので、そのたびに文字やアイコンが
+   選択されてしまう。読ませる文章ではなく操作面なので、選択は殺す。
+   ドラッグ中に画像がゴーストで付いてこないよう -webkit-user-drag も切る */
+body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+img{-webkit-user-drag:none;user-drag:none}
 .mono{font-family:'Roboto Mono',monospace}
 
 .glass{position:fixed;inset:0;overflow:hidden;touch-action:pan-y;
@@ -201,18 +206,22 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      手前に重ねると「グラスの前に立てたストロー」になる */
   /* グラス（z1）より前。奥にすると口のふちの線がストローの手前に来て、
      「グラスの裏に立てたストロー」に見える */
-  .strawout{display:block;position:fixed;z-index:2;pointer-events:none}
+  /* グラスとまったく同じ箱・同じ変換に乗せる。
+     別々に scale すると、2つの合成レイヤーで丸めが独立に起き、
+     傾いたぶんだけ上端が最大1pxずれる（傾きの小さい3面目では出ない）。
+     同じ行列を当てれば、中のストローと同じ画素に乗る。
+     overflow を切らないので、箱の外＝口より上へ伸ばせる */
+  .strawout{display:block;position:fixed;left:50%;top:50%;
+    width:390px;height:844px;transform-origin:center center;
+    z-index:2;pointer-events:none}
   /* 回すのは細い板だけ。パネルごと回すと、幅ぶんの角が
      グラスの中まで振り下ろされる（口へ19px食い込んでいた）。
      軸は下端＝口の高さ。中のストローの軸（top center, top:2px）と同じ点 */
   /* 吸い口は丸めない。ストローは切りっぱなしの断面 */
-  .strawout i{position:absolute;bottom:0;border-radius:2px 2px 0 0;
-    transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
-    /* 塗りは中のストローと完全に同じ式にする。
-       一度「覆いが無いぶん外を淡くする」補正を入れたが、それが
-       口のところで色が切り替わる原因になった。1本のストローなのだから
-       途中で塗りが変わってはいけない。
-       太さだけ JS が --sw で渡す（グラス側が縮小されているぶん細くする） */
+  /* 位置・寸法・回転はすべて JS がグラス座標で当てる。
+     塗りは中のストローと完全に同じ式。1本のストローなのだから
+     途中で塗りが変わってはいけない */
+  .strawout i{position:absolute;
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
       color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
@@ -1054,39 +1063,32 @@ function placeStrawOut(sa, sc) {
   if (!strawOut) return;
   if (innerWidth < 600) { strawOut.style.display = 'none'; return; }
   strawOut.style.display = 'block';
-  const r = glassEl.getBoundingClientRect();
-  const s = gScale;
-  /* ── 中のストローと「同じ描画経路」に乗せる ──
-     中のストローはグラス座標（15px幅）で描かれてから 0.742 倍に縮小される。
-     外を最初から 11px で描くと、縮小の再サンプリングを通らないぶん硬く出る。
-     寸法も塗りも不透明度も一致しているのに見た目が違ったのはこれが理由。
-     こちらもグラス座標で組み立て、同じ倍率で縮める */
-  const OUT = 58;                            // 口から出る長さ（グラス座標）
-  /* ── 口の中へ少し食い込ませる ──
-     奥のふちの線は、ストローの位置（幅の64%）ではグラス上端から
-     わずか 0.2px のところを通る。ところがストローは上端を境に
-     2要素へ分かれており、外は上端「まで」、中は上端の 2px 下から。
-     その細い帯だけどちらも描かれず、奥のふちの線がストローに
-     隠されずに出てしまう＝上の線が手前に見える正体。
-     外側を中へ食い込ませて帯を埋める。手前のふちは 10.8px 下なので届かない */
+  /* ── グラスとまったく同じ行列に乗せる ──
+     以前は外側だけ別に scale していた。同じ倍率でも合成レイヤーが別なら
+     丸めは独立に起きるので、傾いたぶん上端が最大1pxずれる
+     （傾き0.24°の3面目でずれなかったのはそのため）。
+     .strawout は .glass と同じ箱（390x844・中心原点）にしてあるので、
+     変換文字列をそのまま写せば、中のストローと同じ画素に乗る。
+     以降の数値はすべてグラス座標。.straw i と同じ値を使う */
+  strawOut.style.transform = glassEl.style.transform;
+  const OUT = 58;        // 口から出る長さ
+  /* 口の中へ少し食い込ませる。奥のふちの線はストローの位置では
+     グラス上端から 0.2px を通るが、そこは外の板の下端と中の板の上端
+     （y=2）の隙間にあたり、どちらも描いていなかった。だから線が
+     隠されずに出ていた。手前のふちは 10.8px 下なので、埋めても届かない */
   const OVERLAP = 7;
-  strawOut.style.transformOrigin = 'top left';
-  strawOut.style.transform = 'scale(' + s.toFixed(4) + ')';
-  strawOut.style.left   = r.left + 'px';
-  strawOut.style.top    = (r.top - OUT * s) + 'px';
-  strawOut.style.width  = BOX_W + 'px';
-  strawOut.style.height = (OUT + OVERLAP) + 'px';
-  strawOut.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   const i = strawOut.firstElementChild;
-  /* 以降はすべてグラス座標。中のストロー（.straw i）と同じ数値を使う */
+  i.style.top    = (-OUT) + 'px';                 // グラス上端より上へ伸ばす
+  i.style.height = (OUT + OVERLAP) + 'px';        // 下端は y=OVERLAP
   i.style.width  = '15px';
-  i.style.height = (OUT + OVERLAP + 2) + 'px';
-  /* 回転軸を中のストローと同じ点に置く。中は .straw i の top:2px を
-     transform-origin:top center で回している。板を伸ばすと bottom 基準の
-     軸が下へずれるので、その点を明示して合わせる */
-  i.style.transformOrigin = '50% ' + (OUT + 4) + 'px';
-  i.style.right  = (64 - R() * Math.sin(sa) * 0.16) + 'px';
-  i.style.setProperty('--sw', '1.5px');
+  i.style.right  = '64px';
+  /* 回転軸は中のストローと同じ点（グラス座標 y=2）。
+     中は「親を translateX → 子を top center で rotate」の順。
+     親の transform はグラスの行列で埋まっているので、こちらは
+     同じ順序を1つの transform にまとめる。値も丸め方も中と揃える */
+  i.style.transformOrigin = '50% ' + (OUT + 2) + 'px';
+  i.style.transform = 'translateX(' + (R() * Math.sin(sa) * 0.16).toFixed(1) + 'px) ' +
+                      'rotate(' + (9 * sc).toFixed(2) + 'deg)';
   i.style.borderRadius = '2px 2px 0 0';
   /* 中のストロー本体と同じ透け方にそろえる（.straw i の opacity:.92 ぶん） */
   strawOut.style.opacity = (parseFloat(strawEl.style.opacity || 1) * 0.92).toFixed(3);

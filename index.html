@@ -690,6 +690,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 
 <script>
 const glassEl = document.getElementById('glass');
+/* paintDrink がこれを参照するので、初回呼び出しより前に取っておく
+   （const は巻き上げ後も未初期化なので、後ろで宣言すると落ちる） */
+const strawOut = document.getElementById('strawout');
 
 /* ドリンクと、その反対側に置く光沢の色を対で持つ。
    光沢を白のままにすると画面が単一色相に浸かり、締まりが出ない。
@@ -716,12 +719,21 @@ const LINE_BASE = hex2rgb('#5a2a3a'), WHITE = [255, 255, 255];
 /* CSS 側の color-mix と同じ配合をここで再現する。
    片方だけ変えると色がずれるので、必ず両方を直すこと */
 function paintDrink(liq, spec) {
-  const s = glassEl.style;
-  s.setProperty('--liq',  css(liq));
-  s.setProperty('--spec', css(spec));
-  s.setProperty('--line', css(lerp(LINE_BASE, liq,  0.78)));   // liq 78% + #5a2a3a
-  s.setProperty('--g1',   css(lerp(WHITE, spec, 0.55)));       // spec 55% + #fff
-  s.setProperty('--g2',   css(lerp(WHITE, spec, 0.28)));       // spec 28% + #fff
+  const v = {
+    '--liq':  css(liq),
+    '--spec': css(spec),
+    '--line': css(lerp(LINE_BASE, liq,  0.78)),   // liq 78% + #5a2a3a
+    '--g1':   css(lerp(WHITE, spec, 0.55)),       // spec 55% + #fff
+    '--g2':   css(lerp(WHITE, spec, 0.28))        // spec 28% + #fff
+  };
+  /* 突き出しストローはグラスの「外」にある兄弟要素なので、
+     .glass に置いた変数を継承しない。放っておくと @property の
+     初期値（#5a2a3a / #7fe3d0）のままになり、口のところで
+     輪郭も塗りも別の色に切り替わる。同じ値を明示的に配る */
+  [glassEl, strawOut].forEach(el => {
+    if (!el) return;
+    for (const k in v) el.style.setProperty(k, v[k]);
+  });
 }
 
 const FADE = 6500;
@@ -983,7 +995,6 @@ const PY = 62;       // .print の高さ124pxの中心＝perspective-origin の 
    細い縦列を「角度」で置くと、端ほど列が詰まって曲面に貼りついて見える */
 const glossEl = document.getElementById('gloss');
 const strawEl = document.querySelector('.straw');
-const strawOut = document.getElementById('strawout');
 
 /* ── PCで、グラスの縮小率と位置を決める ──
    幅だけ固定して高さを余白で埋めると寸胴になる。箱はスマホ寸法のまま置き、

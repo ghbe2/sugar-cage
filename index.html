@@ -207,7 +207,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 13%, #fff) 0%, #fffdf8 40%, #fff 52%,
       color-mix(in srgb, var(--spec) 9%, #fff) 76%, color-mix(in srgb, var(--spec) 19%, #fff) 100%);
-    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 11%, transparent)}
+    /* 太さは JS が --sw で渡す（縮尺ぶん細くする）。色はここで決める */
+    box-shadow:0 0 0 var(--sw,1.5px) color-mix(in srgb, var(--line) 11%, transparent)}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -301,7 +302,14 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    揺れの中心は触れた場所。力が働いた位置で origin が変わらないと、
    どこを叩いても同じ揺れ方になって嘘くさくなる */
 .surface{position:absolute;left:0;right:0;top:calc(var(--surf) - var(--ell)/2);
-  height:var(--ell);z-index:4;filter:url(#warp);
+  height:var(--ell);z-index:4;
+  /* SVGフィルタ（feTurbulence + feDisplacementMap）を外した。
+     ・楕円が細くなる左右端で変位が勝ち、両端だけ滲んでいた
+     ・ふちが途中から不自然にぼけるのも同じ原因
+     ・そして SVG フィルタは要素を別レイヤーにラスタライズするため、
+       iOS はフィルタ自身のアニメーション周期でしか描き直さず、
+       色替わりが取り残されていた（左右端だけ遅れる正体）
+     揺れは .wob の scaleY だけで足りる */
   transform-origin:var(--ox,50%) 62%}
 /* 奥の縁＝上半分。ストロー(z0)と同じ層に置き、DOM順で先に来るので
    ストローが上に乗る。液(z1)より下だが、上半分は液の上辺より上に
@@ -309,7 +317,7 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 .surffar{z-index:0;clip-path:inset(0 0 50% 0)}
 /* 手前の縁＝下半分。ストローの前に出す */
 .surfnear{clip-path:inset(50% 0 0 0)}
-/* 揺れは控えめに。振幅は --amp で毎回変える（同じ揺れ方の繰り返しに見せない） */
+/* 揺れは控えめに。強さは --wamp で毎回変える（同じ揺れ方の繰り返しに見せない） */
 .surface.wob{animation:wob var(--wdur,1.5s) cubic-bezier(.22,.7,.32,1)}
 @keyframes wob{
   0%  {transform:scaleY(1)}
@@ -564,16 +572,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute">
-  <filter id="warp" x="-15%" y="-70%" width="130%" height="240%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.05" numOctaves="2" seed="5" result="n">
-      <animate attributeName="baseFrequency" dur="21s" repeatCount="indefinite"
-               values="0.011 0.05;0.015 0.036;0.010 0.058;0.011 0.05"/>
-    </feTurbulence>
-    <feDisplacementMap id="disp" in="SourceGraphic" in2="n" scale="4"
-                       xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</svg>
+<!-- 水面の SVG フィルタ（warp）は撤去した。両端の滲みと、
+     iOS で色替わりが取り残される原因になっていた -->
 
 <div class="glass" id="glass">
   <div class="room"></div>
@@ -1022,10 +1022,10 @@ function placeStrawOut(sa, sc) {
   i.style.width  = (15 * s) + 'px';
   i.style.height = (OUT + 2) + 'px';
   i.style.right  = (64 * s - (R() * Math.sin(sa) * 0.16) * s) + 'px';
-  /* 輪郭も縮尺に乗せる。1.5px 固定のままだと、0.72倍された本体側の
-     輪郭（1.1px相当）より4割太く、上部だけ線が濃く見えていた */
-  i.style.boxShadow = '0 0 0 ' + (1.5 * s).toFixed(2) +
-    'px color-mix(in srgb, var(--line) 26%, transparent)';
+  /* 太さだけを渡す。ここで box-shadow を丸ごと組み立てると、
+     インラインスタイルが CSS 側の色指定を上書きしてしまい、
+     スタイルシートを直しても効かなくなる（実際それで直っていなかった） */
+  i.style.setProperty('--sw', (1.5 * s).toFixed(2) + 'px');
   i.style.borderRadius = (2 * s).toFixed(1) + 'px ' + (2 * s).toFixed(1) + 'px 0 0';
   /* 中のストロー本体と同じ透け方にそろえる（.straw i の opacity:.92 ぶん） */
   strawOut.style.opacity = (parseFloat(strawEl.style.opacity || 1) * 0.92).toFixed(3);
@@ -1223,17 +1223,14 @@ document.querySelectorAll('#dots b').forEach(d => {
 document.querySelectorAll('#dots b').forEach((d, i) => d.onclick = () => spin((i - page + PAGES) % PAGES));
 
 /* ══ 水面 ══ */
-const disp = document.getElementById('disp');
 /* 水面は奥／手前の2枚に分かれている。揺れは両方に同じだけ当てないと
    縁が割れて見えるので、まとめて扱う */
 const surfEls = [...document.querySelectorAll('.surface')];
-const BASE = 4;
-let amp = BASE, araf = null;
+/* 変位マップを外したので、その振れ幅を減衰させる仕組みも不要になった。
+   揺れは .wob の scaleY だけが担う */
 /* xPct を渡すと、その位置を中心に水面が撓む。
    渡さないと常に画面中央が沈み、どこを叩いても同じ揺れ方になってしまう */
 function splash(p, xPct) {
-  amp = BASE + 9 * p;                        // 歪みの振れ幅も控えめに
-  if (!araf) araf = requestAnimationFrame(decay);
   if (xPct != null) {
     // 毎回そっくり同じ揺れ方にしない。強さと尺をばらす。
     // 2枚で別々の乱数を引くと縁がずれるので、先に決めてから両方へ配る
@@ -1248,12 +1245,6 @@ function splash(p, xPct) {
       el.classList.add('wob');
     });
   }
-}
-function decay() {
-  amp += (BASE - amp) * 0.055;
-  disp.setAttribute('scale', amp.toFixed(2));
-  if (Math.abs(amp - BASE) > 0.3) araf = requestAnimationFrame(decay);
-  else { disp.setAttribute('scale', BASE); araf = null; }
 }
 /* 勝手に揺れる仕掛けは廃止。角砂糖の着水とタップのときだけ動かす。
    理由なく揺れると「一定時間ごとに動く」不自然さになる。

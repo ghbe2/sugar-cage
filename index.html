@@ -95,8 +95,11 @@ img{-webkit-user-drag:none;user-drag:none}
     box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 30%,transparent),
                0 26px 46px -18px rgba(52,18,31,.55),
                0 60px 90px -40px rgba(52,18,31,.4)}
-  /* グラスの外側＝これから背景が入るところ。いまは無地で置いておく */
-  body{background:#ddd6cb}
+  /* グラスの外側はカフェ。JS が時刻を見て --bg を差す。
+     cover なので、画像のテーブル面は画面のだいたい同じ高さに来る
+     （どの画像もテーブルの向こう端が上から7〜8割の位置）。
+     読み込み前・失敗時に備えて、下地の色は残しておく */
+  body{background:#ddd6cb var(--bg,none) center/cover no-repeat fixed}
   /* 箱がスマホ寸法のままなので、中身の詰め直しは要らない。
      --surf も .ui の padding もスマホと同じ値で、そのまま縮む */
 
@@ -1032,6 +1035,28 @@ const strawEl = document.querySelector('.straw');
    まるごと縮小する。中の間合いも文字組みも円筒の計算も据え置きになる。
    glassEl.clientWidth は transform の影響を受けないので、
    円筒の半径はスマホ座標（390px）のまま。ここは触らなくてよい */
+/* ── グラスの外に敷くカフェ ──
+   4枚を時刻で出し分ける。訪れた時間で景色が変わるので、
+   何度も来る人にだけ気づきがある。ドリンクの色替わりとも喧嘩しない。
+   スマホでは画面いっぱいがグラスの中で背景が見えないので、読み込まない
+   （1枚200〜300KBを無駄に落とさせない） */
+const CAFES = [
+  { from: 5,  file: 'bg01' },   // 朝   温室
+  { from: 10, file: 'bg03' },   // 昼   カフェの店内
+  { from: 16, file: 'bg02' },   // 夕   海辺のテラス
+  { from: 19, file: 'bg04' }    // 夜   バー
+];
+function setCafe() {
+  if (innerWidth < 600) return;
+  const h = new Date().getHours();
+  /* 5時より前は前日の夜が続いている扱い。最後の枠へ回す */
+  let pick = CAFES[CAFES.length - 1];
+  for (const c of CAFES) if (h >= c.from) pick = c;
+  document.body.style.setProperty('--bg', 'url(images/bg/' + pick.file + '.jpg)');
+}
+setCafe();
+addEventListener('resize', setCafe);
+
 const BOX_W = 390, BOX_H = 844;
 let gScale = 1;
 function fitGlass() {

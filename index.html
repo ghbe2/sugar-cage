@@ -321,7 +321,8 @@ img{-webkit-user-drag:none;user-drag:none}
 /* 液体は塗りつぶさない。向こうの窓や卓が透けて見えることが主役で、
    ベタ塗りにした瞬間、ただの色面になってガラスではなくなる */
 .liquid{position:absolute;left:0;right:0;top:var(--surf);bottom:0;z-index:1;
-  background:color-mix(in srgb, var(--liq) 62%, transparent);
+  /* 濃さは飲み物ごと。--liqa は JS が配る（既定62%） */
+  background:color-mix(in srgb, var(--liq) var(--liqa,62%), transparent);
   /* backdrop-filter は外した。ストローを液の下へ移した結果、ストローが
      この「背景」に含まれるようになり、iOS では回転中の更新が遅れて
      水面より下だけが置き去りに見えた。saturate1.2 と blur0.5px の
@@ -383,7 +384,7 @@ img{-webkit-user-drag:none;user-drag:none}
 /* 底に積まれた角砂糖。ドリンクの中なので、輪郭も塗りもうっすらと。
    はっきり描くと「溜まり続けている」矛盾が見えてしまう */
 .pile{position:absolute;left:0;right:0;bottom:0;height:22%;z-index:2;
-  filter:blur(1.6px);opacity:.36}
+  filter:blur(1.6px);opacity:calc(.36 * var(--inside,1))}
 .pile i{position:absolute;display:block;border-radius:4px;
   background:linear-gradient(150deg,rgba(255,252,244,.75),rgba(240,231,214,.5));
   box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 30%, transparent),
@@ -415,7 +416,8 @@ img{-webkit-user-drag:none;user-drag:none}
    液面より前に置く＝突き抜けて沈んでいくのが見える */
 /* 落下・浮遊する砂糖には輪郭を付けない。
    輪郭はアイコンとボタン＝押せるものだけの記号にする */
-.sink{position:absolute;inset:0;z-index:5;pointer-events:none}
+.sink{position:absolute;inset:0;z-index:5;pointer-events:none;
+  opacity:var(--inside,1)}
 .sink i{position:absolute;left:0;top:0;width:38px;height:38px;border-radius:8px;
   background:linear-gradient(150deg,#fffcf4,#f0e7d6);
   will-change:transform,opacity}
@@ -443,7 +445,10 @@ img{-webkit-user-drag:none;user-drag:none}
    連続で立ち上らせる。粒の間隔を遅延でずらして途切れないようにする */
 /* 濃いと「泡の壁」になってドリンクが見えない。全体を薄めて、
    数はそのまま・存在感だけ落とす */
-.bub{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.58}
+/* 液の中のものは --inside で一括して消せる。濃い飲み物では 0 になり、
+   炭酸も沈んだ角砂糖も底の山も見えなくなる */
+.bub{position:absolute;inset:0;z-index:3;pointer-events:none;
+  opacity:calc(.58 * var(--inside,1))}
 /* 湧き出し口はグラスの底の一点。回転で横へ動くので、筋ごと動かす */
 .stream{position:absolute;left:0;top:0;bottom:0;width:0;will-change:transform}
 .bub i{position:absolute;left:0;bottom:-24px;margin-left:var(--o,0px);border-radius:50%;
@@ -750,13 +755,23 @@ const strawOut = document.getElementById('strawout');
 /* ドリンクと、その反対側に置く光沢の色を対で持つ。
    光沢を白のままにすると画面が単一色相に浸かり、締まりが出ない。
    機械的な補色より、飲み物として成立する範囲で外した色のほうが効く */
+/* op     … 液の濃さ（%）。上げると向こうが見えなくなる
+   inside … 液の中にあるもの（炭酸・沈んだ角砂糖・底の山）の見え方。
+            0 にすると消える。濃い飲み物で泡が透けて見えるのは矛盾するので、
+            コーヒー・ミルク・ラテは 0 にしてある。
+            コーラと薬は逆に強めて、絶えず湧いている感じを出す */
 const DRINKS = [
-  { liq:'#f4718f', spec:'#7fe3d0' },   // いちご   × ミント
-  { liq:'#f79a3c', spec:'#6fc9f0' },   // オレンジ × 空
-  { liq:'#e8b84f', spec:'#a99cf0' },   // 蜂蜜     × 藤
-  { liq:'#5cd07a', spec:'#ff9ec4' },   // メロン   × 桃
-  { liq:'#57b8e8', spec:'#ffcf6b' },   // ブルー   × 山吹
-  { liq:'#a884e8', spec:'#a6e26a' }    // ぶどう   × 若草
+  { liq:'#f4718f', spec:'#7fe3d0', op:62, inside:1    },  // いちご       × ミント
+  { liq:'#f79a3c', spec:'#6fc9f0', op:62, inside:1    },  // オレンジ     × 空
+  { liq:'#e8b84f', spec:'#a99cf0', op:62, inside:1    },  // 蜂蜜         × 藤
+  { liq:'#5cd07a', spec:'#ff9ec4', op:62, inside:1    },  // メロン       × 桃
+  { liq:'#57b8e8', spec:'#ffcf6b', op:62, inside:1    },  // ブルー       × 山吹
+  { liq:'#a884e8', spec:'#a6e26a', op:62, inside:1    },  // ぶどう       × 若草
+  { liq:'#5b2c1a', spec:'#bfe3f2', op:76, inside:1.3  },  // コーラ       × 氷の青
+  { liq:'#3a2418', spec:'#e6d6ba', op:92, inside:0    },  // アイスコーヒー × 生成り
+  { liq:'#f6efe3', spec:'#cfdcea', op:94, inside:0    },  // ミルク       × 青灰
+  { liq:'#c39a70', spec:'#dde9f2', op:90, inside:0    },  // カフェラテ   × 薄青
+  { liq:'#1360e0', spec:'#c8f542', op:74, inside:1.2  }   // 真っ青（薬）  × 毒々しい黄緑
 ];
 /* ── 色の補間は JS でやる ──
    CSS の transition に任せると、iOS で左右端（.glasswall が描く部分）
@@ -771,13 +786,15 @@ const LINE_BASE = hex2rgb('#5a2a3a'), WHITE = [255, 255, 255];
 
 /* CSS 側の color-mix と同じ配合をここで再現する。
    片方だけ変えると色がずれるので、必ず両方を直すこと */
-function paintDrink(liq, spec) {
+function paintDrink(liq, spec, op, inside) {
   const v = {
     '--liq':  css(liq),
     '--spec': css(spec),
     '--line': css(lerp(LINE_BASE, liq,  0.78)),   // liq 78% + #5a2a3a
     '--g1':   css(lerp(WHITE, spec, 0.55)),       // spec 55% + #fff
-    '--g2':   css(lerp(WHITE, spec, 0.28))        // spec 28% + #fff
+    '--g2':   css(lerp(WHITE, spec, 0.28)),       // spec 28% + #fff
+    '--liqa':   op.toFixed(1) + '%',              // 液の濃さ
+    '--inside': inside.toFixed(3)                 // 液の中のものの見え方
   };
   /* 突き出しストローはグラスの「外」にある兄弟要素なので、
      .glass に置いた変数を継承しない。放っておくと @property の
@@ -790,19 +807,25 @@ function paintDrink(liq, spec) {
 }
 
 const FADE = 6500;
+/* 濃さと中身の見え方も色と一緒に補間する。ここを飛ばすと、
+   コーヒーへ移った瞬間に泡がパッと消えて不自然になる */
+const asDrink = d => ({ liq: hex2rgb(d.liq), spec: hex2rgb(d.spec),
+                        op: d.op, inside: d.inside });
+const num = (a, b, t) => a + (b - a) * t;
 let di = 0;
-let cFrom = { liq: hex2rgb(DRINKS[0].liq), spec: hex2rgb(DRINKS[0].spec) };
+let cFrom = asDrink(DRINKS[0]);
 let cTo = cFrom, cT0 = 0, cRaf = null;
 function fadeDrink() {
   const p = Math.min(1, (performance.now() - cT0) / FADE);
-  paintDrink(lerp(cFrom.liq, cTo.liq, p), lerp(cFrom.spec, cTo.spec, p));
+  paintDrink(lerp(cFrom.liq, cTo.liq, p), lerp(cFrom.spec, cTo.spec, p),
+             num(cFrom.op, cTo.op, p), num(cFrom.inside, cTo.inside, p));
   cRaf = p < 1 ? requestAnimationFrame(fadeDrink) : null;
 }
-paintDrink(cFrom.liq, cFrom.spec);
+paintDrink(cFrom.liq, cFrom.spec, cFrom.op, cFrom.inside);
 setInterval(() => {
   di = (di + 1) % DRINKS.length;
   cFrom = cTo;
-  cTo = { liq: hex2rgb(DRINKS[di].liq), spec: hex2rgb(DRINKS[di].spec) };
+  cTo = asDrink(DRINKS[di]);
   cT0 = performance.now();
   if (!cRaf) cRaf = requestAnimationFrame(fadeDrink);
 }, 9000);

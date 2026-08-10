@@ -32,6 +32,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   --surf:132px;      /* 水面は高く。ヘッドスペースは僅かでいい */
   --ell:15px;        /* ほぼ真横から見るので、液面の楕円はごく浅い */
   --base:0px;        /* ガラスの床の厚み。スマホでは底が見えないので0 */
+  --strawtop:-44px;  /* ストローの上端。スマホでは画面外へ抜ける */
+  --strawh:118%;
   --liq:#f6a8bd;
   --spec:#7fe3d0;
   /* ── しゅがけの輪郭 ──
@@ -189,7 +191,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      液のクリップが効かなくなる。ここは切り口を見せるほうを取る */
   /* PCでは底が見えるので、ガラスの床の手前で終わらせる。
      112% のままだと箱を突き抜け、半透明な底の向こうに透けていた */
-  .glass .straw i{top:2px;height:95%;border-radius:2px}
+  .glass{--strawtop:2px;--strawh:95%}
+  .glass .straw i,.glass .strawwet i{border-radius:2px}
 
   /* ── 口から突き出すぶん ──
      .glass は overflow:hidden なので、中のストローは天面で切られる。
@@ -340,7 +343,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    あるので重ならない */
 .surffar{z-index:0;clip-path:inset(0 0 50% 0)}
 /* 手前の縁＝下半分。ストローの前に出す */
-.surfnear{clip-path:inset(50% 0 0 0)}
+/* 手前の水面はストロー(z7)より前に出す */
+.surfnear{z-index:8;clip-path:inset(50% 0 0 0)}
 /* 揺れは控えめに。強さは --wamp で毎回変える（同じ揺れ方の繰り返しに見せない） */
 .surface.wob{animation:wob var(--wdur,1.5s) cubic-bezier(.22,.7,.32,1)}
 @keyframes wob{
@@ -377,11 +381,24 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
    あの割合はストロー自身の高さ基準で、水面（--surf）とは無関係。
    だから必ず境目がずれた。
 
-   代わりに、ストローを液より下のレイヤーに置く。液は半透明なので、
-   水中のぶんは液が上から染め、水上のぶんはそのまま出る。
-   境目は液の上辺そのものなので、原理的にずれようがない */
-.straw{position:absolute;inset:0;z-index:0;pointer-events:none}
-.straw i{position:absolute;display:block;right:64px;top:-44px;width:15px;height:118%;
+   ── ストローを .glasswall / .gloss（z6）より前に出す ──
+   以前は液より下（z0）に置いていた。水中の染まりは液が上から掛かって
+   得られるが、同時に .glasswall と .gloss にも覆われる。口より上の
+   ストローはグラスの外にあってこの2枚に覆われないので、口の高さで
+   明るさが一段変わり、そこで分断されて見えていた。
+   ふちの前後をどう入れ替えても、この段差は消えない。
+
+   そこで z7 へ上げて覆いを外し、内外の条件をそろえる。
+   失われる水中の染まりは .strawwet で取り戻す。あれは液の上辺に
+   固定した枠なので、境目は液そのものと完全に一致する */
+.straw{position:absolute;inset:0;z-index:7;pointer-events:none}
+/* 水中のストローの染まり。液と同じ範囲を切り抜いた枠の中に、
+   ストローと同じ形をドリンク色で描く。枠の上辺＝液の上辺なので、
+   どんな画面幅でも水面とずれない */
+.strawwet{position:absolute;left:0;right:0;top:var(--surf);bottom:var(--base);
+  overflow:hidden;z-index:8;pointer-events:none}
+.straw i,.strawwet i{position:absolute;display:block;right:64px;width:15px;
+  top:var(--strawtop);height:var(--strawh);
   border-radius:9px;transform:rotate(var(--tilt,9deg));transform-origin:top center;
   /* 完全な不透明だとプラスチックに見えない。少し透かして、
      水上ではグラスの向こうが、水中では液が薄く抜けるようにする */
@@ -394,6 +411,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
     color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%)}
+/* 染めのほうは、共有ルールの後ろで上書きする（前に置くと後勝ちで消える） */
+.strawwet i{top:calc(var(--strawtop) - var(--surf));
+  opacity:1;box-shadow:none;
+  background:color-mix(in srgb, var(--liq) 62%, transparent)}
 
 /* 落ちてくる角砂糖。動きは重力と水の抵抗でJS側が決めるので、
    ここでは見た目だけ持たせる（CSSの等速アニメーションでは重さが出ない）。
@@ -635,6 +656,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
        ストローを挟んで前後に置くので、この3行の順序を入れ替えないこと -->
   <div class="surface surffar"><div class="ell"></div><div class="far"></div></div>
   <div class="straw"><i></i></div>
+  <!-- 水中のストローの染まり。液と同じ範囲の枠で切り抜く -->
+  <div class="strawwet" id="strawwet"><i></i></div>
   <div class="surface surfnear"><div class="ell"></div><div class="near"></div></div>
 
   <div class="floaters">
@@ -1011,6 +1034,7 @@ const PY = 62;       // .print の高さ124pxの中心＝perspective-origin の 
    細い縦列を「角度」で置くと、端ほど列が詰まって曲面に貼りついて見える */
 const glossEl = document.getElementById('gloss');
 const strawEl = document.querySelector('.straw');
+const strawWetI = document.querySelector('.strawwet i');
 
 /* ── PCで、グラスの縮小率と位置を決める ──
    幅だけ固定して高さを余白で埋めると寸胴になる。箱はスマホ寸法のまま置き、
@@ -1189,6 +1213,15 @@ function layoutCylinder() {
   strawEl.style.transform = 'translateX(' + (r * Math.sin(sa) * 0.16).toFixed(1) + 'px)';
   strawEl.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   strawEl.style.opacity = (0.88 + 0.12 * Math.max(0, sc)).toFixed(3);
+  /* 水中の染めは同じ形・同じ傾きでなければ二重に見える。
+     ただし .strawwet は液の範囲を切り抜く「枠」なので、枠ごと動かすと
+     クリップ位置までずれる。動かすのは中の板だけ。
+     板の上端は .straw i と同じ高さに揃えてあるので、回転軸も一致する */
+  if (strawWetI) {
+    strawWetI.style.transform =
+      'translateX(' + (r * Math.sin(sa) * 0.16).toFixed(1) + 'px) rotate(' + (9 * sc).toFixed(2) + 'deg)';
+    strawWetI.style.opacity = strawEl.style.opacity;
+  }
   placeStrawOut(sa, sc);
   /* アイコン：内壁の半径で回す。奥に行くほど小さく淡く、裏に回ったら押せなくする */
   const rIn = r * 0.72;   // 内壁沿い。広げすぎるとグラスの外に出る

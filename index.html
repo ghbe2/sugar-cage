@@ -94,6 +94,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   body{background:#ddd6cb}
   /* 箱がスマホ寸法のままなので、中身の詰め直しは要らない。
      --surf も .ui の padding もスマホと同じ値で、そのまま縮む */
+
+  /* ── 口のところでストローの明るさが一段落ちる件 ──
+     グラスの中のストローは .glasswall と .gloss に覆われ、外は覆われない。
+     ガラス越しに見ているので暗くなること自体は正しいが、覆いが口の高さで
+     いきなり始まるため、境目が硬く「何かがストローの手前にある」と読まれる。
+     この2枚を上端から徐々に効かせて、段差を勾配に変える */
+  .glass .glasswall, .glass .gloss{
+    -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 62px);
+    mask-image:linear-gradient(180deg,transparent 0,#000 62px)}
   /* シートはグラスの見かけの幅に合わせる（JS が実測して当てる） */
   .sheet{right:auto;transform:none}
 

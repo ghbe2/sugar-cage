@@ -216,8 +216,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
       color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
-    /* 中のストローと同じ線。グラス座標の 1.5px なので同じ倍率で縮む */
-    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
+    /* 輪郭は引かない。中のストローと同じ */
+    box-shadow:none}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -384,11 +384,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 完全な不透明だとプラスチックに見えない。少し透かして、
      水上ではグラスの向こうが、水中では液が薄く抜けるようにする */
   opacity:.92;
-  /* ストローは白い。ヘッドスペースの背景もほぼ白なので、輪郭が無いと
-     そこだけ背景に溶けて消え、口のところで切れて見える。
-     以前は片側にしか線が無かったので分断されたが、いま内外は
-     同じ塗り・同じ縮尺・同じ描画経路なので、両方に同じ線を入れれば揃う */
-  box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent);
+  /* 輪郭は引かない。形は塗り（円柱の陰影）で出す。
+     線を引くと、口の中へ食い込ませた外側の板の下辺が横線として残る */
+  box-shadow:none;
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
     color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%)}

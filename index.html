@@ -47,10 +47,9 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   --g2:color-mix(in srgb, var(--spec) 28%, #fff);
   --edge:linear-gradient(148deg,var(--rim) 0%,var(--rim) 34%,
           color-mix(in srgb,var(--line) 55%,var(--rim)) 52%,var(--line) 78%,var(--line) 100%);
-  /* 派生色も明示的に動かす。元の2色だけ動かして派生は放っておく、が
-     iOS で左右端だけ遅れる原因だった */
-  transition:--liq 6.5s linear, --spec 6.5s linear,
-             --line 6.5s linear, --g1 6.5s linear, --g2 6.5s linear}
+  /* 色の補間は CSS の transition では行わない。JS が毎フレーム
+     具体値を書き込む（下の paintDrink）。@property + transition では
+     iOS で左右端だけ遅れる症状が消せなかった */}
 
 /* ── 広い画面ではグラスを実物の幅に固定する ──
    スマホでは画面いっぱいがグラスの中でよかったが、PCやタブレットで
@@ -200,11 +199,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 吸い口は丸めない。ストローは切りっぱなしの断面 */
   .strawout i{position:absolute;bottom:0;border-radius:2px 2px 0 0;
     transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
-    /* 水より上なので、中のストローの .air と同じ塗り */
+    /* ── 中のストローと「同じ式」で描いてはいけない ──
+       中のストローは .glasswall / .gloss / 結露 の3枚に覆われて淡く沈む。
+       外にはその3枚が無いので、同じ式だと輪郭も彩度も外だけ強く出て、
+       別の棒が刺さっているように見える（線の太さは揃えても直らない）。
+       覆いが無いぶんを見越して、こちら側を先に落としておく */
     background:linear-gradient(90deg,
-      color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
-      color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
-    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
+      color-mix(in srgb, var(--spec) 13%, #fff) 0%, #fffdf8 40%, #fff 52%,
+      color-mix(in srgb, var(--spec) 9%, #fff) 76%, color-mix(in srgb, var(--spec) 19%, #fff) 100%);
+    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 11%, transparent)}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -282,6 +285,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
      水面より下だけが置き去りに見えた。saturate1.2 と blur0.5px の
      効果は僅かで、この症状と釣り合わない */}
 /* 側面の陰影も段に割る */
+/* 角丸は overflow:hidden が無いと子を切らない。この ::after は inset:0 の
+   四角いままなので、底で幅いっぱいの直線になっていた（液本体に角丸を
+   付けても効かなかったのはこれが理由） */
+.liquid{overflow:hidden}
 .liquid::after{content:'';position:absolute;inset:0;
   background:linear-gradient(90deg,
     rgba(74,44,32,.15) 0 5%, rgba(74,44,32,.07) 5% 12%, rgba(0,0,0,0) 12% 32%,
@@ -672,7 +679,6 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
 <script>
 const glassEl = document.getElementById('glass');
 
-/* 色は @property のおかげで補間される。切り替えではなく、混ざりながら変わる */
 /* ドリンクと、その反対側に置く光沢の色を対で持つ。
    光沢を白のままにすると画面が単一色相に浸かり、締まりが出ない。
    機械的な補色より、飲み物として成立する範囲で外した色のほうが効く */
@@ -684,11 +690,44 @@ const DRINKS = [
   { liq:'#57b8e8', spec:'#ffcf6b' },   // ブルー   × 山吹
   { liq:'#a884e8', spec:'#a6e26a' }    // ぶどう   × 若草
 ];
+/* ── 色の補間は JS でやる ──
+   CSS の transition に任せると、iOS で左右端（.glasswall が描く部分）
+   だけ色替わりが遅れ、たまに追いつく、という症状が消せなかった。
+   原因は派生色（--line / --g1 / --g2）の再計算が確実に走らないこと。
+   @property に登録しても直らなかったので、派生色まで含めて毎フレーム
+   具体的な rgb() を書き込む。再計算の余地を残さない */
+const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const lerp = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+const css  = c => 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+const LINE_BASE = hex2rgb('#5a2a3a'), WHITE = [255, 255, 255];
+
+/* CSS 側の color-mix と同じ配合をここで再現する。
+   片方だけ変えると色がずれるので、必ず両方を直すこと */
+function paintDrink(liq, spec) {
+  const s = glassEl.style;
+  s.setProperty('--liq',  css(liq));
+  s.setProperty('--spec', css(spec));
+  s.setProperty('--line', css(lerp(LINE_BASE, liq,  0.78)));   // liq 78% + #5a2a3a
+  s.setProperty('--g1',   css(lerp(WHITE, spec, 0.55)));       // spec 55% + #fff
+  s.setProperty('--g2',   css(lerp(WHITE, spec, 0.28)));       // spec 28% + #fff
+}
+
+const FADE = 6500;
 let di = 0;
+let cFrom = { liq: hex2rgb(DRINKS[0].liq), spec: hex2rgb(DRINKS[0].spec) };
+let cTo = cFrom, cT0 = 0, cRaf = null;
+function fadeDrink() {
+  const p = Math.min(1, (performance.now() - cT0) / FADE);
+  paintDrink(lerp(cFrom.liq, cTo.liq, p), lerp(cFrom.spec, cTo.spec, p));
+  cRaf = p < 1 ? requestAnimationFrame(fadeDrink) : null;
+}
+paintDrink(cFrom.liq, cFrom.spec);
 setInterval(() => {
   di = (di + 1) % DRINKS.length;
-  glassEl.style.setProperty('--liq', DRINKS[di].liq);
-  glassEl.style.setProperty('--spec', DRINKS[di].spec);
+  cFrom = cTo;
+  cTo = { liq: hex2rgb(DRINKS[di].liq), spec: hex2rgb(DRINKS[di].spec) };
+  cT0 = performance.now();
+  if (!cRaf) cRaf = requestAnimationFrame(fadeDrink);
 }, 9000);
 
 /* ══ アチーブメント（全ゲーム共有） ══════════════════════════

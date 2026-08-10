@@ -786,6 +786,7 @@ const LINE_BASE = hex2rgb('#5a2a3a'), WHITE = [255, 255, 255];
 
 /* CSS 側の color-mix と同じ配合をここで再現する。
    片方だけ変えると色がずれるので、必ず両方を直すこと */
+let lastPaint = '';
 function paintDrink(liq, spec, op, inside) {
   const v = {
     '--liq':  css(liq),
@@ -793,9 +794,18 @@ function paintDrink(liq, spec, op, inside) {
     '--line': css(lerp(LINE_BASE, liq,  0.78)),   // liq 78% + #5a2a3a
     '--g1':   css(lerp(WHITE, spec, 0.55)),       // spec 55% + #fff
     '--g2':   css(lerp(WHITE, spec, 0.28)),       // spec 28% + #fff
-    '--liqa':   op.toFixed(1) + '%',              // 液の濃さ
-    '--inside': inside.toFixed(3)                 // 液の中のものの見え方
+    /* 目に見える細かさまで丸める。小数第1位まで書いていた頃は
+       6.5秒の変化で毎フレーム別の値になり、書き込みが無駄に走っていた。
+       濃さは1%刻み、中身は不透明度なので2桁で足りる */
+    '--liqa':   Math.round(op) + '%',             // 液の濃さ
+    '--inside': inside.toFixed(2)                 // 液の中のものの見え方
   };
+  /* グラスに変数を1つ書くだけで、その中の要素すべてのスタイル再計算が走る。
+     毎フレーム呼ばれるので、値が前回と同じなら何もしない。
+     丸めたおかげで、6.5秒の変化のうち半分近くはここで止まる */
+  const sig = v['--liq'] + v['--spec'] + v['--liqa'] + v['--inside'];
+  if (sig === lastPaint) return;
+  lastPaint = sig;
   /* 突き出しストローはグラスの「外」にある兄弟要素なので、
      .glass に置いた変数を継承しない。放っておくと @property の
      初期値（#5a2a3a / #7fe3d0）のままになり、口のところで
@@ -1512,35 +1522,60 @@ function respawn(c, firstRun) {
 }
 cubes.forEach(c => respawn(c, true));
 const H = () => window.innerHeight;
-function stepCubes() {
-  cubes.forEach(c => {
-    if (c.wait > 0) { c.wait--; c.el.style.opacity = 0; return; }
-    if (!c.wet) {
-      c.vy += 0.62;                                   // 重力
-      c.y += c.vy;
-      c.rot += c.vr;
-      if (c.y >= SURF_PX - 13) {                      // 着水
-        c.wet = true;
-        c.vy = Math.min(c.vy * 0.12, 1.6);            // 水に食われて一気に失速
-        c.vr *= 0.3;
-        splash(Math.min(1, 0.45 + c.vy * 0.4), (c.x + 19) / GW() * 100);  // 落ちた位置で跳ねる
-        crown(c.x + 19, SURF_PX, c.vy);              // 水冠
-      }
-    } else {
-      c.vy += 0.035;                                  // 沈降。抵抗があるのでほぼ等速
-      c.vy = Math.min(c.vy, 1.15);
-      c.y += c.vy;
-      c.rot += c.vr;
-      c.vr *= 0.995;
+const depthOf = c => Math.max(0, (c.y - SURF_PX) / (H() - SURF_PX));
+const opOf    = c => c.wet ? Math.max(0, 0.92 - depthOf(c) * 1.25) : 1;
+
+/* 落下は「フレーム数」ではなく「経過時間」で進める。
+   以前は毎フレーム一定量だけ加速・移動していたので、コマが落ちると
+   そのまま砂糖が遅くなっていた（実測 41fps で 213px/秒、17fps で 67px/秒。
+   重力が積み上がるぶん、速度の落ち方は fps 以上に効く）。
+   逆に 120Hz の画面では倍速で落ちていた。
+
+   時間で割るだけでは駄目で、歩幅が伸びると重力の積み上がり方が変わり、
+   着水の位置も飛び越える。1/60 秒の固定歩幅を、実時間ぶんだけ
+   繰り返す形にする。これなら画面が何 Hz でも軌跡が同じになる */
+const DT = 1000 / 60;
+let acc = 0, lastT = performance.now();
+
+function stepOne(c) {
+  if (c.wait > 0) { c.wait--; return; }
+  if (!c.wet) {
+    c.vy += 0.62;                                   // 重力
+    c.y += c.vy;
+    c.rot += c.vr;
+    if (c.y >= SURF_PX - 13) {                      // 着水
+      c.wet = true;
+      c.vy = Math.min(c.vy * 0.12, 1.6);            // 水に食われて一気に失速
+      c.vr *= 0.3;
+      splash(Math.min(1, 0.45 + c.vy * 0.4), (c.x + 19) / GW() * 100);  // 落ちた位置で跳ねる
+      crown(c.x + 19, SURF_PX, c.vy);              // 水冠
     }
-    // 深いほど霞む。アイコンより手前に居座らせない
-    const depth = Math.max(0, (c.y - SURF_PX) / (H() - SURF_PX));
-    const op = c.wet ? Math.max(0, 0.92 - depth * 1.25) : 1;
-    c.el.style.opacity = op.toFixed(3);
-    c.el.style.filter = c.wet ? 'blur(' + (depth * 2.6).toFixed(2) + 'px)' : 'none';
-    c.el.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px) rotate(' + c.rot.toFixed(1) + 'deg)';
-    if (c.y > H() + 40 || (c.wet && op <= 0)) respawn(c, false);
-  });
+  } else {
+    c.vy += 0.035;                                  // 沈降。抵抗があるのでほぼ等速
+    c.vy = Math.min(c.vy, 1.15);
+    c.y += c.vy;
+    c.rot += c.vr;
+    c.vr *= 0.995;
+  }
+  if (c.y > H() + 40 || (c.wet && opOf(c) <= 0)) respawn(c, false);
+}
+
+function draw(c) {
+  if (c.wait > 0) { c.el.style.opacity = 0; return; }
+  // 深いほど霞む。アイコンより手前に居座らせない
+  const op = opOf(c), depth = depthOf(c);
+  c.el.style.opacity = op.toFixed(3);
+  c.el.style.filter = c.wet ? 'blur(' + (depth * 2.6).toFixed(2) + 'px)' : 'none';
+  c.el.style.transform = 'translate(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px) rotate(' + c.rot.toFixed(1) + 'deg)';
+}
+
+function stepCubes(now) {
+  /* 溜まった時間は 5 歩ぶんで打ち切る。タブを離れて戻ったときに
+     何百歩も一気に進めて、砂糖が瞬間移動するのを防ぐ */
+  acc = Math.min(acc + (now - lastT), DT * 5);
+  lastT = now;
+  while (acc >= DT) { acc -= DT; cubes.forEach(stepOne); }
+  cubes.forEach(draw);                               // 描くのはフレームに1回
   requestAnimationFrame(stepCubes);
 }
 requestAnimationFrame(stepCubes);

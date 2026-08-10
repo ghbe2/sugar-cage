@@ -116,16 +116,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     border-top-color:color-mix(in srgb,var(--rim) 92%,transparent);
     border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
     border-right-color:color-mix(in srgb,var(--line) 40%,transparent)}
-  /* 手前＝下の弧。いちばん前に出す */
+  /* 手前＝下の弧。
+     ここはちょうどストローの継ぎ目の高さを横切る。太い線や厚みの帯を
+     置くと、ストローが口のところで一度切れて見える。
+     厚みの帯（::after）は撤去し、線も細く薄くした。
+     ふちの存在は上下2本の弧で足りている */
   .rimnear{z-index:11;clip-path:inset(46% 0 0 0);
-    border-bottom:3px solid color-mix(in srgb,var(--line) 72%,transparent);
-    border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
-    border-right-color:color-mix(in srgb,var(--line) 40%,transparent)}
-  /* ふちの厚み。手前側にだけ付ける */
-  .rimnear::after{content:'';position:absolute;left:-1.5px;right:-1.5px;
-    top:55%;height:calc(var(--ell) * 0.9);border-radius:50%;
-    background:linear-gradient(180deg,
-      color-mix(in srgb,var(--rim) 60%,transparent),transparent 70%)}
+    border-bottom:1.5px solid color-mix(in srgb,var(--line) 42%,transparent);
+    border-left-color:color-mix(in srgb,var(--line) 26%,transparent);
+    border-right-color:color-mix(in srgb,var(--line) 26%,transparent)}
 
   /* ── 底 ──
      ガラスの厚み。液はここで止まり、下は透明なガラスの塊になる。

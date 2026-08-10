@@ -216,10 +216,8 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
       color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
-    /* 輪郭は付けない。グラスの中では .glasswall や結露に覆われて
-       輪郭が消えるので、口より上にだけ線が残ると、そこで分断されて
-       別の棒が刺さっているように見える */
-    box-shadow:none}
+    /* 中のストローと同じ線。グラス座標の 1.5px なので同じ倍率で縮む */
+    box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -386,11 +384,11 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 完全な不透明だとプラスチックに見えない。少し透かして、
      水上ではグラスの向こうが、水中では液が薄く抜けるようにする */
   opacity:.92;
-  /* 輪郭は付けない。口より上（.strawout）には線が無いので、
-     ここだけ線があると口の高さで分断されて見える。
-     以前は液中で形が消えるのを防ぐために入れていたが、
-     いまは1枚の塗りなので線が無くても形は残る */
-  box-shadow:none;
+  /* ストローは白い。ヘッドスペースの背景もほぼ白なので、輪郭が無いと
+     そこだけ背景に溶けて消え、口のところで切れて見える。
+     以前は片側にしか線が無かったので分断されたが、いま内外は
+     同じ塗り・同じ縮尺・同じ描画経路なので、両方に同じ線を入れれば揃う */
+  box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent);
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
     color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%)}

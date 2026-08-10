@@ -376,10 +376,14 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 完全な不透明だとプラスチックに見えない。少し透かして、
      水上ではグラスの向こうが、水中では液が薄く抜けるようにする */
   opacity:.92;
+  /* 輪郭は付けない。口より上（.strawout）には線が無いので、
+     ここだけ線があると口の高さで分断されて見える。
+     以前は液中で形が消えるのを防ぐために入れていたが、
+     いまは1枚の塗りなので線が無くても形は残る */
+  box-shadow:none;
   background:linear-gradient(90deg,
     color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
-    color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
-  box-shadow:0 0 0 1.5px color-mix(in srgb, var(--line) 26%, transparent)}
+    color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%)}
 
 /* 落ちてくる角砂糖。動きは重力と水の抵抗でJS側が決めるので、
    ここでは見た目だけ持たせる（CSSの等速アニメーションでは重さが出ない）。

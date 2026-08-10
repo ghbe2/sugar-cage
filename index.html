@@ -28,7 +28,7 @@ html,body{height:100%}
 /* グラスを回すのに横へドラッグするので、そのたびに文字やアイコンが
    選択されてしまう。読ませる文章ではなく操作面なので、選択は殺す。
    ドラッグ中に画像がゴーストで付いてこないよう -webkit-user-drag も切る */
-body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden;
+body{background:#eae5dd var(--bg,none) center/cover no-repeat;font-family:'Noto Sans JP',sans-serif;overflow:hidden;
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 img{-webkit-user-drag:none;user-drag:none}
 .mono{font-family:'Roboto Mono',monospace}
@@ -95,30 +95,15 @@ img{-webkit-user-drag:none;user-drag:none}
     box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 30%,transparent),
                0 26px 46px -18px rgba(52,18,31,.55),
                0 60px 90px -40px rgba(52,18,31,.4)}
-  /* グラスの外側はカフェ。JS が時刻を見て --bg を差す。
-     cover なので、画像のテーブル面は画面のだいたい同じ高さに来る
-     （どの画像もテーブルの向こう端が上から7〜8割の位置）。
-     読み込み前・失敗時に備えて、下地の色は残しておく */
-  body{background:#ddd6cb var(--bg,none) center/cover no-repeat fixed}
   /* 箱がスマホ寸法のままなので、中身の詰め直しは要らない。
      --surf も .ui の padding もスマホと同じ値で、そのまま縮む */
 
-  /* ── グラスの向こうにカフェを透かす ──
-     いままで .room を不透明な生成りで塞いでいた。背景を敷いた以上、
-     ガラスの向こうが見えないのは嘘になる。薄く残して背後をぼかす。
-     backdrop-filter を使うが、ここが読むのは静止した背景画像だけなので、
-     以前 iOS で色替わりが遅れた件（.glasswall が動く色を読んでいた）は
-     起きない。そもそもスマホでは背景を敷いていない */
-  .glass .room{background:rgba(252,250,245,.30);
-    backdrop-filter:blur(9px) saturate(1.06);
+  /* PCではグラスの外が素の写真なので、中を覗いたぶんだけここでぼかす。
+     読むのは静止した背景画像だけなので、以前 iOS で色替わりが
+     取り残された件（.glasswall が動く色を読んでいた）は起きない。
+     スマホ側はぼかしを焼き込んだ画像を使うので、これは掛けない */
+  .glass .room{backdrop-filter:blur(9px) saturate(1.06);
     -webkit-backdrop-filter:blur(9px) saturate(1.06)}
-  .glass .room::before{background:linear-gradient(180deg,
-    rgba(255,255,255,.34) 0%, rgba(246,242,234,.22) 46%, rgba(236,230,217,.10) 100%)}
-  .glass .room::after{background:linear-gradient(180deg,
-    rgba(188,170,144,0) 0%, rgba(188,170,144,.28) 7%,
-    rgba(176,155,129,.34) 22%, rgba(164,143,117,.40) 100%)}
-  /* 窓を模した白い板は、本物の景色が入った以上いらない */
-  .glass .scene{display:none}
 
   /* ── 口のところでストローの明るさが一段落ちる件 ──
      グラスの中のストローは .glasswall と .gloss に覆われ、外は覆われない。
@@ -259,15 +244,20 @@ img{-webkit-user-drag:none;user-drag:none}
 /* 逆光の窓が奥にあり、手前に木の卓。
    参考写真の要は「明るい窓を背負っていて、液体越しにそれが見える」こと。
    卓の稜線は画面のずっと下に置く（グラスの全高が卓の上に立つ） */
-.room{position:absolute;inset:0;z-index:0;background:#efeade}
+/* グラスの向こうにカフェを透かす。塞いでしまうと、背景を敷いた意味がない。
+   PC・スマホ共通。スマホは画面いっぱいがグラスの中なので、
+   ここが抜けて初めて背景が見える */
+.room{position:absolute;inset:0;z-index:0;background:rgba(252,250,245,.30)}
 /* 滑らかなグラデーションは写真になる。段に割って刷り物へ寄せる */
 .room::before{content:'';position:absolute;left:0;right:0;top:0;height:74%;
   background:linear-gradient(180deg,
-    #fcfbf8 0%, #f6f2ea 46%, #ece6d9 100%)}
+    rgba(255,255,255,.34) 0%, rgba(246,242,234,.22) 46%, rgba(236,230,217,.10) 100%)}
 .room::after{content:'';position:absolute;left:0;right:0;top:74%;bottom:0;
-  background:linear-gradient(180deg,rgba(188,170,144,0) 0%,rgba(188,170,144,.75) 7%,#b09b81 22%,#a48f75 100%)}
+  background:linear-gradient(180deg,rgba(188,170,144,0) 0%,rgba(188,170,144,.28) 7%,
+    rgba(176,155,129,.34) 22%, rgba(164,143,117,.40) 100%)}
 /* 窓の桟。逆光なので白く飛ばす */
-.scene{position:absolute;inset:0;z-index:0;pointer-events:none;filter:blur(7px)}
+/* 窓を模した白い板。本物の景色が背景に入ったので出番なし */
+.scene{display:none}
 .scene i{position:absolute;display:block;background:rgba(255,255,255,.96);border-radius:6px}
 .scene .p1{left:2%;top:-2%;width:26%;height:46%}
 .scene .p2{left:32%;top:-2%;width:30%;height:40%}
@@ -1092,8 +1082,12 @@ function cafeByClock() {
 let curCafe = cafeByClock();
 function setCafe(c) {
   curCafe = c || cafeByClock();
-  if (innerWidth < 600) return;
-  document.body.style.setProperty('--bg', 'url(images/bg/' + curCafe.file + '.jpg)');
+  /* スマホは画面いっぱいがグラスの中なので、背景はドリンク越しにしか
+     見えない。ならば実寸の写真は要らない。ぼかしを焼き込んだ軽い版
+     （11〜20KB）を敷く。全面に backdrop-filter を掛けるより軽いし、
+     以前 iOS で色替わりが取り残された仕組みを持ち込まずに済む */
+  const suffix = innerWidth < 600 ? 'b' : '';
+  document.body.style.setProperty('--bg', 'url(images/bg/' + curCafe.file + suffix + '.jpg)');
 }
 
 const BOX_W = 390, BOX_H = 844;

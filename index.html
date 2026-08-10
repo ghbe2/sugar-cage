@@ -1060,22 +1060,26 @@ function placeStrawOut(sa, sc) {
   strawOut.style.display = 'block';
   const r = glassEl.getBoundingClientRect();
   const s = gScale;
-  const OUT = 58 * s;                        // 口から出る長さ
+  /* ── 中のストローと「同じ描画経路」に乗せる ──
+     中のストローはグラス座標（15px幅）で描かれてから 0.742 倍に縮小される。
+     外を最初から 11px で描くと、縮小の再サンプリングを通らないぶん硬く出る。
+     寸法も塗りも不透明度も一致しているのに見た目が違ったのはこれが理由。
+     こちらもグラス座標で組み立て、同じ倍率で縮める */
+  const OUT = 58;                            // 口から出る長さ（グラス座標）
+  strawOut.style.transformOrigin = 'top left';
+  strawOut.style.transform = 'scale(' + s.toFixed(4) + ')';
   strawOut.style.left   = r.left + 'px';
-  strawOut.style.width  = r.width + 'px';
+  strawOut.style.top    = (r.top - OUT * s) + 'px';
+  strawOut.style.width  = BOX_W + 'px';
   strawOut.style.height = OUT + 'px';
-  strawOut.style.top    = (r.top - OUT) + 'px';
-  /* 傾きは細い板だけに当てる（パネルごと回すと角が口へ食い込む） */
   strawOut.style.setProperty('--tilt', (9 * sc).toFixed(2) + 'deg');
   const i = strawOut.firstElementChild;
-  i.style.width  = (15 * s) + 'px';
+  /* 以降はすべてグラス座標。中のストロー（.straw i）と同じ数値を使う */
+  i.style.width  = '15px';
   i.style.height = (OUT + 2) + 'px';
-  i.style.right  = (64 * s - (R() * Math.sin(sa) * 0.16) * s) + 'px';
-  /* 太さだけを渡す。ここで box-shadow を丸ごと組み立てると、
-     インラインスタイルが CSS 側の色指定を上書きしてしまい、
-     スタイルシートを直しても効かなくなる（実際それで直っていなかった） */
-  i.style.setProperty('--sw', (1.5 * s).toFixed(2) + 'px');
-  i.style.borderRadius = (2 * s).toFixed(1) + 'px ' + (2 * s).toFixed(1) + 'px 0 0';
+  i.style.right  = (64 - R() * Math.sin(sa) * 0.16) + 'px';
+  i.style.setProperty('--sw', '1.5px');
+  i.style.borderRadius = '2px 2px 0 0';
   /* 中のストロー本体と同じ透け方にそろえる（.straw i の opacity:.92 ぶん） */
   strawOut.style.opacity = (parseFloat(strawEl.style.opacity || 1) * 0.92).toFixed(3);
 }

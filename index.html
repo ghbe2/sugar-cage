@@ -699,9 +699,9 @@ img{-webkit-user-drag:none;user-drag:none}
       <div class="ring" id="ring">
         <!-- data-f=面(0-2) / data-c=列(0-2) / data-r=行(0-1) -->
         <!-- ── 1面：ゲーム ── -->
-        <a class="app" data-f="0" data-c="0" data-r="0" data-href="https://ghbe2.github.io/sc_matching/"><div class="face img" style="background:url(images/icon_matching.png) center/cover no-repeat"></div><div class="nm">マッチング</div><div class="ds">運命の相手を診断する</div></a>
-        <a class="app" data-f="0" data-c="1" data-r="0" data-href="https://ghbe2.github.io/sc_curling/"><div class="face img" style="background:url(images/icon_curling.png) center/cover no-repeat;animation-delay:-2.3s"></div><div class="nm">カーリング</div><div class="ds">氷上で競う対戦</div></a>
-        <a class="app" data-f="0" data-c="2" data-r="0" data-href="https://ghbe2.github.io/sc_rating/"><div class="face img" style="background:url(images/icon_rating.png) center/cover no-repeat;animation-delay:-4.6s"></div><div class="nm">レーティング</div><div class="ds">塗り合いバトル</div></a>
+        <a class="app" data-f="0" data-c="0" data-r="0" data-href="https://ghbe2.github.io/sc_matching/"><div class="face img" style="background:url(images/icon_matching.png) center/cover no-repeat"></div><div class="nm">マッチング</div><div class="ds">惹かれ合う診断</div></a>
+        <a class="app" data-f="0" data-c="1" data-r="0" data-href="https://ghbe2.github.io/sc_curling/"><div class="face img" style="background:url(images/icon_curling.png) center/cover no-repeat;animation-delay:-2.3s"></div><div class="nm">カーリング</div><div class="ds">ふっとばせー！</div></a>
+        <a class="app" data-f="0" data-c="2" data-r="0" data-href="https://ghbe2.github.io/sc_rating/"><div class="face img" style="background:url(images/icon_rating.png) center/cover no-repeat;animation-delay:-4.6s"></div><div class="nm">レーティング</div><div class="ds">たぷたぷたぷ</div></a>
         <a class="app" data-f="0" data-c="0" data-r="1"><div class="face" style="animation-delay:-1.5s"><span>?</span></div><div class="nm">？？？</div><div class="ds">準備中</div></a>
 
         <!-- ── 2面：スタンプと小説 ── -->
@@ -1082,10 +1082,12 @@ function cafeByClock() {
 let curCafe = cafeByClock();
 function setCafe(c) {
   curCafe = c || cafeByClock();
-  /* スマホは画面いっぱいがグラスの中なので、背景はドリンク越しにしか
-     見えない。ならば実寸の写真は要らない。ぼかしを焼き込んだ軽い版
-     （11〜20KB）を敷く。全面に backdrop-filter を掛けるより軽いし、
-     以前 iOS で色替わりが取り残された仕組みを持ち込まずに済む */
+  /* スマホ用は別画像（bg0Nb）。横長のまま cover すると左右が大きく
+     切れて何が写っているか分からなくなるので、PCでグラスの後ろに来る
+     あたりを縦長に切り出してある。
+     全面に backdrop-filter を掛けると、以前 iOS で色替わりが
+     取り残された仕組みを全画面に持ち込むことになるので使わない。
+     ドリンク自体が半透明なので、素の画像のままでも十分にぼやける */
   const suffix = innerWidth < 600 ? 'b' : '';
   document.body.style.setProperty('--bg', 'url(images/bg/' + curCafe.file + suffix + '.jpg)');
 }

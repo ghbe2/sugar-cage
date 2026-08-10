@@ -199,16 +199,15 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
   /* 吸い口は丸めない。ストローは切りっぱなしの断面 */
   .strawout i{position:absolute;bottom:0;border-radius:2px 2px 0 0;
     transform-origin:bottom center;transform:rotate(var(--tilt,9deg));
-    /* ── 中のストローと「同じ式」で描いてはいけない ──
-       中のストローは .glasswall / .gloss / 結露 の3枚に覆われて淡く沈む。
-       外にはその3枚が無いので、同じ式だと輪郭も彩度も外だけ強く出て、
-       別の棒が刺さっているように見える（線の太さは揃えても直らない）。
-       覆いが無いぶんを見越して、こちら側を先に落としておく */
+    /* 塗りは中のストローと完全に同じ式にする。
+       一度「覆いが無いぶん外を淡くする」補正を入れたが、それが
+       口のところで色が切り替わる原因になった。1本のストローなのだから
+       途中で塗りが変わってはいけない。
+       太さだけ JS が --sw で渡す（グラス側が縮小されているぶん細くする） */
     background:linear-gradient(90deg,
-      color-mix(in srgb, var(--spec) 13%, #fff) 0%, #fffdf8 40%, #fff 52%,
-      color-mix(in srgb, var(--spec) 9%, #fff) 76%, color-mix(in srgb, var(--spec) 19%, #fff) 100%);
-    /* 太さは JS が --sw で渡す（縮尺ぶん細くする）。色はここで決める */
-    box-shadow:0 0 0 var(--sw,1.5px) color-mix(in srgb, var(--line) 11%, transparent)}
+      color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
+      color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
+    box-shadow:0 0 0 var(--sw,1.5px) color-mix(in srgb, var(--line) 26%, transparent)}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;
@@ -258,11 +257,24 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     color-mix(in srgb, var(--line) 16%, transparent) 92%,
     color-mix(in srgb, var(--g2) 38%, transparent) 96.5%,
     color-mix(in srgb, var(--g1) 70%, transparent) 100%)}
-/* 端の屈折。奥の景色が細く潰れて見える帯 */
+/* 端の屈折。以前は左右12%に backdrop-filter:blur(2px) を敷いていたが、
+   これが「左右端だけ色替わりが遅れ、たまにぱっと追いつく」の正体だった。
+   backdrop-filter は背後をスナップショットして加工する仕組みで、
+   iOS はそのスナップショットをキャッシュし、遅れてしか更新しない。
+   カスタムプロパティを毎フレーム書き換えても、この帯には届かない。
+
+   ぼかしをやめ、静的なグラデーションだけで「端が詰まって濃くなる」感じを
+   出す。背後を読まないので、色は常に他と同時に変わる */
 .glasswall::before{content:'';position:absolute;top:0;bottom:0;left:0;width:12%;
-  backdrop-filter:blur(2px) saturate(1.15);transform:scaleX(-1)}
+  background:linear-gradient(90deg,
+    color-mix(in srgb, var(--line) 20%, transparent) 0%,
+    color-mix(in srgb, var(--line) 7%, transparent) 45%,
+    transparent 100%)}
 .glasswall::after{content:'';position:absolute;top:0;bottom:0;right:0;width:12%;
-  backdrop-filter:blur(2px) saturate(1.15)}
+  background:linear-gradient(270deg,
+    color-mix(in srgb, var(--line) 20%, transparent) 0%,
+    color-mix(in srgb, var(--line) 7%, transparent) 45%,
+    transparent 100%)}
 /* ── 光と影をひとつの系にする ──
    光沢と陰影を別々に描くと点が二重になる。「光が当たるから明るく、
    回り込むから暗い」という一本の勾配から両方を出す。

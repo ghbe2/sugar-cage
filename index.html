@@ -103,6 +103,23 @@ img{-webkit-user-drag:none;user-drag:none}
   /* 箱がスマホ寸法のままなので、中身の詰め直しは要らない。
      --surf も .ui の padding もスマホと同じ値で、そのまま縮む */
 
+  /* ── グラスの向こうにカフェを透かす ──
+     いままで .room を不透明な生成りで塞いでいた。背景を敷いた以上、
+     ガラスの向こうが見えないのは嘘になる。薄く残して背後をぼかす。
+     backdrop-filter を使うが、ここが読むのは静止した背景画像だけなので、
+     以前 iOS で色替わりが遅れた件（.glasswall が動く色を読んでいた）は
+     起きない。そもそもスマホでは背景を敷いていない */
+  .glass .room{background:rgba(252,250,245,.30);
+    backdrop-filter:blur(9px) saturate(1.06);
+    -webkit-backdrop-filter:blur(9px) saturate(1.06)}
+  .glass .room::before{background:linear-gradient(180deg,
+    rgba(255,255,255,.34) 0%, rgba(246,242,234,.22) 46%, rgba(236,230,217,.10) 100%)}
+  .glass .room::after{background:linear-gradient(180deg,
+    rgba(188,170,144,0) 0%, rgba(188,170,144,.28) 7%,
+    rgba(176,155,129,.34) 22%, rgba(164,143,117,.40) 100%)}
+  /* 窓を模した白い板は、本物の景色が入った以上いらない */
+  .glass .scene{display:none}
+
   /* ── 口のところでストローの明るさが一段落ちる件 ──
      グラスの中のストローは .glasswall と .gloss に覆われ、外は覆われない。
      ガラス越しに見ているので暗くなること自体は正しいが、覆いが口の高さで
@@ -485,6 +502,15 @@ img{-webkit-user-drag:none;user-drag:none}
    明るさの段差ができていた（口のところで切れて見える正体）。
    画面全体に掛ける。カフェの背景にも同じ紙質が乗るので、
    絵としてもこちらが正しい */
+/* 確認用の切り替え（暫定）。時刻の自動切替を確かめ終えたら、
+   このルールと #cafesw の markup / JS ごと消すこと */
+.cafesw{display:none;position:fixed;left:16px;bottom:16px;z-index:40;
+  align-items:center;gap:10px;padding:8px 14px;border-radius:99px;
+  background:rgba(253,247,234,.92);box-shadow:0 2px 10px rgba(52,18,31,.25);
+  font:600 12px/1 'Noto Sans JP',sans-serif;color:#6b2f42}
+.cafesw input{width:120px;accent-color:#b8437e}
+.cafesw b{min-width:9em}
+
 .grain{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:.13;
   mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -706,6 +732,9 @@ img{-webkit-user-drag:none;user-drag:none}
 
 <!-- 口から突き出すストロー。グラスの外に置くのでクリップされない -->
 <div class="strawout" id="strawout"><i></i></div>
+
+<!-- ══ 確認用の切り替え（暫定）。時刻による自動切替の確認が済んだら消す ══ -->
+<div class="cafesw" id="cafesw"><input type="range" min="1" max="4" step="1"><b></b></div>
 
 <!-- 紙のノイズ。グラスの中だけに掛けると、そこだけ13%沈んで、
      口から出たストローとの間に段差ができる。画面全体に掛ける。
@@ -1040,22 +1069,28 @@ const strawEl = document.querySelector('.straw');
    何度も来る人にだけ気づきがある。ドリンクの色替わりとも喧嘩しない。
    スマホでは画面いっぱいがグラスの中で背景が見えないので、読み込まない
    （1枚200〜300KBを無駄に落とさせない） */
+/* x / y はグラスの寄せ量（画面幅・高さに対する割合）。
+   背景ごとにテーブルの向こう端の高さも空き場所も違うので、
+   1枚ずつ見て決める。実際に画面を見ながら詰めた値 */
 const CAFES = [
-  { from: 5,  file: 'bg01' },   // 朝   温室
-  { from: 10, file: 'bg03' },   // 昼   カフェの店内
-  { from: 16, file: 'bg02' },   // 夕   海辺のテラス
-  { from: 19, file: 'bg04' }    // 夜   バー
+  { from: 5,  file: 'bg01', name: '朝・温室',        x:-0.14, y: 0.030 },
+  { from: 10, file: 'bg03', name: '昼・カフェ',      x:-0.19, y: 0.020 },
+  { from: 16, file: 'bg02', name: '夕・海辺のテラス', x:-0.20, y: 0.025 },
+  { from: 19, file: 'bg04', name: '夜・バー',        x:-0.12, y: 0.055 }
 ];
-function setCafe() {
-  if (innerWidth < 600) return;
+function cafeByClock() {
   const h = new Date().getHours();
   /* 5時より前は前日の夜が続いている扱い。最後の枠へ回す */
   let pick = CAFES[CAFES.length - 1];
   for (const c of CAFES) if (h >= c.from) pick = c;
-  document.body.style.setProperty('--bg', 'url(images/bg/' + pick.file + '.jpg)');
+  return pick;
 }
-setCafe();
-addEventListener('resize', setCafe);
+let curCafe = cafeByClock();
+function setCafe(c) {
+  curCafe = c || cafeByClock();
+  if (innerWidth < 600) return;
+  document.body.style.setProperty('--bg', 'url(images/bg/' + curCafe.file + '.jpg)');
+}
 
 const BOX_W = 390, BOX_H = 844;
 let gScale = 1;
@@ -1072,13 +1107,19 @@ function fitGlass() {
   /* 上下の余白は 43:57。中心をその比率ぶん上へずらす */
   const free = innerHeight - BOX_H * gScale;
   const top = free * 0.43;
+  /* 背景ごとにテーブルの向こう端の高さも、空いている場所も違う。
+     まん中に置くと、人物や椅子に重なったり宙に浮いたりする。
+     カフェごとの寄せ量（画面幅・高さに対する割合）でずらす */
+  const dx = innerWidth  * (curCafe.x || 0);
+  const dy = innerHeight * (curCafe.y || 0);
   glassEl.style.transform =
-    'translate(-50%,-50%) translateY(' + (top + BOX_H * gScale / 2 - innerHeight / 2).toFixed(1) +
+    'translate(-50%,-50%) translate(' + dx.toFixed(1) + 'px,' +
+    (top + BOX_H * gScale / 2 - innerHeight / 2 + dy).toFixed(1) +
     'px) scale(' + gScale.toFixed(4) + ')';
-  /* シートはグラスの見かけの幅にそろえる。画面全体に広がると、
+  /* シートはグラスの見かけの幅・位置にそろえる。画面全体に広がると、
      グラスの外にUIが出て作り物に見える */
   const sh = document.getElementById('sheet');
-  if (sh) { sh.style.left = (innerWidth - BOX_W * gScale) / 2 + 'px';
+  if (sh) { sh.style.left = ((innerWidth - BOX_W * gScale) / 2 + dx) + 'px';
             sh.style.width = (BOX_W * gScale) + 'px'; }
 }
 
@@ -1262,7 +1303,24 @@ function layoutCylinder() {
     o.el.style.transform = 'translateX(' + (r * Math.sin(a) * 0.28).toFixed(1) + 'px) ' + o.el.dataset.baseTf;
   });
 }
-fitGlass(); measurePrint(); layoutCylinder();
+setCafe(); fitGlass(); measurePrint(); layoutCylinder();
+
+/* ══ 確認用の切り替え（暫定） ══
+   本番は時刻で自動。4枚の見え方を確かめるあいだだけ手で切り替える。
+   確認が済んだら、この塊と #cafesw の markup / CSS ごと消すこと */
+(function () {
+  const sw = document.getElementById('cafesw');
+  if (!sw || innerWidth < 600) return;
+  sw.style.display = 'flex';
+  const range = sw.querySelector('input'), nm = sw.querySelector('b');
+  range.value = CAFES.indexOf(curCafe) + 1;
+  nm.textContent = curCafe.name;
+  range.oninput = function () {
+    const c = CAFES[range.value - 1];
+    nm.textContent = c.name;
+    setCafe(c); fitGlass(); measurePrint(); layoutCylinder();
+  };
+})();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measurePrint(); layoutCylinder(); });
 addEventListener('resize', () => { fitGlass(); measurePrint(); layoutCylinder(); });
 

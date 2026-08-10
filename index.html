@@ -802,8 +802,15 @@ function paintDrink(liq, spec, op, inside) {
   };
   /* グラスに変数を1つ書くだけで、その中の要素すべてのスタイル再計算が走る。
      毎フレーム呼ばれるので、値が前回と同じなら何もしない。
-     丸めたおかげで、6.5秒の変化のうち半分近くはここで止まる */
-  const sig = v['--liq'] + v['--spec'] + v['--liqa'] + v['--inside'];
+
+     判定は 2 段階ぶん粗くする（>>1）。色の離れた組み合わせ、たとえば
+     アイスコーヒーからいちごへ移るときは 8bit の値が毎フレーム変わるので、
+     厳密に比べても 13% しか止まらなかった。6.5秒かけて溶かす色で
+     256階調のうち1段の差は見えない。
+     書き込む値そのものは丸めない。粗いのは「書くかどうか」の判定だけで、
+     書くときは正確な色を書く */
+  const q = c => (c[0] >> 1) + ',' + (c[1] >> 1) + ',' + (c[2] >> 1);
+  const sig = q(liq) + q(spec) + v['--liqa'] + v['--inside'];
   if (sig === lastPaint) return;
   lastPaint = sig;
   /* 突き出しストローはグラスの「外」にある兄弟要素なので、
@@ -827,6 +834,9 @@ let cFrom = asDrink(DRINKS[0]);
 let cTo = cFrom, cT0 = 0, cRaf = null;
 function fadeDrink() {
   const p = Math.min(1, (performance.now() - cT0) / FADE);
+  /* 最後の一枚だけは必ず書く。判定を粗くしているので、放っておくと
+     ゴール色が1〜2段ずれたまま次の変化まで居座る */
+  if (p >= 1) lastPaint = '';
   paintDrink(lerp(cFrom.liq, cTo.liq, p), lerp(cFrom.spec, cTo.spec, p),
              num(cFrom.op, cTo.op, p), num(cFrom.inside, cTo.inside, p));
   cRaf = p < 1 ? requestAnimationFrame(fadeDrink) : null;

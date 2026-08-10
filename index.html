@@ -116,14 +116,13 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     border-top-color:color-mix(in srgb,var(--rim) 92%,transparent);
     border-left-color:color-mix(in srgb,var(--line) 40%,transparent);
     border-right-color:color-mix(in srgb,var(--line) 40%,transparent)}
-  /* 手前＝下の弧。
-     ここはちょうどストローの継ぎ目の高さを横切る。前に出していると、
-     どれだけ細くしてもストローを分断する線として読まれてしまう。
-     奥の弧と同じ z0 に置き、DOM順でストローより前にすることで、
-     ストローの背後を通す。これで横切る線は無くなる。
-     ＝ストローは口を貫いて1本で立ち、ふちはその後ろを回る。
-     線も薄くした（42% → 26%）。厚みの帯（::after）は撤去済み */
-  .rimnear{z-index:0;clip-path:inset(46% 0 0 0);
+  /* 手前＝下の弧。ストローより前に出す。
+     一度「横切る線を無くす」ために背後へ回したが、それだと
+     奥の弧と手前の弧が両方ストローの後ろになり、前後が逆に見える。
+     正しくは、ストローは奥の弧の前を通り、手前の弧の後ろへ入る。
+     線を細く薄くして（3px/72% → 1.5px/26%）、分断に見えない太さで
+     前に置くのが正解だった。厚みの帯（::after）は撤去済み */
+  .rimnear{z-index:11;clip-path:inset(46% 0 0 0);
     border-bottom:1.5px solid color-mix(in srgb,var(--line) 26%,transparent);
     border-left-color:color-mix(in srgb,var(--line) 18%,transparent);
     border-right-color:color-mix(in srgb,var(--line) 18%,transparent)}

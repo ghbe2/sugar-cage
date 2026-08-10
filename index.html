@@ -207,7 +207,10 @@ body{background:#eae5dd;font-family:'Noto Sans JP',sans-serif;overflow:hidden}
     background:linear-gradient(90deg,
       color-mix(in srgb, var(--spec) 30%, #fff) 0%, #fffdf8 38%, #fff 50%,
       color-mix(in srgb, var(--spec) 22%, #fff) 74%, color-mix(in srgb, var(--spec) 46%, #fff) 100%);
-    box-shadow:0 0 0 var(--sw,1.5px) color-mix(in srgb, var(--line) 26%, transparent)}
+    /* 輪郭は付けない。グラスの中では .glasswall や結露に覆われて
+       輪郭が消えるので、口より上にだけ線が残ると、そこで分断されて
+       別の棒が刺さっているように見える */
+    box-shadow:none}
 }
 /* グラデーションの縁取り。padding-box と border-box の二枚重ねなら角丸にも効く */
 .edged{border:3px solid transparent;

@@ -1322,7 +1322,10 @@ setCafe(); fitGlass(); measurePrint(); layoutCylinder();
   };
 })();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measurePrint(); layoutCylinder(); });
-addEventListener('resize', () => { fitGlass(); measurePrint(); layoutCylinder(); });
+/* setCafe も呼び直す。スマホ用とPC用で別の画像を使っているので、
+   幅が変わったときに選び直さないと、片方の画像が残ってしまう
+   （PC幅でスマホ用の縦長画像が出ていた） */
+addEventListener('resize', () => { setCafe(curCafe); fitGlass(); measurePrint(); layoutCylinder(); });
 
 /* アイコンも円筒に乗ったので、別途スライドさせる必要はない。
    回転角ひとつで、ロゴもアイコンも氷も一緒に動く */

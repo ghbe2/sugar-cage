@@ -902,9 +902,15 @@ function readSaves() {
   const c = { best: readNum('sugake-curling.bestScore'), named: !!readStr('sugake-curling.playerName') };
   const r = { rako: +rating.rako || 0, ou: +rating.ou || 0,
               reachedRako: !!reached.rako, reachedOu: !!reached.ou };
+  /* ストーキングは最高得点しか持っていなかったので、段になる数を別の
+     入れ物で足してもらった。既存の sugake_alley_best には触っていない */
+  const alley = readJSON('sugake_alley_stats', {});
+  const k = { best: readNum('sugake_alley_best'),
+              stage: +alley.stage || 0, esc: +alley.escapes || 0 };
   /* 遊んだ本数。ゲームが増えたらここに1行足すだけで「しゅがけ好き」が追随する */
-  const played = [m.viewed >= 1, c.best > 0 || c.named, r.rako + r.ou >= 1].filter(Boolean).length;
-  return { m, c, r, played, f: readFlags() };
+  const played = [m.viewed >= 1, c.best > 0 || c.named, r.rako + r.ou >= 1,
+                  k.best > 0].filter(Boolean).length;
+  return { m, c, r, k, played, f: readFlags() };
 }
 /* ゲーム側が保存していない出来事のための旗。
    各ゲームに scFlag('...') を1行だけ足してもらう想定で、こちらは読むだけ。
@@ -983,6 +989,18 @@ const ACH_DEFS = [
     /* 保存されているのは通算勝利数だけ。単位表から逆算した「235勝で無量大数」は
        いまのラダーでは検算できないので、勝利数そのもので判定する */
     { r:4, open:0, name:'途中突き指しなかった？', desc:'通算300勝した', on:s => s.r.rako + s.r.ou >= 300 }]},
+  { label:'しゅがけストーキング', items:[
+    /* 得点の目安がまだ無いので、しきい値をこちらで作らない。
+       ステージ（輪を1周するごとに+1）とトウカフェーズ（行くたび網が
+       8→14→20→26→32本と増える）という、ゲームがすでに持っている段を使う */
+    { r:1, open:1, name:'ネズミが1匹',     desc:'はじめて逃げた',   on:s => s.k.best > 0 },
+    { r:1, open:1, name:'また同じ路地',   desc:'ステージ2に到達',  on:s => s.k.stage >= 2 },
+    { r:2, open:1, name:'まだ捕まらない', desc:'トウカから逃げ切った', on:s => s.k.esc >= 1 },
+    { r:2, open:1, name:'常連',           desc:'ステージ5に到達',  on:s => s.k.stage >= 5 },
+    { r:3, open:0, name:'濡れずに済んだ', desc:'水たまりを踏まずに下水を抜けた',
+      on:s => !!s.f['s.dry'], f:'s.dry' },
+    { r:3, open:1, name:'網が足りない',   desc:'トウカから3回逃げ切った', on:s => s.k.esc >= 3 },
+    { r:4, open:0, name:'見失いました',   desc:'ステージ10に到達', on:s => s.k.stage >= 10 }]},
   { label:'ぜんたい', items:[
     /* 「3本」と固定するとゲームが増えるたびに直すことになる。
        遊んだ本数を数えて3以上、にしておけば足すだけで済む */
@@ -995,7 +1013,8 @@ const ACH_DEFS = [
 /* 各ゲームが scFlag() を仕込み終わったら、ここを true にすると注記が消える。
    2026-08-09 に4つとも対応完了（マッチング / カーリング / レーティング）。
    新しい旗を足すときは false で入れ、ゲーム側が済んでから true にする */
-const FLAG_READY = { 'm.revote':true, 'm.relations':true, 'c.triple':true, 'r.tap100':true };
+const FLAG_READY = { 'm.revote':true, 'm.relations':true, 'c.triple':true, 'r.tap100':true,
+                     's.dry':false };   // ストーキング側の対応待ち
 
 /* 章の全員に会ったか。抜けが1人でもあれば成立しない */
 function hasAll(ids, from, to) {

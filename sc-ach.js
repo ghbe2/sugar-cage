@@ -44,6 +44,10 @@
                        .filter(function (n) { return !isNaN(n); });
     var rating = readJSON('sugarcage_rating_v5', { rako: 0, ou: 0 }) || {};
     var reach  = readJSON('sugarcage_rating_reached', {}) || {};
+    /* ストーキングは最高得点しか持っていなかったので、段になる数
+       （到達ステージ・トウカを凌いだ回数）を別の入れ物で足してもらった。
+       既存の sugake_alley_best は名前も形もそのまま */
+    var alley  = readJSON('sugake_alley_stats', {}) || {};
     var ids = {}; viewed.forEach(function (v) { ids[Number(v)] = 1; });
     return {
       ids: ids,
@@ -56,6 +60,9 @@
       rOu: Number(rating.ou) || 0,
       reachedRako: !!reach.rako,
       reachedOu: !!reach.ou,
+      sBest: readNum('sugake_alley_best'),
+      sStage: Number(alley.stage) || 0,
+      sEsc: Number(alley.escapes) || 0,
       f: readJSON(FLAG_KEY, {}) || {}
     };
   }
@@ -89,7 +96,18 @@
     { g:'rating', r:2, name:'ワサンボン・オウ', desc:'オウで最上位クラスへ', on:function(s){return s.reachedOu;} },
     { g:'rating', r:2, name:'指何本つかった？', desc:'1回の対戦で100回タップした', on:function(s){return !!s.f['r.tap100'];} },
     { g:'rating', r:3, name:'二人とも登らせた', desc:'ラコもオウも最上位へ', on:function(s){return s.reachedRako&&s.reachedOu;} },
-    { g:'rating', r:4, name:'途中突き指しなかった？', desc:'通算300勝した', on:function(s){return s.rRako+s.rOu>=300;} }
+    { g:'rating', r:4, name:'途中突き指しなかった？', desc:'通算300勝した', on:function(s){return s.rRako+s.rOu>=300;} },
+
+    /* ストーキングは得点の目安が無いので、しきい値をこちらで作らない。
+       ステージ（輪を1周するごとに+1）とトウカフェーズ（行くたび網が増える）
+       という、ゲームがすでに持っている段をそのまま使う */
+    { g:'stalking', r:1, name:'ネズミが1匹',     desc:'はじめて逃げた',   on:function(s){return s.sBest>0;} },
+    { g:'stalking', r:1, name:'また同じ路地',   desc:'ステージ2に到達',  on:function(s){return s.sStage>=2;} },
+    { g:'stalking', r:2, name:'まだ捕まらない', desc:'トウカから逃げ切った', on:function(s){return s.sEsc>=1;} },
+    { g:'stalking', r:2, name:'常連',           desc:'ステージ5に到達',  on:function(s){return s.sStage>=5;} },
+    { g:'stalking', r:3, name:'濡れずに済んだ', desc:'水たまりを踏まずに下水を抜けた', on:function(s){return !!s.f['s.dry'];} },
+    { g:'stalking', r:3, name:'網が足りない',   desc:'トウカから3回逃げ切った', on:function(s){return s.sEsc>=3;} },
+    { g:'stalking', r:4, name:'見失いました',   desc:'ステージ10に到達', on:function(s){return s.sStage>=10;} }
   ];
 
   /* ---- 通知の見た目。ゲーム側のCSSに触られないよう全部ここで持つ ---- */

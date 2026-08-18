@@ -44,8 +44,8 @@
                        .filter(function (n) { return !isNaN(n); });
     var rating = readJSON('sugarcage_rating_v5', { rako: 0, ou: 0 }) || {};
     var reach  = readJSON('sugarcage_rating_reached', {}) || {};
-    /* ストーキングは最高得点しか持っていなかったので、段になる数
-       （到達ステージ・トウカを凌いだ回数）を別の入れ物で足してもらった。
+    /* ストーキングは最高得点しか持っていなかったので、通しで数えるもの
+       （逃げ切った回数・チーズの個数）を別の入れ物で足してもらった。
        既存の sugake_alley_best は名前も形もそのまま */
     var alley  = readJSON('sugake_alley_stats', {}) || {};
     var ids = {}; viewed.forEach(function (v) { ids[Number(v)] = 1; });
@@ -61,7 +61,6 @@
       reachedRako: !!reach.rako,
       reachedOu: !!reach.ou,
       sBest: readNum('sugake_alley_best'),
-      sStage: Number(alley.stage) || 0,
       sEsc: Number(alley.escapes) || 0,
       sCheese: Number(alley.cheese) || 0,
       f: readJSON(FLAG_KEY, {}) || {}
@@ -106,7 +105,6 @@
     { g:'stalking', r:1, name:'ぶつかりおじさん',     desc:'路地で大きな男にぶつかった', on:function(s){return !!s.f['s.man'];} },
     { g:'stalking', r:1, name:'ヒステリックおばさん', desc:'路地で横切る女にぶつかった', on:function(s){return !!s.f['s.woman'];} },
     { g:'stalking', r:1, name:'路地裏キッズ',         desc:'路地で子供にぶつかった', on:function(s){return !!s.f['s.kid'];} },
-    { g:'stalking', r:1, name:'また同じ路地',   desc:'ステージ2に到達',  on:function(s){return s.sStage>=2;} },
     { g:'stalking', r:2, name:'網が足りない',   desc:'はじめてトウカから逃げ切った', on:function(s){return s.sEsc>=1;} },
     { g:'stalking', r:2, name:'運にも見放された', desc:'あみだくじで外れを引いた', on:function(s){return !!s.f['s.amida'];} },
     { g:'stalking', r:3, name:'濡れずに済んだ', desc:'水たまりを踏まずに下水を抜けた', on:function(s){return !!s.f['s.dry'];} },

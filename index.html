@@ -1609,6 +1609,35 @@ function stepCubes(now) {
 }
 requestAnimationFrame(stepCubes);
 
+
+/* ── コマ数の表示（確認用・暫定） ══════════════════════════
+   ?fps=1 を付けたときだけ出る。付けなければ何も作らないし、
+   毎フレームの処理も一切増えない。
+   カクつきの度合いは環境によって桁で変わる（開発用のブラウザ枠は
+   GPU を持たず全部 CPU で描くので、実機よりずっと悪く出る）。
+   実機の数字が要るときにこれを使う。用が済んだら消すこと */
+if (location.search.indexOf('fps=1') >= 0) (function () {
+  const box = document.createElement('div');
+  box.style.cssText = 'position:fixed;left:10px;top:10px;z-index:9999;' +
+    'font:500 12px/1.5 Roboto Mono,monospace;color:#fff;background:rgba(0,0,0,.62);' +
+    'padding:6px 10px;border-radius:8px;pointer-events:none;white-space:pre';
+  document.body.appendChild(box);
+  let frames = 0, t0 = performance.now(), worst = 0, prev = t0, lo = 999;
+  (function tick() {
+    const now = performance.now();
+    const gap = now - prev; prev = now;
+    if (gap > worst) worst = gap;
+    frames++;
+    if (now - t0 >= 500) {
+      const f = frames / ((now - t0) / 1000);
+      if (f < lo) lo = f;
+      box.textContent = 'いま ' + f.toFixed(1) + ' fps\n最低 ' + lo.toFixed(1) +
+                        ' fps\n最長の1コマ ' + worst.toFixed(0) + ' ms';
+      frames = 0; t0 = now; worst = 0;
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>

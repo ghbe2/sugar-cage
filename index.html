@@ -906,7 +906,8 @@ function readSaves() {
      入れ物で足してもらった。既存の sugake_alley_best には触っていない */
   const alley = readJSON('sugake_alley_stats', {});
   const k = { best: readNum('sugake_alley_best'),
-              stage: +alley.stage || 0, esc: +alley.escapes || 0 };
+              stage: +alley.stage || 0, esc: +alley.escapes || 0,
+              cheese: +alley.cheese || 0 };
   /* 遊んだ本数。ゲームが増えたらここに1行足すだけで「しゅがけ好き」が追随する */
   const played = [m.viewed >= 1, c.best > 0 || c.named, r.rako + r.ou >= 1,
                   k.best > 0].filter(Boolean).length;
@@ -991,16 +992,24 @@ const ACH_DEFS = [
     { r:4, open:0, name:'途中突き指しなかった？', desc:'通算300勝した', on:s => s.r.rako + s.r.ou >= 300 }]},
   { label:'しゅがけストーキング', items:[
     /* 得点の目安がまだ無いので、しきい値をこちらで作らない。
-       ステージ（輪を1周するごとに+1）とトウカフェーズ（行くたび網が
-       8→14→20→26→32本と増える）という、ゲームがすでに持っている段を使う */
-    { r:1, open:1, name:'ネズミが1匹',     desc:'はじめて逃げた',   on:s => s.k.best > 0 },
+       路地の3人（man / kid / woman）にぶつかる、あみだで外れを引く、
+       といった出来事は記録に残らないので、ゲーム側から旗を立ててもらう */
+    { r:1, open:1, name:'穴があったら入りたい', desc:'はじめて下水に入った',
+      on:s => !!s.f['s.sewer'], f:'s.sewer' },
+    { r:1, open:1, name:'ぶつかりおじさん', desc:'路地で大きな男にぶつかった',
+      on:s => !!s.f['s.man'], f:'s.man' },
+    { r:1, open:1, name:'ヒステリックおばさん', desc:'路地で横切る女にぶつかった',
+      on:s => !!s.f['s.woman'], f:'s.woman' },
+    { r:1, open:1, name:'路地裏キッズ', desc:'路地で子供にぶつかった',
+      on:s => !!s.f['s.kid'], f:'s.kid' },
     { r:1, open:1, name:'また同じ路地',   desc:'ステージ2に到達',  on:s => s.k.stage >= 2 },
-    { r:2, open:1, name:'まだ捕まらない', desc:'トウカから逃げ切った', on:s => s.k.esc >= 1 },
-    { r:2, open:1, name:'常連',           desc:'ステージ5に到達',  on:s => s.k.stage >= 5 },
+    { r:2, open:1, name:'網が足りない',   desc:'はじめてトウカから逃げ切った', on:s => s.k.esc >= 1 },
+    { r:2, open:0, name:'運にも見放された', desc:'あみだくじで外れを引いた',
+      on:s => !!s.f['s.amida'], f:'s.amida' },
     { r:3, open:0, name:'濡れずに済んだ', desc:'水たまりを踏まずに下水を抜けた',
       on:s => !!s.f['s.dry'], f:'s.dry' },
-    { r:3, open:1, name:'網が足りない',   desc:'トウカから3回逃げ切った', on:s => s.k.esc >= 3 },
-    { r:4, open:0, name:'見失いました',   desc:'ステージ10に到達', on:s => s.k.stage >= 10 }]},
+    { r:3, open:1, name:'っぱチーズだね', desc:'チーズを50個とった', on:s => s.k.cheese >= 50 },
+    { r:4, open:0, name:'ゆるせない',     desc:'トウカから10回逃げ切った', on:s => s.k.esc >= 10 }]},
   { label:'ぜんたい', items:[
     /* 「3本」と固定するとゲームが増えるたびに直すことになる。
        遊んだ本数を数えて3以上、にしておけば足すだけで済む */
@@ -1014,7 +1023,9 @@ const ACH_DEFS = [
    2026-08-09 に4つとも対応完了（マッチング / カーリング / レーティング）。
    新しい旗を足すときは false で入れ、ゲーム側が済んでから true にする */
 const FLAG_READY = { 'm.revote':true, 'm.relations':true, 'c.triple':true, 'r.tap100':true,
-                     's.dry':false };   // ストーキング側の対応待ち
+                     /* ストーキング側の対応待ち。済んだら true にする */
+                     's.sewer':false, 's.man':false, 's.woman':false, 's.kid':false,
+                     's.amida':false, 's.dry':false };
 
 /* 章の全員に会ったか。抜けが1人でもあれば成立しない */
 function hasAll(ids, from, to) {

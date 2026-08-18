@@ -63,6 +63,7 @@
       sBest: readNum('sugake_alley_best'),
       sStage: Number(alley.stage) || 0,
       sEsc: Number(alley.escapes) || 0,
+      sCheese: Number(alley.cheese) || 0,
       f: readJSON(FLAG_KEY, {}) || {}
     };
   }
@@ -99,15 +100,18 @@
     { g:'rating', r:4, name:'途中突き指しなかった？', desc:'通算300勝した', on:function(s){return s.rRako+s.rOu>=300;} },
 
     /* ストーキングは得点の目安が無いので、しきい値をこちらで作らない。
-       ステージ（輪を1周するごとに+1）とトウカフェーズ（行くたび網が増える）
-       という、ゲームがすでに持っている段をそのまま使う */
-    { g:'stalking', r:1, name:'ネズミが1匹',     desc:'はじめて逃げた',   on:function(s){return s.sBest>0;} },
+       路地の3人（man / kid / woman）にぶつかる、あみだで外れを引く、といった
+       出来事は記録に残らないので、ゲーム側から旗を立ててもらう */
+    { g:'stalking', r:1, name:'穴があったら入りたい', desc:'はじめて下水に入った', on:function(s){return !!s.f['s.sewer'];} },
+    { g:'stalking', r:1, name:'ぶつかりおじさん',     desc:'路地で大きな男にぶつかった', on:function(s){return !!s.f['s.man'];} },
+    { g:'stalking', r:1, name:'ヒステリックおばさん', desc:'路地で横切る女にぶつかった', on:function(s){return !!s.f['s.woman'];} },
+    { g:'stalking', r:1, name:'路地裏キッズ',         desc:'路地で子供にぶつかった', on:function(s){return !!s.f['s.kid'];} },
     { g:'stalking', r:1, name:'また同じ路地',   desc:'ステージ2に到達',  on:function(s){return s.sStage>=2;} },
-    { g:'stalking', r:2, name:'まだ捕まらない', desc:'トウカから逃げ切った', on:function(s){return s.sEsc>=1;} },
-    { g:'stalking', r:2, name:'常連',           desc:'ステージ5に到達',  on:function(s){return s.sStage>=5;} },
+    { g:'stalking', r:2, name:'網が足りない',   desc:'はじめてトウカから逃げ切った', on:function(s){return s.sEsc>=1;} },
+    { g:'stalking', r:2, name:'運にも見放された', desc:'あみだくじで外れを引いた', on:function(s){return !!s.f['s.amida'];} },
     { g:'stalking', r:3, name:'濡れずに済んだ', desc:'水たまりを踏まずに下水を抜けた', on:function(s){return !!s.f['s.dry'];} },
-    { g:'stalking', r:3, name:'網が足りない',   desc:'トウカから3回逃げ切った', on:function(s){return s.sEsc>=3;} },
-    { g:'stalking', r:4, name:'見失いました',   desc:'ステージ10に到達', on:function(s){return s.sStage>=10;} }
+    { g:'stalking', r:3, name:'っぱチーズだね', desc:'チーズを50個とった', on:function(s){return s.sCheese>=50;} },
+    { g:'stalking', r:4, name:'ゆるせない',     desc:'トウカから10回逃げ切った', on:function(s){return s.sEsc>=10;} }
   ];
 
   /* ---- 通知の見た目。ゲーム側のCSSに触られないよう全部ここで持つ ---- */
